@@ -1,19 +1,24 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   
-  let loaded = false;
+  let loaded = $state(false);
+  let scrollY = $state(0);
+  
   onMount(() => {
     loaded = true;
   });
 </script>
 
+<svelte:window bind:scrollY />
+
 <section id="home" class="hero-glass-section relative min-h-screen flex items-center overflow-hidden font-inter">
-  <!-- Background Image with soft depth-of-field effect -->
+  <!-- Background Image with soft depth-of-field effect and Parallax -->
   <div class="absolute inset-0 z-0">
-    <!-- Using a wrapper that slightly scales to hide blur edge artifacts -->
+    <!-- Using a wrapper that slightly scales to hide blur edge artifacts and applies scroll translation -->
     <div 
-      class="absolute inset-[-10px] bg-cover bg-center blur-[4px] transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]"
+      class="absolute inset-[-40px] bg-cover bg-center blur-[4px] transition-opacity duration-[1.5s] ease-out will-change-transform"
       style:opacity={loaded ? 1 : 0}
+      style:transform="translate3d(0, {scrollY * 0.35}px, 0) scale(1.05)"
       style="background-image: url('/hero-section/hero.png');"
     ></div>
     <!-- Soft tint overlay to blend background with theme slightly -->
@@ -21,32 +26,38 @@
   </div>
 
   <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
-    <!-- Glassmorphic Card -->
+    <!-- Parallax wrapper for the card so it scrolls at a different speed -->
     <div 
-      class="glass-card flex flex-col items-center md:items-start text-center md:text-left max-w-2xl mx-auto md:mx-0 p-10 md:p-14
-             transition-all duration-[1s] ease-out delay-300"
-      class:translate-y-0={loaded}
-      class:translate-y-[20px]={!loaded}
-      class:opacity-100={loaded}
-      class:opacity-0={!loaded}
+      class="will-change-transform"
+      style:transform="translate3d(0, {scrollY * -0.15}px, 0)"
     >
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-[var(--text-heading)] transition-colors duration-500">
-        Hi, I'm Sidharth
-      </h1>
-      <h2 class="text-xl md:text-2xl font-medium mb-6 text-[var(--accent-primary)] transition-colors duration-500">
-        Full Stack Developer & Founder of XyphX
-      </h2>
-      <p class="text-base md:text-lg mb-10 leading-relaxed font-light text-[var(--text-sub)] transition-colors duration-500 max-w-lg">
-        I build scalable apps, modern web experiences, and AI-powered solutions.
-      </p>
+      <!-- Glassmorphic Card -->
+      <div 
+        class="glass-card flex flex-col items-center md:items-start text-center md:text-left max-w-2xl mx-auto md:mx-0 p-10 md:p-14
+               transition-all duration-[1s] ease-out delay-300 relative z-20"
+        class:translate-y-0={loaded}
+        class:translate-y-[40px]={!loaded}
+        class:opacity-100={loaded}
+        class:opacity-0={!loaded}
+      >
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-[var(--text-heading)] transition-colors duration-500">
+          Hi, I'm Sidharth
+        </h1>
+        <h2 class="text-xl md:text-2xl font-medium mb-6 text-[var(--accent-primary)] transition-colors duration-500">
+          Full Stack Developer & Founder of XyphX
+        </h2>
+        <p class="text-base md:text-lg mb-10 leading-relaxed font-light text-[var(--text-sub)] transition-colors duration-500 max-w-lg">
+          I build scalable apps, modern web experiences, and AI-powered solutions.
+        </p>
 
-      <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-        <a href="#work" class="btn-primary rounded-full px-8 py-3.5 text-sm md:text-base font-medium flex items-center justify-center">
-          View Projects
-        </a>
-        <a href="#contact" class="btn-secondary rounded-full px-8 py-3.5 text-sm md:text-base font-medium flex items-center justify-center border transition-all">
-          Contact Me
-        </a>
+        <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <a href="#work" class="btn-primary rounded-full px-8 py-3.5 text-sm md:text-base font-medium flex items-center justify-center">
+            View Projects
+          </a>
+          <a href="#contact" class="btn-secondary rounded-full px-8 py-3.5 text-sm md:text-base font-medium flex items-center justify-center border transition-all">
+            Contact Me
+          </a>
+        </div>
       </div>
     </div>
   </div>
