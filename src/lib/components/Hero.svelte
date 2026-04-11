@@ -1,101 +1,162 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Icons from './Icons.svelte';
-  import BlurText from './BlurText.svelte';
-
-  const partners = ['Stripe', 'Vercel', 'Linear', 'Notion', 'Figma'];
-
-  let subVisible = $state(false);
-  let ctaVisible = $state(false);
-
+  
+  let loaded = false;
   onMount(() => {
-    const t1 = setTimeout(() => (subVisible = true), 800);
-    const t2 = setTimeout(() => (ctaVisible = true), 1100);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    loaded = true;
   });
 </script>
 
-<section id="home" class="relative overflow-hidden" style="height: 1000px;">
-  <!-- Background Video -->
-  <video
-    autoplay
-    loop
-    muted
-    playsinline
-    poster="/images/hero_bg.jpeg"
-    class="absolute left-0 w-full h-auto object-contain z-0"
-    style="top: 20%;"
-  >
-    <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" type="video/mp4" />
-  </video>
+<section id="home" class="hero-glass-section relative min-h-screen flex items-center overflow-hidden font-inter">
+  <!-- Background Image with soft depth-of-field effect -->
+  <div class="absolute inset-0 z-0">
+    <!-- Using a wrapper that slightly scales to hide blur edge artifacts -->
+    <div 
+      class="absolute inset-[-10px] bg-cover bg-center blur-[4px] transition-all duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]"
+      style:opacity={loaded ? 1 : 0}
+      style="background-image: url('/hero-section/hero.png');"
+    ></div>
+    <!-- Soft tint overlay to blend background with theme slightly -->
+    <div class="absolute inset-0 bg-[var(--bg-primary)] opacity-20 dark:opacity-40 transition-colors duration-700 pointer-events-none"></div>
+  </div>
 
-  <!-- Dark overlay -->
-  <div class="absolute inset-0 bg-black/20 z-0 pointer-events-none"></div>
-
-  <!-- Bottom fade -->
-  <div
-    class="pointer-events-none absolute bottom-0 left-0 right-0 z-10"
-    style="height: 300px; background: linear-gradient(to bottom, transparent, black);"
-  ></div>
-
-  <!-- Content -->
-  <div class="relative z-20 flex flex-col items-center text-center px-6 pt-[150px]">
-    <!-- Badge -->
-    <div class="liquid-glass mb-8 flex items-center gap-2 rounded-full px-1 py-1">
-      <span class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-black font-body">New</span>
-      <span class="pr-3 text-xs font-medium text-white/80 font-body">Available for hire — Full Stack & AI Projects.</span>
-    </div>
-
-    <!-- Heading -->
-    <h1 class="font-heading italic text-white leading-[0.85] max-w-4xl tracking-[-4px] text-6xl md:text-7xl lg:text-[5.5rem] mb-6">
-      <BlurText text="The Developer Your Project Deserves" delay={100} direction="bottom" />
-    </h1>
-
-    <!-- Subtext -->
-    <p
-      class="max-w-xl text-sm md:text-base text-white/70 font-body font-light leading-relaxed mt-4 mb-8"
-      style:transition="filter 0.6s ease, opacity 0.6s ease, transform 0.6s ease"
-      style:transition-delay="0s"
-      style:filter={subVisible ? 'blur(0px)' : 'blur(10px)'}
-      style:opacity={subVisible ? 1 : 0}
-      style:transform={subVisible ? 'translateY(0)' : 'translateY(20px)'}
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+    <!-- Glassmorphic Card -->
+    <div 
+      class="glass-card flex flex-col items-center md:items-start text-center md:text-left max-w-2xl mx-auto md:mx-0 p-10 md:p-14
+             transition-all duration-[1s] ease-out delay-300"
+      class:translate-y-0={loaded}
+      class:translate-y-[20px]={!loaded}
+      class:opacity-100={loaded}
+      class:opacity-0={!loaded}
     >
-      Stunning interfaces. Blazing performance. Built with modern frameworks, refined with obsessive detail. This is full-stack development, wildly reimagined.
-    </p>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 text-[var(--text-heading)] transition-colors duration-500">
+        Hi, I'm Sidharth
+      </h1>
+      <h2 class="text-xl md:text-2xl font-medium mb-6 text-[var(--accent-primary)] transition-colors duration-500">
+        Full Stack Developer & Founder of XyphX
+      </h2>
+      <p class="text-base md:text-lg mb-10 leading-relaxed font-light text-[var(--text-sub)] transition-colors duration-500 max-w-lg">
+        I build scalable apps, modern web experiences, and AI-powered solutions.
+      </p>
 
-    <!-- CTA Buttons -->
-    <div
-      class="flex flex-wrap items-center justify-center gap-4"
-      style:transition="filter 0.6s ease, opacity 0.6s ease, transform 0.6s ease"
-      style:transition-delay="0s"
-      style:filter={ctaVisible ? 'blur(0px)' : 'blur(10px)'}
-      style:opacity={ctaVisible ? 1 : 0}
-      style:transform={ctaVisible ? 'translateY(0)' : 'translateY(20px)'}
-    >
-      <a href="#contact" class="liquid-glass-strong flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-white font-body hover:scale-105 transition-transform duration-200">
-        Get In Touch
-        <Icons name="ArrowUpRight" size={16} />
-      </a>
-      <a href="#work" class="flex items-center gap-2 text-sm font-medium text-white/70 font-body hover:text-white transition-colors duration-200">
-        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-          <Icons name="Play" size={13} />
-        </div>
-        View My Work
-      </a>
-    </div>
-
-    <!-- Partners Bar -->
-    <div class="mt-16 flex flex-col items-center gap-5 pb-8">
-      <div class="liquid-glass rounded-full px-4 py-2">
-        <span class="text-xs font-medium text-white/50 font-body tracking-wider uppercase">Trusted by the teams behind</span>
-      </div>
-      <div class="flex flex-wrap items-center justify-center gap-10 md:gap-16">
-        {#each partners as partner}
-          <span class="text-2xl md:text-3xl font-heading italic text-white/60 hover:text-white transition-colors duration-300 cursor-default">
-            {partner}
-          </span>
-        {/each}
+      <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+        <a href="#work" class="btn-primary rounded-full px-8 py-3.5 text-sm md:text-base font-medium flex items-center justify-center">
+          View Projects
+        </a>
+        <a href="#contact" class="btn-secondary rounded-full px-8 py-3.5 text-sm md:text-base font-medium flex items-center justify-center border transition-all">
+          Contact Me
+        </a>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .hero-glass-section {
+    /* LIGHT THEME VARIABLES */
+    --bg-primary: #F5EFEA;
+    --bg-secondary: #E8E5E1;
+    --bg-surface: #FFFFFF;
+    
+    --glass-bg: rgba(255, 255, 255, 0.25);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    
+    --text-heading: #2B2B2B;
+    --text-sub: #5C5C5C;
+    
+    --accent-primary: #B68A6E;
+    --accent-secondary: #9C8F82;
+    
+    --btn-primary-bg: #B68A6E;
+    --btn-primary-text: #FFFFFF;
+    --btn-primary-hover: #9C8F82;
+    
+    --btn-secondary-border: #B68A6E;
+    --btn-secondary-hover-border: #9C8F82;
+  }
+
+  /* Note: using :global(.dark) so the section reacts when the HTML tag has dark class */
+  :global(.dark) .hero-glass-section {
+    /* DARK THEME VARIABLES */
+    --bg-primary: #121212;
+    --bg-secondary: #1E1E1E;
+    --bg-surface: #2B2B2B;
+    
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    
+    --text-heading: #FFFFFF;
+    --text-sub: #CFCFCF;
+    
+    --accent-primary: #B68A6E;
+    --accent-secondary: #CFC3B6;
+    
+    --btn-primary-bg: #B68A6E;
+    --btn-primary-text: #121212;
+    --btn-primary-hover: #E8E5E1;
+    
+    --btn-secondary-border: #CFC3B6;
+    --btn-secondary-hover-border: #E8E5E1;
+  }
+
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    
+    /* Subtle float animation */
+    animation: floatY 8s ease-in-out infinite;
+  }
+
+  /* Interaction: Slight glow on hover */
+  .glass-card:hover {
+    box-shadow: 0 0 40px rgba(182, 138, 110, 0.15);
+  }
+
+  /* Buttons */
+  .btn-primary {
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                background-color 0.3s ease, 
+                box-shadow 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    transform: scale(1.05);
+    background-color: var(--btn-primary-hover);
+    box-shadow: 0 0 20px rgba(182, 138, 110, 0.3);
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    border-color: var(--btn-secondary-border);
+    color: var(--text-heading);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                border-color 0.3s ease, 
+                color 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+
+  .btn-secondary:hover {
+    transform: scale(1.05);
+    border-color: var(--btn-secondary-hover-border);
+    color: var(--btn-secondary-hover-border);
+    /* subtle inner/outer glow on secondary border */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+
+  @keyframes floatY {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0px); }
+  }
+</style>
