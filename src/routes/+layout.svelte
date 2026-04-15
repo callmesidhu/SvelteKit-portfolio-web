@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import Lenis from 'lenis';
 	import './layout.css';
-	import favicon from '$lib/assets/logo.png';
 
 	let { children } = $props();
 
@@ -27,7 +26,6 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
 	<style>
 		html.lenis, html.lenis body {
 			height: auto;

@@ -1,7 +1,6 @@
 <script lang="ts">
   import Navbar from '$lib/components/Navbar.svelte';
-  import Hero from '$lib/components/Hero.svelte';
-  import StartSection from '$lib/components/StartSection.svelte';
+  import ScrollFrameAnimation from '$lib/components/ScrollFrameAnimation.svelte';
   import FeaturesChess from '$lib/components/FeaturesChess.svelte';
   import FeaturesGrid from '$lib/components/FeaturesGrid.svelte';
   import Stats from '$lib/components/Stats.svelte';
@@ -15,20 +14,19 @@
 </svelte:head>
 
 <div class="bg-black">
-  <div class="relative z-10">
-    <Navbar />
-    
-    <main>
-      <Hero />
-      
-      <div class="bg-black">
-        <StartSection />
-        <FeaturesChess />
-        <FeaturesGrid />
-        <Stats />
-        <Testimonials />
-        <CtaFooter />
-      </div>
-    </main>
-  </div>
+  <!-- Navbar floats above everything -->
+  <Navbar />
+
+  <main>
+    <!-- Scroll-scrubbed frame animation (full viewport hero) -->
+    <ScrollFrameAnimation />
+
+    <div class="bg-black relative z-10">
+      <FeaturesChess />
+      <FeaturesGrid />
+      <Stats />
+      <Testimonials />
+      <CtaFooter />
+    </div>
+  </main>
 </div>

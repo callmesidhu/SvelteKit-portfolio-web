@@ -22,7 +22,7 @@
   }
 </script>
 
-<nav class="fixed left-0 right-0 top-4 z-50 flex items-center justify-between px-8 py-3 lg:px-16 mix-blend-difference text-white">
+<nav class="fixed left-0 right-0 top-4 z-50 flex items-center justify-between px-8 py-3 lg:px-16 text-white">
   <!-- Logo -->
   <a href="/" class="flex items-center gap-3 group">
     <div class="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden bg-white/10 backdrop-blur-md">
