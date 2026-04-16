@@ -27,7 +27,8 @@
 
 <svelte:head>
 	<style>
-		html.lenis, html.lenis body {
+		html.lenis,
+		html.lenis body {
 			height: auto;
 		}
 		.lenis.lenis-smooth {
