@@ -14,6 +14,14 @@
 	--color-muted: hsl(213 35% 60%);
 	--color-accent: hsl(213 45% 72%);
 	--color-border: hsl(0 0% 100% / 0.2);
+
+	/* Admin Theme Colors */
+	--color-admin-offwhite: #D5D0CC;
+	--color-admin-taupe: #A39889;
+	--color-admin-clay: #B58A6C;
+	--color-admin-charcoal: #2A292D;
+	--color-admin-stone: #C2B7A9;
+	--color-admin-coolgray: #CDCAC7;
 }
 
 :root {
