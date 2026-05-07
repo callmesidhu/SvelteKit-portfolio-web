@@ -189,7 +189,7 @@
   Outer section is tall so the browser gives us real scroll distance.
   Inner sticky div holds the canvas at viewport height while the user scrolls.
 -->
-<section bind:this={section} class="frame-anim-section" style="height: {SCROLL_MULTIPLIER * 100}vh;" aria-label="Scroll-driven frame animation">
+<section id="home" bind:this={section} class="frame-anim-section" style="height: {SCROLL_MULTIPLIER * 100}vh;" aria-label="Scroll-driven frame animation">
 	<div class="sticky-viewport">
 		<canvas bind:this={canvas} class="frame-canvas"></canvas>
 

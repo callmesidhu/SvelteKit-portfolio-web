@@ -24,22 +24,6 @@
 		<!-- Scroll-scrubbed frame animation (full viewport hero) -->
 		<ScrollFrameAnimation />
 
-		<!-- Tech Stack Section -->
-		<section id="skills" class="relative bg-black py-24">
-			<div class="mx-auto max-w-7xl px-6">
-				<div class="mb-16 text-center">
-					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-						My <span class="text-[#B58A6C]">Tech Stack</span>
-					</h2>
-					<p class="mt-4 text-lg text-white/40">
-						Tools and technologies I use to bring ideas to life.
-					</p>
-				</div>
-
-				<IconCloud />
-			</div>
-		</section>
-
 		<!-- About Section (AI Chat Style) -->
 		<section id="about" class="relative bg-black py-24">
 			<div class="mx-auto max-w-7xl px-6">
@@ -57,6 +41,22 @@
 
 		<!-- Experience Section: scroll-jacked, 100vh sticky panel -->
 		<ExperienceTimeline />
+
+		<!-- Tech Stack Section -->
+		<section id="skills" class="relative bg-black py-24">
+			<div class="mx-auto max-w-7xl px-6">
+				<div class="mb-16 text-center">
+					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+						My <span class="text-[#B58A6C]">Tech Stack</span>
+					</h2>
+					<p class="mt-4 text-lg text-white/40">
+						Tools and technologies I use to bring ideas to life.
+					</p>
+				</div>
+
+				<IconCloud />
+			</div>
+		</section>
 
 		<!-- Projects Section -->
 		<ProjectsGrid />

@@ -107,7 +107,7 @@
 
 		<!-- Footer line -->
 		<p class="footer-note">
-			© {new Date().getFullYear()} <span>callmesidhu</span> — Built with SvelteKit & Firebase
+			© {new Date().getFullYear()} <span>callmesidhu</span> — Built with SvelteKit
 		</p>
 	</div>
 

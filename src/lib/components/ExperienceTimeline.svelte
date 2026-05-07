@@ -128,7 +128,7 @@
 >
 
 <!-- Sticky inner: pins at top while user scrolls through outer -->
-<div bind:this={section} class="exp-section" id="experience">
+<div bind:this={section} class="exp-section" id="experiences">
 
 	<!-- Section heading (static, centered top) -->
 	<div class="heading">
