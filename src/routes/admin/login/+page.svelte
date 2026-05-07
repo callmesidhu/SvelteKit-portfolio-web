@@ -106,5 +106,14 @@
 				{loading ? 'Logging in...' : 'Login'}
 			</button>
 		</form>
+
+		<div class="mt-8 text-center">
+			<a
+				href="/"
+				class="text-sm font-medium text-admin-charcoal/50 transition-colors hover:text-admin-charcoal"
+			>
+				← Back to portfolio
+			</a>
+		</div>
 	</div>
 </div>
