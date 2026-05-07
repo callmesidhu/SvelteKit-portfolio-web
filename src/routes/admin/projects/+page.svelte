@@ -40,6 +40,7 @@
 	let image = $state('');
 	let loading = $state(true);
 	let adding = $state(false);
+	let status = $state('');
 
 	onMount(() => {
 		const q = query(collection(db, 'projects'), orderBy('id', 'asc'));
@@ -57,10 +58,12 @@
 	const addProject = async (e: SubmitEvent) => {
 		e.preventDefault();
 		if (!title || !tech) {
-			alert('Title and Tech are required');
+			status = '⚠️ Title and Tech are required';
+			setTimeout(() => (status = ''), 3000);
 			return;
 		}
 		adding = true;
+		status = '';
 
 		try {
 			await runTransaction(db, async (transaction) => {
@@ -88,6 +91,7 @@
 				transaction.set(counterRef, { current: newId });
 			});
 
+			status = '✅ Project added successfully!';
 			title = '';
 			tech = '';
 			description = '';
@@ -95,9 +99,10 @@
 			image = '';
 		} catch (e) {
 			console.error('Failed to add project:', e);
-			alert('Error adding project');
+			status = '❌ Error adding project. Please try again.';
 		} finally {
 			adding = false;
+			setTimeout(() => (status = ''), 4000);
 		}
 	};
 
@@ -113,19 +118,19 @@
 
 <div class="space-y-10 pb-20">
 	<header>
-		<h1 class="flex items-center gap-3 text-3xl font-bold text-white">
-			<Star class="text-violet-400" />
+		<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
+			<Star class="text-admin-clay" />
 			Project Portfolio
 		</h1>
-		<p class="mt-2 text-gray-400">Showcase your best work to the world.</p>
+		<p class="mt-2 text-admin-charcoal/70">Showcase your best work to the world.</p>
 	</header>
 
 	<!-- Add Project Form -->
-	<div class="rounded-2xl border border-violet-900/20 bg-[#121212] p-8 shadow-2xl">
-		<h2 class="mb-6 text-xl font-bold text-gray-200">Add New Project</h2>
+	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
+		<h2 class="mb-6 text-xl font-bold text-admin-charcoal">Add New Project</h2>
 		<form onsubmit={addProject} class="grid grid-cols-1 gap-6 md:grid-cols-2">
 			<div class="space-y-2">
-				<label for="proj-title" class="flex items-center gap-2 text-sm font-medium text-gray-400">
+				<label for="proj-title" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
 					<Type size={14} /> Title *
 				</label>
 				<input
@@ -133,13 +138,13 @@
 					type="text"
 					placeholder="e.g., E-commerce App"
 					bind:value={title}
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 					required
 				/>
 			</div>
 
 			<div class="space-y-2">
-				<label for="proj-tech" class="flex items-center gap-2 text-sm font-medium text-gray-400">
+				<label for="proj-tech" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
 					<Code size={14} /> Technologies *
 				</label>
 				<input
@@ -147,24 +152,24 @@
 					type="text"
 					placeholder="e.g., SvelteKit, Tailwind, Firebase"
 					bind:value={tech}
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 					required
 				/>
 			</div>
 
 			<div class="space-y-2 md:col-span-2">
-				<label for="proj-desc" class="text-sm font-medium text-gray-400">Description</label>
+				<label for="proj-desc" class="text-sm font-medium text-admin-charcoal/70">Description</label>
 				<textarea
 					id="proj-desc"
 					rows={3}
 					placeholder="Briefly describe the project..."
 					bind:value={description}
-					class="w-full resize-none rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full resize-none rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 				></textarea>
 			</div>
 
 			<div class="space-y-2">
-				<label for="proj-url" class="flex items-center gap-2 text-sm font-medium text-gray-400">
+				<label for="proj-url" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
 					<LinkIcon size={14} /> Project URL
 				</label>
 				<input
@@ -172,12 +177,12 @@
 					type="url"
 					placeholder="https://your-project.com"
 					bind:value={link}
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 				/>
 			</div>
 
 			<div class="space-y-2">
-				<label for="proj-image" class="flex items-center gap-2 text-sm font-medium text-gray-400">
+				<label for="proj-image" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
 					<ImageIcon size={14} /> Cover Image URL
 				</label>
 				<input
@@ -185,15 +190,15 @@
 					type="url"
 					placeholder="https://image-url.com"
 					bind:value={image}
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 				/>
 			</div>
 
-			<div class="pt-4 md:col-span-2">
+			<div class="flex flex-col gap-4 pt-4 md:col-span-2">
 				<button
 					type="submit"
 					disabled={adding}
-					class="flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-12 py-4 font-bold text-white shadow-lg shadow-violet-600/20 transition-all hover:bg-violet-700 disabled:opacity-50 md:w-auto"
+					class="flex w-full items-center justify-center gap-2 rounded-xl bg-admin-clay px-12 py-4 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50 md:w-auto"
 				>
 					{#if adding}
 						<div
@@ -205,32 +210,42 @@
 						Add Project
 					{/if}
 				</button>
+
+				{#if status}
+					<p
+						class="animate-in fade-in slide-in-from-top-2 text-sm font-medium {status.includes('✅')
+							? 'text-emerald-600'
+							: 'text-amber-600'}"
+					>
+						{status}
+					</p>
+				{/if}
 			</div>
 		</form>
 	</div>
 
 	<!-- Projects Grid -->
 	<section>
-		<h2 class="mb-8 text-2xl font-bold text-gray-200">Active Projects ({projects.length})</h2>
+		<h2 class="mb-8 text-2xl font-bold text-admin-charcoal">Active Projects ({projects.length})</h2>
 
 		{#if loading}
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{#each Array(3) as _, i (i)}
 					<div
-						class="h-96 animate-pulse rounded-2xl border border-violet-900/10 bg-[#121212]"
+						class="h-96 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"
 					></div>
 				{/each}
 			</div>
 		{:else if projects.length === 0}
-			<div class="rounded-2xl border border-violet-900/20 bg-[#121212] py-20 text-center">
-				<ImageIcon class="mx-auto mb-4 text-gray-600" size={48} />
-				<p class="text-lg text-gray-500">No projects added yet.</p>
+			<div class="rounded-2xl border border-admin-stone bg-admin-coolgray py-20 text-center">
+				<ImageIcon class="mx-auto mb-4 text-admin-charcoal/30" size={48} />
+				<p class="text-lg text-admin-charcoal/50">No projects added yet.</p>
 			</div>
 		{:else}
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{#each projects as proj (proj.docId)}
 					<div
-						class="group flex flex-col overflow-hidden rounded-2xl border border-violet-900/20 bg-[#121212] shadow-xl transition-all duration-300 hover:border-violet-600/30"
+						class="group flex flex-col overflow-hidden rounded-2xl border border-admin-stone bg-admin-coolgray shadow-xl transition-all duration-300 hover:border-admin-taupe/50"
 					>
 						{#if proj.image}
 							<div class="relative h-48 overflow-hidden">
@@ -247,7 +262,7 @@
 							</div>
 						{:else}
 							<div
-								class="flex h-48 items-center justify-center bg-violet-900/10 text-violet-900/30"
+								class="flex h-48 items-center justify-center bg-admin-stone/10 text-admin-stone/30"
 							>
 								<ImageIcon size={48} />
 							</div>
@@ -255,30 +270,30 @@
 
 						<div class="flex flex-grow flex-col p-6">
 							<h3
-								class="mb-2 text-xl font-bold text-white transition-colors group-hover:text-violet-400"
+								class="mb-2 text-xl font-bold text-admin-charcoal transition-colors group-hover:text-admin-clay"
 							>
 								{proj.title}
 							</h3>
 							<div class="mb-4 flex flex-wrap gap-2">
 								{#each proj.tech.split(',') as t (t)}
 									<span
-										class="rounded border border-violet-600/20 bg-violet-600/10 px-2 py-1 text-[10px] font-bold tracking-wider text-violet-400 uppercase"
+										class="rounded border border-admin-clay/20 bg-admin-clay/10 px-2 py-1 text-[10px] font-bold tracking-wider text-admin-clay uppercase"
 									>
 										{t.trim()}
 									</span>
 								{/each}
 							</div>
-							<p class="mb-6 line-clamp-3 flex-grow text-sm text-gray-400">
+							<p class="mb-6 line-clamp-3 flex-grow text-sm text-admin-charcoal/70">
 								{proj.description || 'No description provided.'}
 							</p>
 
-							<div class="flex items-center justify-between border-t border-violet-900/10 pt-6">
+							<div class="flex items-center justify-between border-t border-admin-stone pt-6">
 								{#if proj.link}
 									<a
 										href={proj.link}
 										target="_blank"
 										rel="noreferrer"
-										class="flex items-center gap-1 text-sm font-medium text-gray-400 hover:text-white"
+										class="flex items-center gap-1 text-sm font-medium text-admin-charcoal/50 hover:text-admin-charcoal"
 									>
 										<ExternalLink size={14} /> Preview
 									</a>
@@ -288,7 +303,7 @@
 
 								<button
 									onclick={() => deleteProject(proj.docId)}
-									class="rounded-lg p-2 text-gray-500 transition-all hover:bg-red-400/10 hover:text-red-400"
+									class="rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-red-400/10 hover:text-red-600"
 									aria-label="Delete project"
 								>
 									<Trash2 size={18} />
