@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	// ─── Config ────────────────────────────────────────────────────────────────
-	const TOTAL_FRAMES = 552;
+	const TOTAL_FRAMES = 373;
 	const FRAME_PATH = (n: number) => `/frames/frame_${String(n).padStart(4, '0')}.jpg`;
 
 	// How many viewport-heights tall the scroll section is.
@@ -127,7 +127,7 @@
   Outer section is tall so the browser gives us real scroll distance.
   Inner sticky div holds the canvas at viewport height while the user scrolls.
 -->
-<section bind:this={section} class="frame-anim-section" aria-label="Scroll-driven frame animation">
+<section bind:this={section} class="frame-anim-section" style="height: {SCROLL_MULTIPLIER * 100}vh;" aria-label="Scroll-driven frame animation">
 	<div class="sticky-viewport">
 		<canvas bind:this={canvas} class="frame-canvas"></canvas>
 
@@ -182,8 +182,7 @@
 	.frame-anim-section {
 		position: relative;
 		width: 100%;
-		/* SCROLL_MULTIPLIER × 100vh = total scroll distance for this section */
-		height: 700vh; /* 8 viewport heights = scroll through 7 screens worth (slower) */
+		/* height is set dynamically via inline style using SCROLL_MULTIPLIER */
 	}
 
 	/* ── Sticky inner — stays pinned while user scrolls through the section ─── */
