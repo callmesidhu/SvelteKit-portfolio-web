@@ -50,7 +50,7 @@
 				<div
 					class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-admin-stone bg-admin-offwhite shadow-sm"
 				>
-					<img src="/favicon.png" alt="Logo" class="h-full w-full object-cover" />
+					<img src="/favicon.png" alt="Logo" class="h-full w-full object-contain" />
 				</div>
 				<h1 class="text-xl font-bold text-admin-charcoal">Admin Panel</h1>
 			</div>
@@ -86,7 +86,7 @@
 				<div
 					class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-admin-stone bg-admin-offwhite shadow-sm"
 				>
-					<img src="/favicon.png" alt="Logo" class="h-full w-full object-cover" />
+					<img src="/favicon.png" alt="Logo" class="h-full w-full object-contain" />
 				</div>
 				<h1 class="text-2xl font-bold text-admin-charcoal">Admin Panel</h1>
 			</div>
