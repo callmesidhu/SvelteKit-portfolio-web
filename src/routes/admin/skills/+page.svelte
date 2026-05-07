@@ -86,21 +86,21 @@
 
 <div class="mx-auto max-w-5xl space-y-8">
 	<header>
-		<h1 class="flex items-center gap-3 text-3xl font-bold text-white">
-			<Code class="text-violet-400" />
+		<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
+			<Code class="text-admin-clay" />
 			Skill Management
 		</h1>
-		<p class="mt-2 text-gray-400">Manage your tech stack categories and icons.</p>
+		<p class="mt-2 text-admin-charcoal/70">Manage your tech stack categories and icons.</p>
 	</header>
 
 	<!-- Tabs -->
-	<div class="flex w-fit gap-2 rounded-xl border border-violet-900/20 bg-[#121212] p-1">
+	<div class="flex w-fit gap-2 rounded-xl border border-admin-stone bg-admin-coolgray p-1">
 		{#each tabs as tab (tab.id)}
 			<button
 				onclick={() => (activeTab = tab.id)}
 				class="rounded-lg px-6 py-2 font-medium transition-all {activeTab === tab.id
-					? 'bg-violet-600 text-white shadow-lg shadow-violet-600/20'
-					: 'text-gray-500 hover:text-gray-300'}"
+					? 'bg-admin-clay text-white shadow-lg shadow-admin-clay/20'
+					: 'text-admin-charcoal/50 hover:text-admin-charcoal/70'}"
 			>
 				{tab.label}
 			</button>
@@ -108,32 +108,32 @@
 	</div>
 
 	<!-- Add Skill Form -->
-	<div class="rounded-2xl border border-violet-900/20 bg-[#121212] p-8 shadow-2xl">
+	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
 		<form onsubmit={handleAdd} class="grid grid-cols-1 items-end gap-6 md:grid-cols-3">
 			<div class="space-y-2">
-				<label for="skill-name" class="text-sm font-medium text-gray-400">Skill Name</label>
+				<label for="skill-name" class="text-sm font-medium text-admin-charcoal/70">Skill Name</label>
 				<input
 					id="skill-name"
 					type="text"
 					placeholder="e.g., JavaScript"
 					bind:value={name}
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="icon-url" class="text-sm font-medium text-gray-400">Icon URL (SVG/PNG)</label>
+				<label for="icon-url" class="text-sm font-medium text-admin-charcoal/70">Icon URL (SVG/PNG)</label>
 				<input
 					id="icon-url"
 					type="text"
 					placeholder="https://icon-url.com"
 					bind:value={src}
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-3 text-white transition-all outline-none focus:ring-2 focus:ring-violet-600"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-3 text-admin-charcoal transition-all outline-none focus:ring-2 focus:ring-admin-clay"
 				/>
 			</div>
 			<button
 				type="submit"
 				disabled={adding}
-				class="flex h-[52px] items-center justify-center gap-2 rounded-xl bg-violet-600 font-bold text-white transition-all hover:bg-violet-700 disabled:opacity-50"
+				class="flex h-[52px] items-center justify-center gap-2 rounded-xl bg-admin-clay font-bold text-white transition-all hover:bg-[#A37B60] disabled:opacity-50"
 			>
 				{#if adding}
 					<div
@@ -149,8 +149,8 @@
 		{#if status}
 			<p
 				class="mt-4 text-center text-sm font-medium {status.includes('✅')
-					? 'text-emerald-400'
-					: 'text-red-400'}"
+					? 'text-emerald-600'
+					: 'text-red-600'}"
 			>
 				{status}
 			</p>
@@ -161,31 +161,31 @@
 	<div class="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-6">
 		{#if loading}
 			{#each Array(6) as _}
-				<div class="h-40 animate-pulse rounded-2xl border border-violet-900/10 bg-[#121212]"></div>
+				<div class="h-40 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"></div>
 			{/each}
 		{:else if items.length === 0}
 			<div
-				class="col-span-full rounded-2xl border border-violet-900/20 bg-[#121212] py-20 text-center"
+				class="col-span-full rounded-2xl border border-admin-stone bg-admin-coolgray py-20 text-center"
 			>
-				<Layers class="mx-auto mb-4 text-gray-600" size={48} />
-				<p class="text-gray-500">No {activeTab} added yet.</p>
+				<Layers class="mx-auto mb-4 text-admin-charcoal/30" size={48} />
+				<p class="text-admin-charcoal/50">No {activeTab} added yet.</p>
 			</div>
 		{:else}
 			{#each items as item (item.docId)}
 				<div
-					class="group relative flex flex-col items-center justify-center rounded-2xl border border-violet-900/20 bg-[#121212] p-6 transition-all duration-300 hover:border-violet-600/40 hover:bg-[#1a1a1a]"
+					class="group relative flex flex-col items-center justify-center rounded-2xl border border-admin-stone bg-admin-coolgray p-6 transition-all duration-300 hover:border-admin-taupe/50 hover:bg-admin-stone/10"
 				>
 					<div
 						class="mb-4 flex h-16 w-16 items-center justify-center transition-transform duration-300 group-hover:scale-110"
 					>
 						<img src={item.src} alt={item.name} class="max-h-full max-w-full object-contain" />
 					</div>
-					<p class="text-center text-sm font-bold text-gray-200">{item.name}</p>
-					<span class="mt-1 font-mono text-[10px] text-gray-600">ID: {item.id}</span>
+					<p class="text-center text-sm font-bold text-admin-charcoal">{item.name}</p>
+					<span class="mt-1 font-mono text-[10px] text-admin-charcoal/40">ID: {item.id}</span>
 
 					<button
 						onclick={() => handleDelete(item.docId)}
-						class="absolute top-2 right-2 rounded-lg p-2 text-gray-600 opacity-0 transition-all group-hover:opacity-100 hover:text-red-400"
+						class="absolute top-2 right-2 rounded-lg p-2 text-admin-charcoal/40 opacity-0 transition-all group-hover:opacity-100 hover:text-red-600"
 						aria-label="Delete skill"
 					>
 						<Trash2 size={14} />
