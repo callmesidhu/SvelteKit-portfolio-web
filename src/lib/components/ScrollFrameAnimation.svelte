@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { db } from '$lib/firebase';
+	import { collection, getDocs } from 'firebase/firestore';
 
 	// ─── Config ────────────────────────────────────────────────────────────────
 	const TOTAL_FRAMES = 373;
@@ -24,6 +26,44 @@
 	let rafId: number;
 	let targetFrame = 0;
 	let renderedFrame = 0;
+	
+	// ─── Typing Animation ───────────────────────────────────────────────────────
+	let roles = $state<string[]>([]);
+	let roleIndex = $state(0);
+	let charIndex = $state(0);
+	let isDeleting = $state(false);
+	let displayedText = $state('');
+	let isTyping = $state(true);
+
+	function type() {
+		if (roles.length === 0) return;
+		const currentRole = roles[roleIndex];
+		
+		if (isDeleting) {
+			displayedText = currentRole.substring(0, charIndex - 1);
+			charIndex--;
+		} else {
+			displayedText = currentRole.substring(0, charIndex + 1);
+			charIndex++;
+		}
+
+		let typeSpeed = isDeleting ? 50 : 100;
+
+		if (!isDeleting && charIndex === currentRole.length) {
+			typeSpeed = 2000; // Pause at end
+			isDeleting = true;
+			isTyping = false;
+		} else if (isDeleting && charIndex === 0) {
+			isDeleting = false;
+			roleIndex = (roleIndex + 1) % roles.length;
+			typeSpeed = 500;
+			isTyping = true;
+		} else {
+			isTyping = true;
+		}
+
+		setTimeout(type, typeSpeed);
+	}
 
 	// ─── Preload ───────────────────────────────────────────────────────────────
 	function preloadFrames() {
@@ -106,6 +146,28 @@
 		ctx = canvas.getContext('2d');
 		resizeCanvas();
 		preloadFrames();
+		
+		// Fetch roles from Firebase
+		const fetchRoles = async () => {
+			try {
+				const querySnapshot = await getDocs(collection(db, 'roles'));
+				const fetchedRoles = querySnapshot.docs.map(doc => doc.data() as { role: string; order: number });
+				// Sort by order
+				fetchedRoles.sort((a, b) => (a.order || 0) - (b.order || 0));
+				roles = fetchedRoles.map(r => r.role);
+				
+				if (roles.length > 0) {
+					type();
+				}
+			} catch (err) {
+				console.error('Error fetching roles:', err);
+				// Fallback if firebase fails
+				roles = ['Full Stack Developer', 'App Developer', 'UI/UX Designer'];
+				type();
+			}
+		};
+
+		fetchRoles();
 
 		rafId = requestAnimationFrame(loop);
 
@@ -153,6 +215,22 @@
 			>
 				<div class="progress-bar-track">
 					<div class="progress-bar-fill" style:width="{frameProgress}%"></div>
+				</div>
+			</div>
+		{/if}
+
+		<!-- Hero Text Overlay -->
+		{#if isReady}
+			<div class="hero-text-overlay" style:opacity={currentFrame < 15 ? 1 : Math.max(0, 1 - (currentFrame - 15) / 10)}>
+				<div class="hero-content">
+					<h1 class="hero-title">
+						<span class="hero-name">S SIDHARTH</span>
+						<div class="hero-role-wrapper">
+							<span class="hero-role-prefix">Are you looking for a</span>
+							<span class="hero-role-typing">{displayedText}?</span>
+							<span class="hero-cursor" class:blink={!isTyping}></span>
+						</div>
+					</h1>
 				</div>
 			</div>
 		{/if}
@@ -335,6 +413,102 @@
 		}
 		50% {
 			transform: translateY(6px);
+		}
+	}
+
+	/* ── Hero Text Overlay ───────────────────────────────────────────────────── */
+	.hero-text-overlay {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 5;
+		pointer-events: none;
+		transition: opacity 0.4s ease;
+		background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, transparent 70%);
+	}
+
+	.hero-content {
+		text-align: center;
+		padding: 0 20px;
+	}
+
+	.hero-title {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.hero-name {
+		font-family: 'Barlow', sans-serif;
+		font-size: 14px;
+		letter-spacing: 0.4em;
+		color: #B58A6C;
+		font-weight: 700;
+		text-transform: uppercase;
+		opacity: 0.9;
+		animation: fadeInDown 1s ease-out;
+	}
+
+	.hero-role-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		font-size: 42px;
+		font-weight: 800;
+		color: white;
+		letter-spacing: -0.02em;
+	}
+
+	.hero-role-prefix {
+		color: rgba(255, 255, 255, 0.5);
+		font-weight: 400;
+	}
+
+	.hero-role-typing {
+		color: white;
+		text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+	}
+
+	.hero-cursor {
+		display: inline-block;
+		width: 3px;
+		height: 40px;
+		background-color: #B58A6C;
+		margin-left: 4px;
+		box-shadow: 0 0 10px #B58A6C;
+	}
+
+	.hero-cursor.blink {
+		animation: cursorBlink 1s infinite;
+	}
+
+	@keyframes cursorBlink {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+
+	@keyframes fadeInDown {
+		from {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+		to {
+			opacity: 0.9;
+			transform: translateY(0);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.hero-role-wrapper {
+			font-size: 28px;
+			flex-direction: column;
+			gap: 4px;
+		}
+		.hero-cursor {
+			height: 30px;
 		}
 	}
 </style>
