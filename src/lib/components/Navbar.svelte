@@ -66,6 +66,14 @@
 
 	<!-- Right CTA & Theme Toggle -->
 	<div class="flex items-center gap-3">
+		<a
+			href="/admin"
+			class="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm font-medium backdrop-blur-md transition-transform duration-200 hover:scale-105"
+		>
+			Admin
+			<Icons name="ArrowUpRight" size={14} />
+		</a>
+
 		<button
 			onclick={toggleTheme}
 			class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-md transition-all hover:bg-black/60"
