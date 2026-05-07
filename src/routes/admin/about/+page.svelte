@@ -45,7 +45,7 @@
 </script>
 
 <div class="mx-auto max-w-4xl space-y-8">
-	<header class="flex items-end justify-between">
+	<header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 		<div>
 			<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
 				<User class="text-admin-clay" />
@@ -59,7 +59,7 @@
 		<button
 			onclick={updateAbout}
 			disabled={status === 'saving'}
-			class="flex items-center gap-2 rounded-xl bg-admin-clay px-6 py-3 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50"
+			class="flex items-center justify-center gap-2 rounded-xl bg-admin-clay px-6 py-3 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50 sm:w-auto"
 		>
 			{#if status === 'saving'}
 				<div
