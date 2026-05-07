@@ -9,7 +9,7 @@
 		skills: string[]; rank: number;
 	}
 
-	const CARD_W = 350, CARD_H = 250, STEP = 400, PAD = 200, AMP = 100;
+	const CARD_W = 350, CARD_H = 250, STEP = 400, PAD = 200, AMP = 80;
 	const WAVE_BASE = [-AMP, 0, AMP, 0]; // static vertical positions
 
 	let experiences = $state<Experience[]>([]);
@@ -34,7 +34,7 @@
 	// Static wave base + dynamic ripple based on scroll progress
 	function cardY(i: number): number {
 		const base  = WAVE_BASE[i % 4];
-		const ripple = Math.sin(progress * Math.PI * 4 + i * 1.1) * 18;
+		const ripple = Math.sin(progress * Math.PI * 4 + i * 1.1) * 35;
 		return base + ripple;
 	}
 	function cardTop(i: number) { return vh / 2 + cardY(i) - CARD_H / 2; }
