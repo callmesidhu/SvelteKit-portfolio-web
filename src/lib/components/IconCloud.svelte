@@ -76,30 +76,33 @@
 			const x2d = this.x * scale + width / 2;
 			const y2d = this.y * scale + height / 2;
 
-			const dx = x2d - width / 2;
-			const dy = y2d - height / 2;
-			const dist2d = Math.sqrt(dx * dx + dy * dy);
-			const maxRadius = Math.min(width, height) / 1.7;
-			const edgeFade = Math.max(0, 1 - Math.pow(dist2d / maxRadius, 3));
-			
-			this.opacity = Math.max(0, scale * edgeFade);
-			return { x2d, y2d, scale, edgeFade };
+			// Simplified visibility
+			this.opacity = Math.max(0.1, scale); 
+			return { x2d, y2d, scale, edgeFade: 1 };
 		}
 
 		draw(ctx: CanvasRenderingContext2D, width: number, height: number) {
-			const { x2d, y2d, scale, edgeFade } = this.update(width, height);
+			const { x2d, y2d, scale } = this.update(width, height);
+			const size = ICON_SIZE * scale;
 
-			if (this.img) {
-				const size = ICON_SIZE * scale;
+			if (this.img && this.img.complete) {
 				ctx.globalAlpha = this.opacity;
 				ctx.drawImage(this.img, x2d - size / 2, y2d - size / 2, size, size);
+			} else {
+				// Fallback: draw a glowing dot if image isn't ready
+				ctx.globalAlpha = this.opacity * 0.5;
+				ctx.fillStyle = '#B58A6C';
+				ctx.beginPath();
+				ctx.arc(x2d, y2d, 4 * scale, 0, Math.PI * 2);
+				ctx.fill();
+			}
 
-				if (scale > 0.92 && edgeFade > 0.7) {
-					ctx.font = `700 ${Math.round(11 * scale)}px Inter, sans-serif`;
-					ctx.fillStyle = `rgba(255, 255, 255, ${(edgeFade - 0.4) * 0.9})`;
-					ctx.textAlign = 'center';
-					ctx.fillText(this.name.toUpperCase(), x2d, y2d + size / 2 + 20);
-				}
+			if (scale > 0.8) {
+				ctx.globalAlpha = this.opacity;
+				ctx.font = `700 ${Math.round(10 * scale)}px Inter, sans-serif`;
+				ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.8})`;
+				ctx.textAlign = 'center';
+				ctx.fillText(this.name.toUpperCase(), x2d, y2d + size / 2 + 15);
 			}
 		}
 	}
@@ -205,10 +208,11 @@
 				.filter(d => d.index !== i)
 				.sort((a, b) => a.dist - b.dist);
 				
-				p.neighbors = distances.slice(0, 3).map(d => d.index);
+				p.neighbors = distances.slice(0, 5).map(d => d.index);
 			});
 
 			for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+			console.log(`Initialized ${points.length} points and ${particles.length} particles`);
 			loading = false;
 		} catch (e) {
 			console.error('Error initializing IconCloud:', e);
@@ -222,12 +226,13 @@
 		if (!ctx) return;
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.globalAlpha = 1;
-
-		if (!points || points.length === 0) {
+		
+		if (loading || points.length === 0) {
 			requestAnimationFrame(render);
 			return;
 		}
+
+		ctx.globalAlpha = 1;
 
 		let targetRX = ROTATION_SPEED;
 		let targetRY = ROTATION_SPEED;
@@ -252,7 +257,6 @@
 
 		const depth = 500;
 		// Draw Mesh Lines
-		ctx.beginPath();
 		const drawnLines = new Set<string>();
 		points.forEach((p1, i) => {
 			p1.neighbors.forEach(neighborIdx => {
@@ -267,17 +271,19 @@
 					const x2 = p2.x * scale2 + canvas.width / 2;
 					const y2 = p2.y * scale2 + canvas.height / 2;
 					
-					const lineOpacity = Math.min(p1.opacity, p2.opacity) * 0.5;
-					if (lineOpacity > 0.05) {
-						ctx.strokeStyle = `rgba(181, 138, 108, ${lineOpacity})`;
-						ctx.lineWidth = 1 * Math.min(scale1, scale2);
+					const lineFlicker = Math.random() > 0.95 ? Math.random() * 0.4 : 1;
+					const lineOpacity = Math.min(p1.opacity, p2.opacity) * 0.8 * lineFlicker;
+					if (lineOpacity > 0.02) {
+						ctx.beginPath();
+						ctx.strokeStyle = `rgba(255, 255, 255, ${lineOpacity})`;
+						ctx.lineWidth = 1.2 * Math.min(scale1, scale2);
 						ctx.moveTo(x1, y1);
 						ctx.lineTo(x2, y2);
+						ctx.stroke();
 					}
 				}
 			});
 		});
-		ctx.stroke();
 
 		// Draw Icons
 		const sortedPoints = [...points].sort((a, b) => b.z - a.z);

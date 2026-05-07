@@ -3,7 +3,7 @@
 	import Icons from './Icons.svelte';
 	const logo = '/favicon.png';
 
-	const links = ['Home', 'About', 'Experiences', 'Skills', 'Projects', 'Contact'];
+	const links = ['Home', 'About', 'Skills', 'Experiences', 'Projects', 'Contact'];
 	let isDark = $state(true);
 
 	onMount(() => {

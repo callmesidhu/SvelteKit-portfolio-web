@@ -34,9 +34,6 @@
 			</div>
 		</section>
 
-		<!-- Experience Section: scroll-jacked, 100vh sticky panel -->
-		<ExperienceTimeline />
-
 		<!-- Tech Stack Section -->
 		<section id="skills" class="relative bg-black py-24">
 			<div class="mx-auto max-w-7xl px-6">
@@ -52,6 +49,9 @@
 				<IconCloud />
 			</div>
 		</section>
+
+		<!-- Experience Section: scroll-jacked, 100vh sticky panel -->
+		<ExperienceTimeline />
 
 		<!-- Projects Section -->
 		<ProjectsGrid />
