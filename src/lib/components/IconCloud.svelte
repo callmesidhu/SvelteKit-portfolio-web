@@ -154,18 +154,34 @@
 
 	async function init() {
 		try {
-			const collections = ['languages', 'frameworks', 'technologies'];
+			const CACHE_KEY = 'tech_stack_icons';
+			const CACHE_TIME_KEY = 'tech_stack_icons_time';
+			const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
+
+			const cachedData = localStorage.getItem(CACHE_KEY);
+			const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+			const now = Date.now();
+
 			let allIcons: Icon[] = [];
-			
-			// Use Firebase if available, otherwise use hardcoded fallbacks
-			try {
-				for (const col of collections) {
-					const q = query(collection(db, col), orderBy('id', 'asc'));
-					const snap = await getDocs(q);
-					snap.forEach(doc => allIcons.push(doc.data() as Icon));
+
+			if (cachedData && cachedTime && (now - parseInt(cachedTime)) < CACHE_EXPIRY) {
+				allIcons = JSON.parse(cachedData);
+				console.log('Using cached tech stack icons');
+			} else {
+				const collections = ['languages', 'frameworks', 'technologies'];
+				try {
+					for (const col of collections) {
+						const q = query(collection(db, col), orderBy('id', 'asc'));
+						const snap = await getDocs(q);
+						snap.forEach(doc => allIcons.push(doc.data() as Icon));
+					}
+					if (allIcons.length > 0) {
+						localStorage.setItem(CACHE_KEY, JSON.stringify(allIcons));
+						localStorage.setItem(CACHE_TIME_KEY, now.toString());
+					}
+				} catch (err) {
+					console.warn('Firebase error, using fallback icons');
 				}
-			} catch (err) {
-				console.warn('Firebase error, using fallback icons');
 			}
 
 			if (allIcons.length === 0) {
