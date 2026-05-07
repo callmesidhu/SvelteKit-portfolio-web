@@ -3,6 +3,7 @@
 	import ScrollFrameAnimation from '$lib/components/ScrollFrameAnimation.svelte';
 	import IconCloud from '$lib/components/IconCloud.svelte';
 	import AboutAI from '$lib/components/AboutAI.svelte';
+	import ExperienceTimeline from '$lib/components/ExperienceTimeline.svelte';
 </script>
 
 <svelte:head>
@@ -49,6 +50,21 @@
 					</p>
 				</div>
 				<AboutAI />
+			</div>
+		</section>
+
+		<!-- Experience Section -->
+		<section id="experience" class="relative bg-black py-24">
+			<div class="mx-auto max-w-7xl px-6">
+				<div class="mb-16 text-center">
+					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+						Work <span class="text-[#B58A6C]">Experience</span>
+					</h2>
+					<p class="mt-4 text-lg text-white/40">
+						The journey that shaped my craft.
+					</p>
+				</div>
+				<ExperienceTimeline />
 			</div>
 		</section>
 	</main>
