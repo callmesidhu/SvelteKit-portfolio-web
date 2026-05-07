@@ -20,9 +20,8 @@
 
 	// ─── Constants ─────────────────────────────────────────────────────────────
 	const RADIUS = 220;
-	const ICON_SIZE = 45;
-	const ROTATION_SPEED = 0.005;
-	const MAX_LINE_DIST = 200;
+	const ICON_SIZE = 50;
+	const ROTATION_SPEED = 0.015;
 	const PARTICLE_COUNT = 60;
 
 	// ─── 3D State ─────────────────────────────────────────────────────────────
@@ -39,6 +38,7 @@
 		img: HTMLImageElement | null = null;
 		name: string;
 		opacity: number = 0;
+		neighbors: number[] = [];
 
 		constructor(x: number, y: number, z: number, name: string, src: string) {
 			this.x = x;
@@ -69,23 +69,29 @@
 			this.z = z2;
 		}
 
-		draw(ctx: CanvasRenderingContext2D, width: number, height: number) {
+		update(width: number, height: number) {
+			if (!width || !height) return { x2d: 0, y2d: 0, scale: 1, edgeFade: 1 };
 			const depth = 500;
 			const scale = depth / (depth + this.z);
 			const x2d = this.x * scale + width / 2;
 			const y2d = this.y * scale + height / 2;
 
+			const dx = x2d - width / 2;
+			const dy = y2d - height / 2;
+			const dist2d = Math.sqrt(dx * dx + dy * dy);
+			const maxRadius = Math.min(width, height) / 1.7;
+			const edgeFade = Math.max(0, 1 - Math.pow(dist2d / maxRadius, 3));
+			
+			this.opacity = Math.max(0, scale * edgeFade);
+			return { x2d, y2d, scale, edgeFade };
+		}
+
+		draw(ctx: CanvasRenderingContext2D, width: number, height: number) {
+			const { x2d, y2d, scale, edgeFade } = this.update(width, height);
+
 			if (this.img) {
 				const size = ICON_SIZE * scale;
-				const dx = x2d - width / 2;
-				const dy = y2d - height / 2;
-				const dist2d = Math.sqrt(dx * dx + dy * dy);
-				const maxRadius = Math.min(width, height) / 1.7;
-				const edgeFade = Math.max(0, 1 - Math.pow(dist2d / maxRadius, 3));
-				
-				this.opacity = Math.max(0, (scale - 0.1) * edgeFade);
 				ctx.globalAlpha = this.opacity;
-				
 				ctx.drawImage(this.img, x2d - size / 2, y2d - size / 2, size, size);
 
 				if (scale > 0.92 && edgeFade > 0.7) {
@@ -147,10 +153,16 @@
 		try {
 			const collections = ['languages', 'frameworks', 'technologies'];
 			let allIcons: Icon[] = [];
-			for (const col of collections) {
-				const q = query(collection(db, col), orderBy('id', 'asc'));
-				const snap = await getDocs(q);
-				snap.forEach(doc => allIcons.push(doc.data() as Icon));
+			
+			// Use Firebase if available, otherwise use hardcoded fallbacks
+			try {
+				for (const col of collections) {
+					const q = query(collection(db, col), orderBy('id', 'asc'));
+					const snap = await getDocs(q);
+					snap.forEach(doc => allIcons.push(doc.data() as Icon));
+				}
+			} catch (err) {
+				console.warn('Firebase error, using fallback icons');
 			}
 
 			if (allIcons.length === 0) {
@@ -183,6 +195,19 @@
 				const z = Math.sin(theta) * radiusAtY;
 				return new Point(x * RADIUS, y * RADIUS, z * RADIUS, icon.name, icon.src);
 			});
+
+			// Fullerene Logic
+			points.forEach((p, i) => {
+				const distances = points.map((p2, j) => ({
+					index: j,
+					dist: Math.sqrt(Math.pow(p.x - p2.x, 2) + Math.pow(p.y - p2.y, 2) + Math.pow(p.z - p2.z, 2))
+				}))
+				.filter(d => d.index !== i)
+				.sort((a, b) => a.dist - b.dist);
+				
+				p.neighbors = distances.slice(0, 3).map(d => d.index);
+			});
+
 			for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
 			loading = false;
 		} catch (e) {
@@ -195,7 +220,15 @@
 		if (!canvas) return;
 		const ctx = canvas.getContext('2d');
 		if (!ctx) return;
+		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.globalAlpha = 1;
+
+		if (!points || points.length === 0) {
+			requestAnimationFrame(render);
+			return;
+		}
+
 		let targetRX = ROTATION_SPEED;
 		let targetRY = ROTATION_SPEED;
 		if (isMouseOver) {
@@ -204,40 +237,62 @@
 		}
 		rotationX += (targetRX - rotationX) * 0.03;
 		rotationY += (targetRY - rotationY) * 0.03;
+
+		// Draw Particles
 		particles.forEach(p => {
 			p.update();
 			p.draw(ctx, canvas.width, canvas.height);
 		});
-		points.forEach(p => p.rotate(rotationX, rotationY));
+
+		// Update and Rotate Points
+		points.forEach(p => {
+			p.rotate(rotationX, rotationY);
+			p.update(canvas.width, canvas.height);
+		});
 
 		const depth = 500;
+		// Draw Mesh Lines
 		ctx.beginPath();
-		for (let i = 0; i < points.length; i++) {
-			for (let j = i + 1; j < points.length; j++) {
-				const p1 = points[i];
-				const p2 = points[j];
-				const dx = p1.x - p2.x, dy = p1.y - p2.y, dz = p1.z - p2.z;
-				const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-				if (dist < MAX_LINE_DIST) {
-					const scale1 = depth / (depth + p1.z), scale2 = depth / (depth + p2.z);
-					const x1 = p1.x * scale1 + canvas.width / 2, y1 = p1.y * scale1 + canvas.height / 2;
-					const x2 = p2.x * scale2 + canvas.width / 2, y2 = p2.y * scale2 + canvas.height / 2;
-					const opacity = (1 - dist / MAX_LINE_DIST) * Math.min(p1.opacity, p2.opacity) * 0.4;
-					ctx.strokeStyle = `rgba(181, 138, 108, ${opacity})`;
-					ctx.lineWidth = 0.5 * Math.min(scale1, scale2);
-					ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+		const drawnLines = new Set<string>();
+		points.forEach((p1, i) => {
+			p1.neighbors.forEach(neighborIdx => {
+				const p2 = points[neighborIdx];
+				const lineKey = [i, neighborIdx].sort().join('-');
+				if (!drawnLines.has(lineKey)) {
+					drawnLines.add(lineKey);
+					const scale1 = depth / (depth + p1.z);
+					const scale2 = depth / (depth + p2.z);
+					const x1 = p1.x * scale1 + canvas.width / 2;
+					const y1 = p1.y * scale1 + canvas.height / 2;
+					const x2 = p2.x * scale2 + canvas.width / 2;
+					const y2 = p2.y * scale2 + canvas.height / 2;
+					
+					const lineOpacity = Math.min(p1.opacity, p2.opacity) * 0.5;
+					if (lineOpacity > 0.05) {
+						ctx.strokeStyle = `rgba(181, 138, 108, ${lineOpacity})`;
+						ctx.lineWidth = 1 * Math.min(scale1, scale2);
+						ctx.moveTo(x1, y1);
+						ctx.lineTo(x2, y2);
+					}
 				}
-			}
-		}
+			});
+		});
 		ctx.stroke();
+
+		// Draw Icons
 		const sortedPoints = [...points].sort((a, b) => b.z - a.z);
-		sortedPoints.forEach(p => p.draw(ctx, canvas.width, canvas.height));
+		sortedPoints.forEach(p => {
+			ctx.globalAlpha = 1; // Reset for each icon's own alpha logic
+			p.draw(ctx, canvas.width, canvas.height);
+		});
+
 		requestAnimationFrame(render);
 	}
 
 	onMount(() => {
 		init();
 		const resize = () => {
+			if (!canvas) return;
 			canvas.width = canvas.parentElement?.clientWidth || 800;
 			canvas.height = canvas.parentElement?.clientHeight || 650;
 		};
@@ -362,10 +417,20 @@
 				</div>
 			</div>
 		</div>
+		<!-- Cloud Computing -->
+		<div class="animate-float">
+			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
+				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Cloud size={18} /></div>
+				<div>
+					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40 text-right">Infrastructure</div>
+					<div class="text-xs font-medium text-white/80 text-right">Cloud Computing</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	{#if loading}
-		<div class="z-20 flex flex-col items-center gap-4">
+		<div class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm">
 			<div class="h-12 w-12 animate-spin rounded-full border-4 border-[#B58A6C]/20 border-t-[#B58A6C]"></div>
 			<p class="font-mono text-xs uppercase tracking-[0.3em] text-[#B58A6C] animate-pulse">Syncing Tech Ecosystem</p>
 		</div>
