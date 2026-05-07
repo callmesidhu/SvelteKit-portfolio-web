@@ -16,13 +16,11 @@
 		/>
 		%sveltekit.head%
 		<script>
-			if (
-				localStorage.theme === 'dark' ||
-				(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-			) {
-				document.documentElement.classList.add('dark');
-			} else {
+			// Force dark mode as default unless user explicitly chose light mode
+			if (localStorage.theme === 'light') {
 				document.documentElement.classList.remove('dark');
+			} else {
+				document.documentElement.classList.add('dark');
 			}
 		</script>
 	</head>
