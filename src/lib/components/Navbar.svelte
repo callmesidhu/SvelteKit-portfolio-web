@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Icons from './Icons.svelte';
-	import logo from '$lib/assets/logo.png';
+	import logo from '/favicon.png';
 
 	const links = ['Home', 'About', 'Work', 'Skills', 'Contact'];
 	let isDark = $state(true);
@@ -31,9 +31,9 @@
 		class="group flex items-center gap-3 rounded-full border border-white/20 bg-black/40 pr-4 backdrop-blur-md"
 	>
 		<div
-			class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-black/10 backdrop-blur-md"
+			class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-white/5 backdrop-blur-md transition-transform duration-300 group-hover:scale-110"
 		>
-			<img src={logo} alt="Logo" class="h-full w-full object-cover" />
+			<img src={logo} alt="Logo" class="h-8 w-8 object-contain" />
 		</div>
 		<span class="hidden font-body text-sm font-medium tracking-wider uppercase sm:block"
 			>callmesidhu</span
