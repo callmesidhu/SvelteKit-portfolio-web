@@ -14,8 +14,8 @@
 	let loading = $state(true);
 
 	// ─── Constants ─────────────────────────────────────────────────────────────
-	const RADIUS = 250;
-	const ICON_SIZE = 40;
+	const RADIUS = 220;
+	const ICON_SIZE = 45;
 	const ROTATION_SPEED = 0.005;
 
 	// ─── 3D State ─────────────────────────────────────────────────────────────
@@ -71,13 +71,21 @@
 
 			if (this.img) {
 				const size = ICON_SIZE * scale;
-				ctx.globalAlpha = Math.max(0.1, scale - 0.2);
+				
+				// Calculate distance from canvas center in 2D to fade out at edges
+				const dx = x2d - width / 2;
+				const dy = y2d - height / 2;
+				const dist2d = Math.sqrt(dx * dx + dy * dy);
+				const maxRadius = Math.min(width, height) / 2;
+				const edgeFade = Math.max(0, 1 - Math.pow(dist2d / maxRadius, 4));
+				
+				ctx.globalAlpha = Math.max(0, (scale - 0.1) * edgeFade);
 				ctx.drawImage(this.img, x2d - size / 2, y2d - size / 2, size, size);
 				
 				// Optional: Draw text
-				if (scale > 0.8) {
+				if (scale > 0.85 && edgeFade > 0.6) {
 					ctx.font = `${Math.round(12 * scale)}px sans-serif`;
-					ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+					ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0, (edgeFade - 0.2) * 0.8)})`;
 					ctx.textAlign = 'center';
 					ctx.fillText(this.name, x2d, y2d + size / 2 + 15);
 				}
@@ -105,17 +113,29 @@
 			if (allIcons.length === 0) {
 				const fallbacks = [
 					{ id: 1, name: 'Svelte', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' },
-					{ id: 2, name: 'React', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-					{ id: 3, name: 'TypeScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-					{ id: 4, name: 'Tailwind CSS', src: 'https://raw.githubusercontent.com/devicons/devicon/62071a2d295cc46d06a92892305018a1a9f1437c/icons/tailwindcss/tailwindcss-original.svg' },
-					{ id: 5, name: 'Node.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-					{ id: 6, name: 'Firebase', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' },
-					{ id: 7, name: 'JavaScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
-					{ id: 8, name: 'Next.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-					{ id: 9, name: 'Vite', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vite/vite-original.svg' },
-					{ id: 10, name: 'Git', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
-					{ id: 11, name: 'PostgreSQL', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg' },
-					{ id: 12, name: 'Docker', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' }
+					{ id: 2, name: 'Nuxt', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg' },
+					{ id: 3, name: 'React', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+					{ id: 4, name: 'Flutter', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg' },
+					{ id: 5, name: 'Vue', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
+					{ id: 6, name: 'Node.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+					{ id: 7, name: 'PHP', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg' },
+					{ id: 8, name: 'Laravel', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg' },
+					{ id: 9, name: 'Spring Boot', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg' },
+					{ id: 10, name: 'Java', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
+					{ id: 11, name: 'NestJS', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-original.svg' },
+					{ id: 12, name: 'TypeScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
+					{ id: 13, name: 'C', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg' },
+					{ id: 14, name: 'C++', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' },
+					{ id: 15, name: 'Arduino', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg' },
+					{ id: 16, name: 'Docker', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
+					{ id: 17, name: 'Next.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+					{ id: 18, name: 'FastAPI', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
+					{ id: 19, name: 'Django', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg' },
+					{ id: 20, name: 'Flask', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg' },
+					{ id: 21, name: 'Firebase', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' },
+					{ id: 22, name: 'Supabase', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/supabase/supabase-original.svg' },
+					{ id: 23, name: 'PowerBI', src: 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Power_bi_logo_black.svg' },
+					{ id: 24, name: 'Fastify', src: 'https://www.vectorlogo.zone/logos/fastifyio/fastifyio-icon.svg' }
 				];
 				allIcons = fallbacks;
 			}
@@ -210,7 +230,7 @@
 	{#if loading}
 		<div class="flex flex-col items-center gap-4">
 			<div class="h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-white"></div>
-			<p class="text-white/50 animate-pulse font-mono text-sm uppercase tracking-widest">Initializing Cloud...</p>
+			<p class="text-white/50 font-mono text-sm uppercase tracking-widest">Initializing Cloud...</p>
 		</div>
 	{/if}
 	
