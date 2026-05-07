@@ -12,6 +12,9 @@
 
 	const toggleMobileMenu = () => {
 		isMobileMenuOpen = !isMobileMenuOpen;
+		if (typeof document !== 'undefined') {
+			document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+		}
 	};
 
 	$effect(() => {
