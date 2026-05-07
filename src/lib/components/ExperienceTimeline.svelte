@@ -270,7 +270,7 @@
 	/* ── Section heading (centered top) ──────────────────────────────── */
 	.heading {
 		position: absolute;
-		top: 40px;
+		top: 100px;
 		left: 50%;
 		transform: translateX(-50%);
 		text-align: center;
