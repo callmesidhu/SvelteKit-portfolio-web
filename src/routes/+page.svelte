@@ -4,6 +4,7 @@
 	import IconCloud from '$lib/components/IconCloud.svelte';
 	import AboutAI from '$lib/components/AboutAI.svelte';
 	import ExperienceTimeline from '$lib/components/ExperienceTimeline.svelte';
+	import ProjectsGrid from '$lib/components/ProjectsGrid.svelte';
 </script>
 
 <svelte:head>
@@ -55,5 +56,8 @@
 
 		<!-- Experience Section: scroll-jacked, 100vh sticky panel -->
 		<ExperienceTimeline />
+
+		<!-- Projects Section -->
+		<ProjectsGrid />
 	</main>
 </div>
