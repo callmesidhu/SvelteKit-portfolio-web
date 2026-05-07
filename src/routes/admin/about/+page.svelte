@@ -47,11 +47,11 @@
 <div class="mx-auto max-w-4xl space-y-8">
 	<header class="flex items-end justify-between">
 		<div>
-			<h1 class="flex items-center gap-3 text-3xl font-bold text-white">
-				<User class="text-violet-400" />
+			<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
+				<User class="text-admin-clay" />
 				Edit About Section
 			</h1>
-			<p class="mt-2 text-gray-400">
+			<p class="mt-2 text-admin-charcoal/70">
 				Update the text that appears in your portfolio's about section.
 			</p>
 		</div>
@@ -59,7 +59,7 @@
 		<button
 			onclick={updateAbout}
 			disabled={status === 'saving'}
-			class="flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 font-bold text-white shadow-lg shadow-violet-600/20 transition-all hover:bg-violet-700 disabled:opacity-50"
+			class="flex items-center gap-2 rounded-xl bg-admin-clay px-6 py-3 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50"
 		>
 			{#if status === 'saving'}
 				<div
@@ -75,39 +75,39 @@
 
 	{#if loading}
 		<div
-			class="flex flex-col items-center justify-center space-y-4 rounded-2xl border border-violet-900/20 bg-[#121212] p-12"
+			class="flex flex-col items-center justify-center space-y-4 rounded-2xl border border-admin-stone bg-admin-coolgray p-12"
 		>
 			<div
-				class="h-10 w-10 animate-spin rounded-full border-4 border-violet-600 border-t-transparent"
+				class="h-10 w-10 animate-spin rounded-full border-4 border-admin-clay border-t-transparent"
 			></div>
-			<p class="text-gray-400">Fetching current data...</p>
+			<p class="text-admin-charcoal/70">Fetching current data...</p>
 		</div>
 	{:else}
-			<div class="space-y-2 rounded-2xl border border-violet-900/20 bg-[#121212] p-8 shadow-xl">
-			<label for="about-content" class="text-sm font-medium text-gray-400">About Content</label>
+			<div class="space-y-2 rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-xl">
+			<label for="about-content" class="text-sm font-medium text-admin-charcoal/70">About Content</label>
 			<textarea
 				id="about-content"
 				rows={16}
-				class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] p-6 text-lg leading-relaxed text-gray-200 placeholder-gray-600 transition-all focus:border-transparent focus:ring-2 focus:ring-violet-600 focus:outline-none"
+				class="w-full rounded-xl border border-admin-stone bg-admin-offwhite p-6 text-lg leading-relaxed text-admin-charcoal placeholder-admin-charcoal/40 transition-all focus:border-transparent focus:ring-2 focus:ring-admin-clay focus:outline-none"
 				bind:value={aboutText}
 				placeholder="Write about yourself, your skills, and your passion..."
 			></textarea>
 
 			<div class="mt-6 flex items-center justify-between">
-				<p class="text-sm text-gray-500 italic">
+				<p class="text-sm text-admin-charcoal/50 italic">
 					Tip: Use Markdown for better formatting if your frontend supports it.
 				</p>
 
 				{#if status === 'saved'}
 					<div
-						class="animate-in fade-in slide-in-from-right-4 flex items-center gap-2 font-medium text-emerald-400"
+						class="animate-in fade-in slide-in-from-right-4 flex items-center gap-2 font-medium text-emerald-600"
 					>
 						<CheckCircle size={18} />
 						Success! Saved changes.
 					</div>
 				{:else if status === 'error'}
 					<div
-						class="animate-in fade-in slide-in-from-right-4 flex items-center gap-2 font-medium text-red-400"
+						class="animate-in fade-in slide-in-from-right-4 flex items-center gap-2 font-medium text-red-600"
 					>
 						<XCircle size={18} />
 						Failed to save changes.
