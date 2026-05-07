@@ -315,9 +315,10 @@
 										href={proj.link}
 										target="_blank"
 										rel="noreferrer"
-										class="flex items-center gap-1 text-sm font-medium text-admin-charcoal/50 hover:text-admin-charcoal"
+										class="group/link flex items-center gap-1 text-sm font-medium text-admin-charcoal/50 transition-colors hover:text-admin-charcoal"
 									>
-										<ExternalLink size={14} /> Preview
+										<ExternalLink size={14} class="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" /> 
+										<span class="border-b border-transparent transition-colors group-hover/link:border-admin-charcoal">Preview</span>
 									</a>
 								{:else}
 									<div></div>
