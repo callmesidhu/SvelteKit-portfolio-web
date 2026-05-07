@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ScrollFrameAnimation from '$lib/components/ScrollFrameAnimation.svelte';
+	import IconCloud from '$lib/components/IconCloud.svelte';
 </script>
 
 <svelte:head>
@@ -18,5 +19,21 @@
 	<main>
 		<!-- Scroll-scrubbed frame animation (full viewport hero) -->
 		<ScrollFrameAnimation />
+
+		<!-- Tech Stack Section -->
+		<section id="skills" class="relative bg-black py-24">
+			<div class="mx-auto max-w-7xl px-6">
+				<div class="mb-16 text-center">
+					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+						My <span class="text-[#B58A6C]">Tech Stack</span>
+					</h2>
+					<p class="mt-4 text-lg text-white/40">
+						Tools and technologies I use to bring ideas to life.
+					</p>
+				</div>
+
+				<IconCloud />
+			</div>
+		</section>
 	</main>
 </div>
