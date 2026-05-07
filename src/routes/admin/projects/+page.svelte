@@ -116,6 +116,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Project Portfolio | Admin Panel</title>
+</svelte:head>
+
 <div class="space-y-10 pb-20">
 	<header>
 		<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
