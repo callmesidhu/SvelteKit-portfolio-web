@@ -96,6 +96,16 @@
 			</nav>
 
 			<div class="border-t border-admin-stone p-4">
+				{#if $user}
+					<div class="mb-4 px-4">
+						<p class="text-[10px] font-bold tracking-wider text-admin-charcoal/40 uppercase">
+							Logged in as
+						</p>
+						<p class="truncate text-sm font-medium text-admin-charcoal">
+							{$user.email}
+						</p>
+					</div>
+				{/if}
 				<button
 					onclick={handleLogout}
 					class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-admin-charcoal/70 transition-all duration-200 hover:bg-admin-clay/10 hover:text-admin-clay"
