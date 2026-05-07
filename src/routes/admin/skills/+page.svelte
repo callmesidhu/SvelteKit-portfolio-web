@@ -98,11 +98,11 @@
 	</header>
 
 	<!-- Tabs -->
-	<div class="flex w-fit gap-2 rounded-xl border border-admin-stone bg-admin-coolgray p-1">
+	<div class="flex w-full gap-2 overflow-x-auto rounded-xl border border-admin-stone bg-admin-coolgray p-1 no-scrollbar sm:w-fit">
 		{#each tabs as tab (tab.id)}
 			<button
 				onclick={() => (activeTab = tab.id)}
-				class="rounded-lg px-6 py-2 font-medium transition-all {activeTab === tab.id
+				class="whitespace-nowrap rounded-lg px-6 py-2 font-medium transition-all {activeTab === tab.id
 					? 'bg-admin-clay text-white shadow-lg shadow-admin-clay/20'
 					: 'text-admin-charcoal/50 hover:text-admin-charcoal/70'}"
 			>
@@ -137,7 +137,7 @@
 			<button
 				type="submit"
 				disabled={adding}
-				class="flex h-[52px] items-center justify-center gap-2 rounded-xl bg-admin-clay font-bold text-white transition-all hover:bg-[#A37B60] disabled:opacity-50"
+				class="flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-admin-clay font-bold text-white transition-all hover:bg-[#A37B60] disabled:opacity-50 md:w-auto"
 			>
 				{#if adding}
 					<div
