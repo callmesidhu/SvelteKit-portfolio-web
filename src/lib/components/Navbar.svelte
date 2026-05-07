@@ -86,7 +86,7 @@
 		</button>
 
 		<a
-			href="/resume.pdf"
+			href="/resume"
 			download
 			class="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm font-medium backdrop-blur-md transition-transform duration-200 hover:scale-105"
 		>
