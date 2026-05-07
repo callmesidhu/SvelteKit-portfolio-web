@@ -95,12 +95,12 @@
 				{#each menuItems as item (item.path)}
 					<a
 						href={item.path}
-						class="flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 {page
+						class="group flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] {page
 							.url.pathname === item.path
 							? 'border border-admin-taupe bg-admin-taupe/20 text-admin-charcoal'
 							: 'text-admin-charcoal/70 hover:bg-admin-stone/50 hover:text-admin-charcoal'}"
 					>
-						<item.icon size={20} />
+						<item.icon size={20} class="transition-transform duration-200 group-hover:scale-110" />
 						<span class="font-medium">{item.name}</span>
 					</a>
 				{/each}
