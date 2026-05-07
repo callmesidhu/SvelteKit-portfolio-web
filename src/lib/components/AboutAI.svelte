@@ -2,21 +2,92 @@
 	import { onMount } from 'svelte';
 	import { db } from '$lib/firebase';
 	import { doc, getDoc } from 'firebase/firestore';
-	import { Sparkles, Send, Mic, Plus, ChevronDown } from 'lucide-svelte';
+	import { Sparkles, Send, Volume2, Plus, ChevronDown, Share2, AlertCircle } from 'lucide-svelte';
 
 	let aboutContent = $state('');
+	let displayedContent = $state('');
 	let loading = $state(true);
 	let selectedModel = $state('xyphx 1.0 thinking');
 	let showModels = $state(false);
+	let container: HTMLElement | null = $state(null);
+	let hasStartedTyping = $state(false);
+	let hasFinishedTyping = $state(false);
+	
+	let userMessage = $state('who am i');
+	let inputText = $state('');
+	let isReading = $state(false);
+	let fileInput: HTMLInputElement | null = $state(null);
+	let showLimitWarning = $state(false);
 
 	const models = [
 		'xyphx 1.0 fast',
 		'xyphx 1.0 thinking',
-		'xyphx 1.0 max',
-		'sonnet 4.5',
-		'gpt 5.1',
-		'gemini 3.5'
+		'xyphx 1.0 max'
 	];
+
+	async function typeEffect(text: string) {
+		if (hasStartedTyping || !text || hasFinishedTyping) return;
+		hasStartedTyping = true;
+		displayedContent = '';
+		
+		const chunks = text.split(/(\s+)/);
+		let currentText = '';
+		
+		for (const chunk of chunks) {
+			currentText += chunk;
+			displayedContent = currentText;
+			await new Promise(resolve => setTimeout(resolve, Math.random() * 10 + 5));
+		}
+		hasFinishedTyping = true;
+	}
+
+	function handleSend() {
+		if (!inputText.trim()) return;
+		showLimitWarning = true;
+		inputText = '';
+		setTimeout(() => showLimitWarning = false, 10000);
+	}
+
+	function handleKeyDown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			handleSend();
+		}
+	}
+
+	function toggleReading() {
+		if (isReading) {
+			window.speechSynthesis.cancel();
+			isReading = false;
+			return;
+		}
+
+		const utterance = new SpeechSynthesisUtterance(aboutContent);
+		utterance.onend = () => isReading = false;
+		isReading = true;
+		window.speechSynthesis.speak(utterance);
+	}
+
+	function handleShare() {
+		if (navigator.share) {
+			navigator.share({
+				title: 'CallMeSidhu Portfolio',
+				text: 'Check out Sidharth\'s portfolio!',
+				url: window.location.href
+			}).catch(console.error);
+		} else {
+			navigator.clipboard.writeText(window.location.href);
+			alert('Link copied to clipboard!');
+		}
+	}
+
+	function triggerFileUpload() {
+		fileInput?.click();
+	}
+
+	function handleFileChange() {
+		showLimitWarning = true;
+		setTimeout(() => showLimitWarning = false, 10000);
+	}
 
 	onMount(async () => {
 		try {
@@ -30,6 +101,30 @@
 		} finally {
 			loading = false;
 		}
+
+		const observer = new IntersectionObserver((entries) => {
+			if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
+				typeEffect(aboutContent);
+				observer.disconnect();
+			}
+		}, { threshold: 0.1 });
+
+		if (container) observer.observe(container);
+
+		return () => {
+			observer.disconnect();
+			window.speechSynthesis.cancel();
+		};
+	});
+
+	$effect(() => {
+		if (!loading && aboutContent && container && !hasStartedTyping) {
+			const rect = container.getBoundingClientRect();
+			const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+			if (isInView) {
+				typeEffect(aboutContent);
+			}
+		}
 	});
 
 	function toggleModels() {
@@ -42,54 +137,104 @@
 	}
 </script>
 
-<div class="mx-auto max-w-4xl px-4 pb-20">
-	<div class="relative flex flex-col space-y-8">
+<input 
+	type="file" 
+	bind:this={fileInput} 
+	class="hidden" 
+	onchange={handleFileChange}
+	accept="image/*"
+/>
+
+<div bind:this={container} class="mx-auto max-w-4xl px-4 pb-20">
+	<div class="relative flex flex-col space-y-8 h-[550px]">
 		<!-- User Message -->
-		<div class="flex justify-end">
-			<div class="rounded-2xl bg-[#2A292D] px-6 py-3 text-white shadow-lg border border-white/5">
-				<p class="text-sm font-medium">who am i</p>
+		<div class="flex justify-end shrink-0">
+			<div class="rounded-2xl bg-[#2A292D] px-6 py-3 text-white shadow-lg border border-white/5 max-w-[80%]">
+				<p class="text-sm font-medium">{userMessage}</p>
 			</div>
 		</div>
 
 		<!-- AI Response -->
-		<div class="flex flex-col space-y-4">
-			<div class="flex items-start gap-4">
-				<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#B58A6C] text-white">
+		<div class="flex flex-col space-y-4 flex-1 min-h-0">
+			<div class="items-start flex gap-4 h-full">
+				<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#B58A6C] text-white shrink-0">
 					<Sparkles size={16} />
 				</div>
-				<div class="flex-1 space-y-6 pt-1">
-					{#if loading}
-						<div class="space-y-3">
-							<div class="h-4 w-3/4 animate-pulse rounded bg-white/5"></div>
-							<div class="h-4 w-full animate-pulse rounded bg-white/5"></div>
-							<div class="h-4 w-5/6 animate-pulse rounded bg-white/5"></div>
-						</div>
-					{:else}
-						<div class="prose prose-invert max-w-none text-white/90 leading-relaxed">
-							{@html aboutContent.replace(/\n/g, '<br>')}
-						</div>
-					{/if}
+				<div class="flex-1 flex flex-col min-h-0 pt-1">
+					<div class="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+						{#if loading}
+							<div class="space-y-3">
+								<div class="h-4 w-3/4 animate-pulse rounded bg-white/5"></div>
+								<div class="h-4 w-full animate-pulse rounded bg-white/5"></div>
+								<div class="h-4 w-5/6 animate-pulse rounded bg-white/5"></div>
+							</div>
+						{:else}
+							<div class="prose prose-invert max-w-none text-white/90 leading-relaxed">
+								{@html (hasFinishedTyping ? aboutContent : displayedContent || '').replace(/\n/g, '<br>')}
+								{#if hasStartedTyping && !hasFinishedTyping}
+									<span class="inline-block w-2 h-4 ml-1 bg-[#B58A6C] animate-pulse"></span>
+								{/if}
+							</div>
+						{/if}
+					</div>
 
 					<!-- Action Icons -->
-					<div class="flex items-center gap-4 text-white/40">
-						<button class="hover:text-white transition-colors"><Plus size={18} /></button>
-						<button class="hover:text-white transition-colors"><Send size={18} /></button>
-						<button class="hover:text-white transition-colors"><Mic size={18} /></button>
+					<div class="flex items-center gap-4 text-white/40 mt-6 shrink-0">
+						<button 
+							onclick={triggerFileUpload}
+							class="hover:text-white transition-colors" 
+							title="Upload File"
+						>
+							<Plus size={18} />
+						</button>
+						<button 
+							onclick={handleShare}
+							class="hover:text-white transition-colors"
+							title="Share Page"
+						>
+							<Share2 size={18} />
+						</button>
+						<button 
+							onclick={toggleReading}
+							class="transition-colors {isReading ? 'text-[#B58A6C] animate-pulse' : 'hover:text-white'}"
+							title="Read Aloud"
+						>
+							<Volume2 size={18} />
+						</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<!-- Chat Input Area (Visual Only) -->
-		<div class="relative mt-12 px-2">
+		<!-- Chat Input Area with Absolute Warning -->
+		<div class="relative mt-auto shrink-0 px-2 pb-2">
+			{#if showLimitWarning}
+				<div class="absolute bottom-full left-0 right-0 mb-4 flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-500 z-10">
+					<div class="flex items-center gap-3 rounded-2xl bg-red-500/10 border border-red-500/20 px-6 py-3 text-red-400 shadow-xl backdrop-blur-md">
+						<AlertCircle size={18} />
+						<div class="text-sm">
+							<span class="font-bold">Daily Limit Reached!</span>
+							<span class="opacity-80"> Upgrade to Pro to continue.</span>
+						</div>
+					</div>
+				</div>
+			{/if}
+
 			<div class="flex items-center gap-4 rounded-3xl border border-white/10 bg-[#1A191D] p-3 shadow-2xl transition-all focus-within:border-[#B58A6C]/30">
-				<button class="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/40 hover:bg-white/10 transition-all">
+				<button 
+					onclick={triggerFileUpload}
+					class="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/40 hover:bg-white/10 transition-all"
+				>
 					<Plus size={20} />
 				</button>
 				
-				<div class="flex-1 px-2 text-white/30 text-sm">
-					Write a message...
-				</div>
+				<input
+					type="text"
+					bind:value={inputText}
+					onkeydown={handleKeyDown}
+					placeholder="Write a message..."
+					class="flex-1 bg-transparent border-none outline-none text-white text-sm placeholder:text-white/20"
+				/>
 
 				<div class="flex items-center gap-2">
 					<!-- Model Selector -->
@@ -103,7 +248,7 @@
 						</button>
 
 						{#if showModels}
-							<div class="absolute bottom-full right-0 mb-3 w-52 overflow-hidden rounded-2xl border border-white/10 bg-[#2A292D] p-1 shadow-2xl z-50 animate-in fade-in slide-in-from-bottom-2">
+							<div class="absolute bottom-full right-0 mb-3 w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#2A292D] p-1 shadow-2xl z-50 animate-in fade-in slide-in-from-bottom-2">
 								<div class="px-3 py-2 text-[10px] font-bold text-white/20 uppercase tracking-widest">Select Model</div>
 								{#each models as model}
 									<button 
@@ -113,12 +258,21 @@
 										<span class="capitalize">{model}</span>
 									</button>
 								{/each}
+								<div class="mt-1 border-t border-white/5 p-2">
+									<div class="flex items-center gap-2 rounded-lg bg-orange-500/10 px-2 py-2 text-[10px] text-orange-400">
+										<Sparkles size={12} />
+										<span>Upgrade to Pro for Unlimited credits</span>
+									</div>
+								</div>
 							</div>
 						{/if}
 					</div>
 
-					<button class="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/40 hover:text-white transition-colors">
-						<Mic size={20} />
+					<button 
+						onclick={handleSend}
+						class="flex h-10 w-10 items-center justify-center rounded-full {inputText ? 'bg-[#B58A6C] text-white' : 'bg-white/5 text-white/40'} hover:scale-105 transition-all"
+					>
+						<Send size={20} />
 					</button>
 				</div>
 			</div>
@@ -133,5 +287,27 @@
 <style>
 	:global(.prose br) {
 		margin-bottom: 0.5rem;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar {
+		width: 4px;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-thumb {
+		background: rgba(181, 138, 108, 0.2);
+		border-radius: 10px;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: rgba(181, 138, 108, 0.4);
+	}
+
+	.custom-scrollbar {
+		scrollbar-width: thin;
+		scrollbar-color: rgba(181, 138, 108, 0.2) transparent;
 	}
 </style>
