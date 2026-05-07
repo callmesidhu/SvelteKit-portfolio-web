@@ -47,6 +47,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Admin Login | Portfolio</title>
+</svelte:head>
+
 <div class="flex min-h-screen items-center justify-center bg-admin-offwhite p-4">
 	<div class="w-full max-w-md rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
 		<div class="mb-8 flex flex-col items-center">
