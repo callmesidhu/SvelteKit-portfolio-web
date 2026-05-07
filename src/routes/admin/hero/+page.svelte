@@ -14,6 +14,7 @@
 	let newRole = $state('');
 	let loading = $state(true);
 	let adding = $state(false);
+	let status = $state('');
 
 	const fetchRoles = async () => {
 		loading = true;
@@ -35,6 +36,7 @@
 	const addRole = async () => {
 		if (!newRole.trim()) return;
 		adding = true;
+		status = '';
 
 		try {
 			const nextOrder = roles.length > 0 ? Math.max(...roles.map((r) => r.order)) + 1 : 1;
@@ -44,12 +46,15 @@
 				order: nextOrder
 			});
 
+			status = '✅ Role added!';
 			newRole = '';
 			await fetchRoles();
 		} catch (err) {
 			console.error('Error adding role:', err);
+			status = '❌ Error adding role';
 		} finally {
 			adding = false;
+			setTimeout(() => (status = ''), 3000);
 		}
 	};
 
@@ -78,7 +83,7 @@
 
 	<!-- Add Role Form -->
 	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-6 shadow-xl">
-		<div class="flex gap-4">
+		<div class="flex flex-col gap-4 sm:flex-row">
 			<div class="relative flex-grow">
 				<label for="new-role" class="sr-only">New Role</label>
 				<input
@@ -93,7 +98,7 @@
 			<button
 				onclick={addRole}
 				disabled={adding || !newRole.trim()}
-				class="flex items-center gap-2 rounded-xl bg-admin-clay px-8 font-bold text-white transition-all hover:bg-[#A37B60] disabled:opacity-50"
+				class="flex items-center justify-center gap-2 rounded-xl bg-admin-clay px-8 py-4 font-bold text-white transition-all hover:bg-[#A37B60] disabled:opacity-50 sm:py-0"
 			>
 				{#if adding}
 					<div
@@ -105,6 +110,16 @@
 				{/if}
 			</button>
 		</div>
+
+		{#if status}
+			<p
+				class="mt-4 animate-in fade-in slide-in-from-top-2 text-center text-sm font-medium {status.includes('✅')
+					? 'text-emerald-600'
+					: 'text-red-600'} sm:text-left"
+			>
+				{status}
+			</p>
+		{/if}
 	</div>
 
 	<!-- Role List -->
