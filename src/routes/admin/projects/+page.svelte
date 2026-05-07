@@ -9,7 +9,8 @@
 		addDoc,
 		deleteDoc,
 		query,
-		orderBy
+		orderBy,
+		updateDoc
 	} from 'firebase/firestore';
 	import {
 		Star,
@@ -19,7 +20,9 @@
 		Image as ImageIcon,
 		Code,
 		Type,
-		Link as LinkIcon
+		Link as LinkIcon,
+		Pencil,
+		X
 	} from 'lucide-svelte';
 
 	interface Project {
@@ -40,6 +43,7 @@
 	let image = $state('');
 	let loading = $state(true);
 	let adding = $state(false);
+	let editingId = $state<string | null>(null);
 	let status = $state('');
 
 	onMount(() => {
@@ -55,6 +59,28 @@
 		return () => unsubscribe();
 	});
 
+	function resetForm() {
+		title = '';
+		tech = '';
+		description = '';
+		link = '';
+		image = '';
+		editingId = null;
+		status = '';
+	}
+
+	function startEdit(proj: Project) {
+		editingId = proj.docId;
+		title = proj.title;
+		tech = proj.tech;
+		description = proj.description;
+		link = proj.link;
+		image = proj.image;
+
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
+
 	const addProject = async (e: SubmitEvent) => {
 		e.preventDefault();
 		if (!title || !tech) {
@@ -66,40 +92,49 @@
 		status = '';
 
 		try {
-			await runTransaction(db, async (transaction) => {
-				const counterRef = doc(db, 'counters', 'projects');
-				const counterDoc = await transaction.get(counterRef);
-
-				let newId = 1;
-				if (counterDoc.exists()) {
-					newId = counterDoc.data().current + 1;
-				}
-
-				const newProject = {
-					id: newId,
+			if (editingId) {
+				const projectRef = doc(db, 'projects', editingId);
+				await updateDoc(projectRef, {
 					title,
 					tech,
 					description,
 					link,
 					image,
-					createdAt: new Date().toISOString()
-				};
+					updatedAt: new Date().toISOString()
+				});
+				status = '✅ Project updated successfully!';
+			} else {
+				await runTransaction(db, async (transaction) => {
+					const counterRef = doc(db, 'counters', 'projects');
+					const counterDoc = await transaction.get(counterRef);
 
-				const projectsCol = collection(db, 'projects');
-				await addDoc(projectsCol, newProject);
+					let newId = 1;
+					if (counterDoc.exists()) {
+						newId = counterDoc.data().current + 1;
+					}
 
-				transaction.set(counterRef, { current: newId });
-			});
+					const newProject = {
+						id: newId,
+						title,
+						tech,
+						description,
+						link,
+						image,
+						createdAt: new Date().toISOString()
+					};
 
-			status = '✅ Project added successfully!';
-			title = '';
-			tech = '';
-			description = '';
-			link = '';
-			image = '';
+					const projectsCol = collection(db, 'projects');
+					await addDoc(projectsCol, newProject);
+
+					transaction.set(counterRef, { current: newId });
+				});
+				status = '✅ Project added successfully!';
+			}
+
+			resetForm();
 		} catch (e) {
-			console.error('Failed to add project:', e);
-			status = '❌ Error adding project. Please try again.';
+			console.error('Failed to save project:', e);
+			status = editingId ? '❌ Error updating project.' : '❌ Error adding project.';
 		} finally {
 			adding = false;
 			setTimeout(() => (status = ''), 4000);
@@ -114,14 +149,7 @@
 			console.error('Failed to delete project:', e);
 		}
 	};
-	const clearForm = () => {
-		title = '';
-		tech = '';
-		description = '';
-		link = '';
-		image = '';
-		status = '';
-	};
+	const clearForm = resetForm;
 </script>
 
 <svelte:head>
@@ -137,9 +165,21 @@
 		<p class="mt-2 text-admin-charcoal/70">Showcase your best work to the world.</p>
 	</header>
 
-	<!-- Add Project Form -->
+	<!-- Add/Edit Project Form -->
 	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
-		<h2 class="mb-6 text-xl font-bold text-admin-charcoal">Add New Project</h2>
+		<div class="mb-6 flex items-center justify-between">
+			<h2 class="text-xl font-bold text-admin-charcoal">
+				{editingId ? 'Edit Project' : 'Add New Project'}
+			</h2>
+			{#if editingId}
+				<button
+					onclick={resetForm}
+					class="flex items-center gap-2 text-sm font-medium text-admin-clay hover:underline"
+				>
+					<X size={14} /> Cancel Edit
+				</button>
+			{/if}
+		</div>
 		<form onsubmit={addProject} class="grid grid-cols-1 gap-6 md:grid-cols-2">
 			<div class="space-y-2">
 				<label for="proj-title" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
@@ -217,7 +257,10 @@
 							<div
 								class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
 							></div>
-							Adding Project...
+							{editingId ? 'Updating...' : 'Adding Project...'}
+						{:else if editingId}
+							<Pencil size={20} />
+							Update Project
 						{:else}
 							<Plus size={20} />
 							Add Project
@@ -324,13 +367,22 @@
 									<div></div>
 								{/if}
 
-								<button
-									onclick={() => deleteProject(proj.docId)}
-									class="rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-red-400/10 hover:text-red-600"
-									aria-label="Delete project"
-								>
-									<Trash2 size={18} />
-								</button>
+								<div class="flex items-center gap-2">
+									<button
+										onclick={() => startEdit(proj)}
+										class="rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-admin-clay/10 hover:text-admin-clay"
+										aria-label="Edit project"
+									>
+										<Pencil size={18} />
+									</button>
+									<button
+										onclick={() => deleteProject(proj.docId)}
+										class="rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-red-400/10 hover:text-red-600"
+										aria-label="Delete project"
+									>
+										<Trash2 size={18} />
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { db } from '$lib/firebase';
-	import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
-	import { Briefcase, Trash2, Plus, MapPin, Calendar, Building, Tag } from 'lucide-svelte';
+	import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, updateDoc } from 'firebase/firestore';
+	import { Briefcase, Trash2, Plus, MapPin, Calendar, Building, Tag, Pencil, X } from 'lucide-svelte';
 
 	interface Experience {
 		id: string;
@@ -29,6 +29,7 @@
 	let status = $state('');
 	let loading = $state(true);
 	let adding = $state(false);
+	let editingId = $state<string | null>(null);
 
 	const fetchExperience = async () => {
 		loading = true;
@@ -45,9 +46,36 @@
 
 	onMount(fetchExperience);
 
+	function resetForm() {
+		title = '';
+		company = '';
+		type = '';
+		duration = '';
+		location = '';
+		description = '';
+		skills = '';
+		rank = '';
+		editingId = null;
+	}
+
+	function startEdit(exp: Experience) {
+		editingId = exp.id;
+		title = exp.title;
+		company = exp.company;
+		type = exp.type;
+		duration = exp.duration;
+		location = exp.location;
+		description = exp.description;
+		skills = exp.skills.join(', ');
+		rank = exp.rank.toString();
+
+		// Scroll to form
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	}
+
 	const handleAdd = async (e: SubmitEvent) => {
 		e.preventDefault();
-		if (experiences.length >= 6) {
+		if (!editingId && experiences.length >= 6) {
 			status = '⚠️ Max 6 entries allowed.';
 			return;
 		}
@@ -73,21 +101,18 @@
 				rank: parseInt(rank || '99')
 			};
 
-			await addDoc(collection(db, 'experience'), newItem);
-			status = '✅ Added successfully!';
-			// Reset form
-			title = '';
-			company = '';
-			type = '';
-			duration = '';
-			location = '';
-			description = '';
-			skills = '';
-			rank = '';
+			if (editingId) {
+				await updateDoc(doc(db, 'experience', editingId), newItem);
+				status = '✅ Updated successfully!';
+			} else {
+				await addDoc(collection(db, 'experience'), newItem);
+				status = '✅ Added successfully!';
+			}
+			resetForm();
 			await fetchExperience();
 		} catch (error) {
-			console.error('Error adding experience:', error);
-			status = '❌ Failed to add.';
+			console.error('Error saving experience:', error);
+			status = editingId ? '❌ Failed to update.' : '❌ Failed to add.';
 		} finally {
 			adding = false;
 			setTimeout(() => (status = ''), 3000);
@@ -118,9 +143,21 @@
 		<p class="mt-2 text-admin-charcoal/70">Manage your career timeline (Max 6 entries).</p>
 	</header>
 
-	<!-- Add Experience Form -->
+	<!-- Add/Edit Experience Form -->
 	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
-		<h2 class="mb-6 text-xl font-bold text-admin-charcoal">New Experience</h2>
+		<div class="mb-6 flex items-center justify-between">
+			<h2 class="text-xl font-bold text-admin-charcoal">
+				{editingId ? 'Edit Experience' : 'New Experience'}
+			</h2>
+			{#if editingId}
+				<button
+					onclick={resetForm}
+					class="flex items-center gap-2 text-sm font-medium text-admin-clay hover:underline"
+				>
+					<X size={14} /> Cancel Edit
+				</button>
+			{/if}
+		</div>
 		<form onsubmit={handleAdd} class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			<div class="space-y-2">
 				<label for="exp-title" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
@@ -216,13 +253,16 @@
 			<div class="pt-4 lg:col-span-3">
 				<button
 					type="submit"
-					disabled={adding || experiences.length >= 6}
+					disabled={adding || (!editingId && experiences.length >= 6)}
 					class="flex items-center gap-2 rounded-xl bg-admin-clay px-10 py-4 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50"
 				>
 					{#if adding}
 						<div
 							class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
 						></div>
+					{:else if editingId}
+						<Pencil size={20} />
+						Update Experience
 					{:else}
 						<Plus size={20} />
 						Add Experience
@@ -296,13 +336,22 @@
 						{/each}
 					</div>
 
-					<button
-						onclick={() => handleDelete(exp.id)}
-						class="absolute right-6 bottom-6 rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-red-400/10 hover:text-red-600"
-						aria-label="Delete experience"
-					>
-						<Trash2 size={18} />
-					</button>
+					<div class="absolute right-6 bottom-6 flex items-center gap-2">
+						<button
+							onclick={() => startEdit(exp)}
+							class="rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-admin-clay/10 hover:text-admin-clay"
+							aria-label="Edit experience"
+						>
+							<Pencil size={18} />
+						</button>
+						<button
+							onclick={() => handleDelete(exp.id)}
+							class="rounded-lg p-2 text-admin-charcoal/40 transition-all hover:bg-red-400/10 hover:text-red-600"
+							aria-label="Delete experience"
+						>
+							<Trash2 size={18} />
+						</button>
+					</div>
 				</div>
 			{/each}
 		{/if}
