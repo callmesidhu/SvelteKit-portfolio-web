@@ -114,6 +114,14 @@
 			console.error('Failed to delete project:', e);
 		}
 	};
+	const clearForm = () => {
+		title = '';
+		tech = '';
+		description = '';
+		link = '';
+		image = '';
+		status = '';
+	};
 </script>
 
 <svelte:head>
@@ -199,21 +207,31 @@
 			</div>
 
 			<div class="flex flex-col gap-4 pt-4 md:col-span-2">
-				<button
-					type="submit"
-					disabled={adding}
-					class="flex w-full items-center justify-center gap-2 rounded-xl bg-admin-clay px-12 py-4 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50 md:w-auto"
-				>
-					{#if adding}
-						<div
-							class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
-						></div>
-						Adding Project...
-					{:else}
-						<Plus size={20} />
-						Add Project
-					{/if}
-				</button>
+				<div class="flex flex-wrap gap-4">
+					<button
+						type="submit"
+						disabled={adding}
+						class="flex flex-grow items-center justify-center gap-2 rounded-xl bg-admin-clay px-12 py-4 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50 md:flex-none"
+					>
+						{#if adding}
+							<div
+								class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
+							></div>
+							Adding Project...
+						{:else}
+							<Plus size={20} />
+							Add Project
+						{/if}
+					</button>
+
+					<button
+						type="button"
+						onclick={clearForm}
+						class="flex flex-grow items-center justify-center gap-2 rounded-xl border border-admin-stone bg-transparent px-8 py-4 font-bold text-admin-charcoal/70 transition-all hover:bg-admin-stone/10 md:flex-none"
+					>
+						Clear Form
+					</button>
+				</div>
 
 				{#if status}
 					<p
