@@ -46,7 +46,14 @@
 		<div
 			class="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-b border-admin-stone bg-admin-coolgray p-4 lg:hidden"
 		>
-			<h1 class="text-xl font-bold text-admin-charcoal">Admin Panel</h1>
+			<div class="flex items-center gap-2">
+				<div
+					class="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-admin-stone bg-admin-offwhite shadow-sm"
+				>
+					<img src="/favicon.png" alt="Logo" class="h-6 w-6 object-contain" />
+				</div>
+				<h1 class="text-xl font-bold text-admin-charcoal">Admin Panel</h1>
+			</div>
 			<button
 				onclick={toggleMobileMenu}
 				class="rounded-lg p-2 text-admin-charcoal hover:bg-admin-stone/20"
@@ -75,12 +82,13 @@
 				? 'translate-x-0'
 				: '-translate-x-full'}"
 		>
-			<div class="p-6">
-				<h1
-					class="text-2xl font-bold text-admin-charcoal"
+			<div class="flex items-center gap-3 p-6">
+				<div
+					class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-admin-stone bg-admin-offwhite shadow-sm"
 				>
-					Admin Panel
-				</h1>
+					<img src="/favicon.png" alt="Logo" class="h-8 w-8 object-contain" />
+				</div>
+				<h1 class="text-2xl font-bold text-admin-charcoal">Admin Panel</h1>
 			</div>
 
 			<nav class="mt-4 flex-grow space-y-2 px-4">

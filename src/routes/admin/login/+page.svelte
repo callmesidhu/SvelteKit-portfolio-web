@@ -55,9 +55,9 @@
 	<div class="w-full max-w-md rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
 		<div class="mb-8 flex flex-col items-center">
 			<div
-				class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-admin-taupe/30 bg-admin-taupe/20"
+				class="mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-admin-taupe/30 bg-admin-taupe/20"
 			>
-				<Rocket class="text-admin-clay" size={32} />
+				<img src="/favicon.png" alt="Logo" class="h-10 w-10 object-contain" />
 			</div>
 			<h1 class="text-3xl font-bold text-admin-charcoal">callmesidhu@xyphx.admin</h1>
 			<p class="mt-2 text-admin-charcoal/70">Login to your portfolio admin</p>
