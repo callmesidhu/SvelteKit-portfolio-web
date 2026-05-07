@@ -105,6 +105,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Work Experience | Admin Panel</title>
+</svelte:head>
+
 <div class="mx-auto max-w-6xl space-y-10 pb-20">
 	<header>
 		<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
