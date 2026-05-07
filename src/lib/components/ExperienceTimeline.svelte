@@ -4,409 +4,359 @@
 	import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 	interface Experience {
-		id: string;
-		title: string;
-		company: string;
-		type: string;
-		duration: string;
-		location: string;
-		description: string;
-		skills: string[];
-		rank: number;
+		id: string; title: string; company: string; type: string;
+		duration: string; location: string; description: string;
+		skills: string[]; rank: number;
 	}
 
+	const CARD_W = 350, CARD_H = 250, STEP = 400, PAD = 200, AMP = 100;
+	const WAVE_BASE = [-AMP, 0, AMP, 0]; // static vertical positions
+
 	let experiences = $state<Experience[]>([]);
-	let loading = $state(true);
-	let visibleItems = $state<Set<string>>(new Set());
+	let loading     = $state(true);
+	let outer: HTMLElement;  // tall outer div
+	let section: HTMLElement; // sticky inner div
+	let pathEl: SVGPathElement | null = null;
+
+	// Smooth scroll state (lerped)
+	let displayX = $state(0);
+	let targetX  = 0;
+	let progress = $state(0);
+	let pathLen  = $state(8000);
+	let vh = 0, vw = 0;
+	let outerH = $state(4000); // updated after data loads
+
+	const count  = $derived(loading ? 5 : experiences.length);
+	const trackW = $derived(PAD + count * STEP + CARD_W + PAD);
+	function maxX() { return Math.max(0, trackW - vw); }
+
+	// Static wave base + dynamic ripple based on scroll progress
+	function cardY(i: number): number {
+		const base  = WAVE_BASE[i % 4];
+		const ripple = Math.sin(progress * Math.PI * 4 + i * 1.1) * 18;
+		return base + ripple;
+	}
+	function cardTop(i: number) { return vh / 2 + cardY(i) - CARD_H / 2; }
+
+	function buildPath(): string {
+		if (!vh) return '';
+		const mid = vh / 2;
+		const pts = [
+			{ x: 0, y: mid },
+			...Array.from({ length: count }, (_, i) => ({
+				x: PAD + i * STEP + CARD_W / 2,
+				y: mid + cardY(i)
+			})),
+			{ x: trackW, y: mid }
+		];
+		let d = `M ${pts[0].x} ${pts[0].y}`;
+		for (let i = 1; i < pts.length; i++) {
+			const a = pts[i - 1], b = pts[i], cx = (a.x + b.x) / 2;
+			d += ` C ${cx} ${a.y} ${cx} ${b.y} ${b.x} ${b.y}`;
+		}
+		return d;
+	}
+
+	function recalc() {
+		vh = window.innerHeight;
+		vw = window.innerWidth;
+		// outer height = viewport height + horizontal scroll distance
+		outerH = vh + Math.max(0, trackW - vw) + 60;
+	}
 
 	onMount(async () => {
+		recalc();
+
 		try {
-			const q = query(collection(db, 'experience'), orderBy('rank', 'asc'));
-			const snapshot = await getDocs(q);
-			experiences = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as Experience);
-		} catch (err) {
-			console.error('Error fetching experience:', err);
-		} finally {
-			loading = false;
+			const snap = await getDocs(query(collection(db, 'experience'), orderBy('rank', 'asc')));
+			experiences = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Experience);
+		} catch (e) { console.error(e); } finally { loading = false; }
+
+		// Recalc after data (trackW changes when count changes)
+		requestAnimationFrame(() => {
+			recalc();
+			if (pathEl) pathLen = pathEl.getTotalLength();
+		});
+
+		// ── RAF loop: lerp displayX toward targetX ────────────────────────
+		let rafId: number;
+		function loop() {
+			const dist = targetX - displayX;
+			displayX = Math.abs(dist) > 0.3 ? displayX + dist * 0.09 : targetX;
+			progress = maxX() > 0 ? displayX / maxX() : 0;
+			rafId = requestAnimationFrame(loop);
+		}
+		rafId = requestAnimationFrame(loop);
+
+		// ── Native scroll drives horizontal progress ──────────────────────
+		// Outer div is tall; as page scrolls INTO it, targetX increases.
+		// Scrolling back UP decreases targetX. No wheel interception needed.
+		function onScroll() {
+			if (!outer) return;
+			const scrollable = outer.offsetHeight - vh;
+			const scrolled   = Math.max(0, Math.min(scrollable, -outer.getBoundingClientRect().top));
+			const raw = scrollable > 0 ? scrolled / scrollable : 0;
+			targetX = raw * Math.max(0, trackW - vw);
 		}
 
-		// Intersection Observer for scroll-in animations
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						visibleItems = new Set([...visibleItems, entry.target.id]);
-					}
-				});
-			},
-			{ threshold: 0.15 }
-		);
+		function onResize() {
+			recalc();
+			if (pathEl) pathLen = pathEl.getTotalLength();
+			onScroll();
+		}
 
-		// Observe after DOM updates
-		setTimeout(() => {
-			document.querySelectorAll('.timeline-item').forEach((el) => observer.observe(el));
-		}, 100);
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', onResize);
 
-		return () => observer.disconnect();
+		return () => {
+			cancelAnimationFrame(rafId);
+			window.removeEventListener('scroll', onScroll);
+			window.removeEventListener('resize', onResize);
+		};
 	});
 </script>
 
-<div class="timeline-container">
-	{#if loading}
-		<!-- Skeleton loader -->
-		<div class="skeleton-wrap">
-			{#each Array(4) as _, i (i)}
-				<div class="skeleton-row" style="animation-delay: {i * 0.1}s">
-					<div class="skeleton-dot"></div>
-					<div class="skeleton-card">
-						<div class="skeleton-line w-40"></div>
-						<div class="skeleton-line w-64 thin"></div>
-						<div class="skeleton-line w-full thin"></div>
-					</div>
-				</div>
-			{/each}
-		</div>
-	{:else if experiences.length === 0}
-		<p class="empty-msg">No experience entries yet.</p>
-	{:else}
-		<div class="timeline">
-			<!-- Central line -->
-			<div class="timeline-line" aria-hidden="true"></div>
+<!-- Tall outer div gives browser real scroll distance -->
+<div bind:this={outer} style="position:relative; height:{outerH}px">
 
-			{#each experiences as exp, i (exp.id)}
-				{@const isLeft = i % 2 === 0}
-				{@const itemId = `exp-${exp.id}`}
+<!-- Sticky inner: pins at top while user scrolls through outer -->
+<div bind:this={section} class="exp-section" id="experience">
+
+	<!-- Section heading (static, centered top) -->
+	<div class="heading">
+		<p class="heading-sub">The journey that shaped my craft</p>
+		<h2 class="heading-title">Work <span>Experience</span></h2>
+	</div>
+
+	<!-- Static glowing reference line at 50vh (z-index: 0, behind cards) -->
+	<div class="ref-line"></div>
+
+	<!-- Horizontally translated track -->
+	<div class="track" style="transform:translateX(-{displayX}px); width:{trackW}px">
+
+		<!-- Animated wave SVG -->
+		{#if vh}
+			<svg class="wave-svg" viewBox="0 0 {trackW} {vh}" width={trackW} height={vh}>
+				<defs>
+					<filter id="wave-glow" x="-20%" y="-200%" width="140%" height="500%">
+						<feGaussianBlur stdDeviation="4" result="blur"/>
+						<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+					</filter>
+				</defs>
+				<path d={buildPath()} fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1.5"/>
+				<path
+					bind:this={pathEl}
+					d={buildPath()}
+					fill="none"
+					stroke="#B58A6C"
+					stroke-width="2.5"
+					stroke-dasharray={pathLen}
+					stroke-dashoffset={pathLen * (1 - progress)}
+					filter="url(#wave-glow)"
+					style="transition:stroke-dashoffset .05s linear"
+				/>
+			</svg>
+		{/if}
+
+		<!-- Cards — positioned dynamically with wave ripple -->
+		{#if loading}
+			{#each Array(5) as _, i (i)}
 				<div
-					id={itemId}
-					class="timeline-item {isLeft ? 'left' : 'right'} {visibleItems.has(itemId) ? 'visible' : ''}"
-					style="--delay: {i * 0.12}s"
+					class="card skel"
+					style="left:{PAD+i*STEP}px; top:{vh/2-CARD_H/2}px; width:{CARD_W}px; height:{CARD_H}px"
 				>
-					<!-- Card -->
-					<div class="exp-card">
-						<div class="card-header">
-							<div class="card-titles">
-								<h3 class="exp-title">{exp.title}</h3>
-								<p class="exp-company">
-									<span class="company-dot"></span>
-									{exp.company}
-								</p>
-							</div>
-							{#if exp.type}
-								<span class="exp-badge">{exp.type}</span>
-							{/if}
-						</div>
-
-						<div class="exp-meta">
-							{#if exp.duration}
-								<span class="meta-item">
-									<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-									{exp.duration}
-								</span>
-							{/if}
-							{#if exp.location}
-								<span class="meta-item">
-									<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-									{exp.location}
-								</span>
-							{/if}
-						</div>
-
-						{#if exp.description}
-							<p class="exp-desc">{exp.description}</p>
-						{/if}
-
-						{#if exp.skills?.length}
-							<div class="skills-wrap">
-								{#each exp.skills as skill (skill)}
-									<span class="skill-tag">{skill}</span>
-								{/each}
-							</div>
-						{/if}
-					</div>
-
-					<!-- Connector dot -->
-					<div class="timeline-dot" aria-hidden="true">
-						<div class="dot-inner"></div>
-					</div>
+					<div class="sk l"></div><div class="sk m mt2"></div>
+					<div class="sk f mt4"></div><div class="sk s"></div>
 				</div>
 			{/each}
-		</div>
-	{/if}
-</div>
+		{:else}
+			{#each experiences as exp, i (exp.id)}
+				<div
+					class="card"
+					style="
+						left:{PAD+i*STEP}px;
+						top:{cardTop(i)}px;
+						width:{CARD_W}px;
+						height:{CARD_H}px;
+						--delay:{i*0.05}s;
+					"
+				>
+					<div class="card-glow"></div>
+
+					<div class="ch">
+						<span class="cn">{String(i+1).padStart(2,'0')}</span>
+						{#if exp.type}<span class="badge">{exp.type}</span>{/if}
+					</div>
+					<h3 class="ct">{exp.title}</h3>
+					<p class="cc"><span class="pip"></span>{exp.company}</p>
+					<div class="meta">
+						{#if exp.duration}<span class="pill">📅 {exp.duration}</span>{/if}
+						{#if exp.location}<span class="pill">📍 {exp.location}</span>{/if}
+					</div>
+					{#if exp.description}<p class="cd">{exp.description}</p>{/if}
+					{#if exp.skills?.length}
+						<div class="skills">{#each exp.skills as sk (sk)}<span class="sk-tag">{sk}</span>{/each}</div>
+					{/if}
+				</div>
+			{/each}
+		{/if}
+	</div>
+
+	<!-- Scroll hint -->
+	<div class="cue" style:opacity={progress < 0.04 ? 1 : 0}>
+		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+		<span>Scroll to explore</span>
+	</div>
+</div> <!-- /exp-section (sticky) -->
+</div> <!-- /outer (tall scroll container) -->
 
 <style>
-	.timeline-container {
-		position: relative;
-		width: 100%;
-	}
-
-	/* ── Timeline layout ─────────────────────────────────────────────── */
-	.timeline {
-		position: relative;
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-	}
-
-	.timeline-line {
-		position: absolute;
-		left: 50%;
+	/* ── Section ───────────────────────────────────────────────────────── */
+	.exp-section {
+		position: sticky;
 		top: 0;
-		bottom: 0;
-		width: 1px;
-		background: linear-gradient(to bottom, transparent, #B58A6C44 10%, #B58A6C44 90%, transparent);
-		transform: translateX(-50%);
+		height: 100vh;
+		overflow: hidden;
+		background: #000;
 	}
 
-	/* ── Individual timeline item ─────────────────────────────────────── */
-	.timeline-item {
-		position: relative;
-		width: 45%;
-		padding-bottom: 48px;
-		opacity: 0;
-		transition: opacity 0.6s ease var(--delay), transform 0.6s ease var(--delay);
-	}
-
-	.timeline-item.left {
-		align-self: flex-start;
-		transform: translateX(-40px);
-	}
-
-	.timeline-item.right {
-		align-self: flex-end;
-		transform: translateX(40px);
-	}
-
-	.timeline-item.visible {
-		opacity: 1;
-		transform: translateX(0);
-	}
-
-	/* ── Connector dot ────────────────────────────────────────────────── */
-	.timeline-dot {
+	/* ── Section heading (centered top) ──────────────────────────────── */
+	.heading {
 		position: absolute;
-		top: 20px;
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: #B58A6C;
-		box-shadow: 0 0 0 3px rgba(181,138,108,0.2), 0 0 16px rgba(181,138,108,0.4);
-	}
-
-	.timeline-item.left .timeline-dot {
-		right: -7%;
-		transform: translateX(50%);
-	}
-
-	.timeline-item.right .timeline-dot {
-		left: -7%;
+		top: 40px;
+		left: 50%;
 		transform: translateX(-50%);
+		text-align: center;
+		z-index: 10;
+		pointer-events: none;
+		white-space: nowrap;
+	}
+	.heading-sub {
+		font-size: .68rem;
+		letter-spacing: .28em;
+		text-transform: uppercase;
+		color: rgba(255,255,255,.28);
+		margin-bottom: 6px;
+	}
+	.heading-title {
+		font-size: clamp(2rem, 4vw, 3rem);
+		font-weight: 800;
+		color: #fff;
+		line-height: 1;
+		margin: 0;
+		letter-spacing: -.02em;
+	}
+	.heading-title span { color: #B58A6C; }
+
+	/* ── Glowing reference line ────────────────────────────────────────── */
+	.ref-line {
+		position: absolute;
+		top: 50%; left: 0; right: 0;
+		height: 1px;
+		transform: translateY(-50%);
+		background: rgba(181,138,108,0.12);
+		box-shadow: 0 0 20px 4px rgba(181,138,108,0.18), 0 0 60px 8px rgba(181,138,108,0.08);
+		pointer-events: none;
+		z-index: 0;
 	}
 
-	.dot-inner {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: #fff;
-		margin: 4px auto;
+
+	/* ── Horizontal track ─────────────────────────────────────────────── */
+	.track {
+		position: absolute;
+		top: 0; left: 0;
+		height: 100%;
+		/* no CSS transition — RAF loop handles smoothness */
 	}
+
+	/* ── SVG wave (behind cards) ──────────────────────────────────────── */
+	.wave-svg { position:absolute; top:0; left:0; pointer-events:none; z-index:1; }
 
 	/* ── Card ─────────────────────────────────────────────────────────── */
-	.exp-card {
-		background: rgba(255,255,255,0.03);
-		border: 1px solid rgba(255,255,255,0.07);
-		border-radius: 16px;
-		padding: 22px 24px;
-		transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
-		backdrop-filter: blur(8px);
+	.card {
+		position: absolute;
+		background: rgba(12,12,14,0.85);
+		border: 1px solid rgba(255,255,255,.08);
+		border-radius: 20px;
+		padding: 22px 20px;
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		transition: border-color .35s, box-shadow .35s;
+		z-index: 4;
+		overflow: hidden;
+	}
+	.card:hover {
+		border-color: rgba(181,138,108,.4);
+		box-shadow: 0 0 40px rgba(181,138,108,.08), 0 24px 48px rgba(0,0,0,.5);
 	}
 
-	.exp-card:hover {
-		border-color: rgba(181,138,108,0.3);
-		background: rgba(181,138,108,0.05);
-		transform: translateY(-2px);
+	/* Inner glow that activates on hover */
+	.card-glow {
+		position: absolute;
+		inset: 0;
+		border-radius: 20px;
+		background: radial-gradient(circle at 50% -20%, rgba(181,138,108,.12) 0%, transparent 70%);
+		opacity: 0;
+		transition: opacity .35s;
+		pointer-events: none;
 	}
+	.card:hover .card-glow { opacity: 1; }
 
-	.card-header {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 12px;
-		margin-bottom: 10px;
+	.ch { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+	.cn { font-size:1.9rem; font-weight:800; color:rgba(181,138,108,.12); line-height:1; user-select:none; }
+	.badge {
+		font-size:.57rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em;
+		color:#B58A6C; background:rgba(181,138,108,.1); border:1px solid rgba(181,138,108,.2);
+		border-radius:99px; padding:3px 10px;
 	}
-
-	.exp-title {
-		font-size: 1.05rem;
-		font-weight: 700;
-		color: #fff;
-		line-height: 1.3;
-		margin: 0;
+	.ct { font-size:1.05rem; font-weight:700; color:#fff; margin:0 0 5px; line-height:1.3; }
+	.cc { display:flex; align-items:center; gap:6px; font-size:.76rem; font-weight:600; color:#B58A6C; margin-bottom:12px; }
+	.pip { width:5px; height:5px; border-radius:50%; background:#B58A6C; flex-shrink:0; }
+	.meta { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:11px; }
+	.pill {
+		display:inline-flex; align-items:center; gap:4px; font-size:.68rem;
+		color:rgba(255,255,255,.32); background:rgba(255,255,255,.04);
+		border:1px solid rgba(255,255,255,.07); border-radius:99px; padding:2px 9px;
 	}
-
-	.exp-company {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 0.8rem;
-		font-weight: 500;
-		color: #B58A6C;
-		margin-top: 3px;
+	.cd {
+		font-size:.76rem; line-height:1.65; color:rgba(255,255,255,.38); margin-bottom:12px;
+		display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 	}
-
-	.company-dot {
-		width: 5px;
-		height: 5px;
-		border-radius: 50%;
-		background: #B58A6C;
-		flex-shrink: 0;
+	.skills { display:flex; flex-wrap:wrap; gap:4px; }
+	.sk-tag {
+		font-size:.6rem; font-weight:600; color:rgba(255,255,255,.36);
+		background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+		border-radius:6px; padding:2px 7px;
+		transition: color .2s, border-color .2s;
 	}
-
-	.exp-badge {
-		font-size: 0.65rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: #B58A6C;
-		background: rgba(181,138,108,0.12);
-		border: 1px solid rgba(181,138,108,0.2);
-		border-radius: 99px;
-		padding: 3px 10px;
-		white-space: nowrap;
-		flex-shrink: 0;
-	}
-
-	.exp-meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-		margin-bottom: 10px;
-	}
-
-	.meta-item {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		font-size: 0.75rem;
-		color: rgba(255,255,255,0.4);
-	}
-
-	.exp-desc {
-		font-size: 0.82rem;
-		color: rgba(255,255,255,0.55);
-		line-height: 1.6;
-		margin-bottom: 12px;
-	}
-
-	.skills-wrap {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-	}
-
-	.skill-tag {
-		font-size: 0.65rem;
-		font-weight: 600;
-		color: rgba(255,255,255,0.5);
-		background: rgba(255,255,255,0.05);
-		border: 1px solid rgba(255,255,255,0.08);
-		border-radius: 6px;
-		padding: 3px 8px;
-		transition: color 0.2s, border-color 0.2s;
-	}
-
-	.exp-card:hover .skill-tag {
-		color: rgba(255,255,255,0.7);
-		border-color: rgba(181,138,108,0.2);
-	}
+	.card:hover .sk-tag { color:rgba(255,255,255,.65); border-color:rgba(181,138,108,.2); }
 
 	/* ── Skeleton ─────────────────────────────────────────────────────── */
-	.skeleton-wrap {
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
+	.skel { pointer-events:none; }
+	.sk { height:10px; border-radius:5px; margin-bottom:6px; background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.09),rgba(255,255,255,.04)); background-size:200% 100%; animation:shimmer 1.5s infinite; }
+	.sk.l { width:38%; height:13px; }
+	.sk.m { width:58%; }
+	.sk.f { width:100%; }
+	.sk.s { width:72%; }
+	.mt2 { margin-top:8px; }
+	.mt4 { margin-top:16px; }
+	@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+	/* ── Scroll cue ───────────────────────────────────────────────────── */
+	.cue {
+		position:absolute; bottom:30px; right:44px; z-index:10;
+		display:flex; align-items:center; gap:8px;
+		font-size:.7rem; letter-spacing:.12em; color:rgba(255,255,255,.22);
+		transition:opacity .6s ease; pointer-events:none;
+		animation:nudge 2s ease-in-out infinite;
 	}
+	@keyframes nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(7px)} }
 
-	.skeleton-row {
-		display: flex;
-		align-items: center;
-		gap: 16px;
-		opacity: 0;
-		animation: skeletonFadeIn 0.4s ease forwards;
-	}
-
-	.skeleton-dot {
-		width: 14px;
-		height: 14px;
-		border-radius: 50%;
-		background: rgba(181,138,108,0.2);
-		flex-shrink: 0;
-	}
-
-	.skeleton-card {
-		flex: 1;
-		background: rgba(255,255,255,0.03);
-		border: 1px solid rgba(255,255,255,0.05);
-		border-radius: 14px;
-		padding: 20px;
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.skeleton-line {
-		height: 14px;
-		border-radius: 6px;
-		background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-		background-size: 200% 100%;
-		animation: shimmer 1.4s infinite;
-	}
-
-	.skeleton-line.thin {
-		height: 10px;
-	}
-
-	.skeleton-line.w-40 { width: 40%; }
-	.skeleton-line.w-64 { width: 64%; }
-	.skeleton-line.w-full { width: 100%; }
-
-	@keyframes shimmer {
-		0% { background-position: 200% 0; }
-		100% { background-position: -200% 0; }
-	}
-
-	@keyframes skeletonFadeIn {
-		to { opacity: 1; }
-	}
-
-	.empty-msg {
-		text-align: center;
-		color: rgba(255,255,255,0.3);
-		font-size: 0.9rem;
-		padding: 40px 0;
-	}
-
-	/* ── Responsive: stack on mobile ─────────────────────────────────── */
-	@media (max-width: 768px) {
-		.timeline-line {
-			left: 20px;
-		}
-
-		.timeline-item {
-			width: 100%;
-			padding-left: 48px;
-			align-self: unset !important;
-			transform: translateX(-20px) !important;
-		}
-
-		.timeline-item.visible {
-			transform: translateX(0) !important;
-		}
-
-		.timeline-item.left .timeline-dot,
-		.timeline-item.right .timeline-dot {
-			left: 13px;
-			right: auto;
-			transform: none;
-		}
+	/* ── Mobile ───────────────────────────────────────────────────────── */
+	@media (max-width:768px) {
+		.exp-section { overflow-x:auto; scrollbar-width:none; }
+		.exp-section::-webkit-scrollbar { display:none; }
+		.track { transform:none !important; }
+		.ref-line, .prog-bar, .cue, .heading { display:none; }
 	}
 </style>

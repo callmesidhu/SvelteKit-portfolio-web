@@ -227,6 +227,7 @@
 						<span class="hero-name">S SIDHARTH</span>
 						<div class="hero-role-wrapper">
 							<span class="hero-role-prefix">Are you looking for a</span>
+							<br class="lg:hidden">
 							<span class="hero-role-typing">{displayedText}?</span>
 							<span class="hero-cursor" class:blink={!isTyping}></span>
 						</div>
