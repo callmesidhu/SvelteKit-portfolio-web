@@ -5,6 +5,7 @@
 	import AboutAI from '$lib/components/AboutAI.svelte';
 	import ExperienceTimeline from '$lib/components/ExperienceTimeline.svelte';
 	import ProjectsGrid from '$lib/components/ProjectsGrid.svelte';
+	import Contact from '$lib/components/Contact.svelte';
 </script>
 
 <svelte:head>
@@ -59,5 +60,8 @@
 
 		<!-- Projects Section -->
 		<ProjectsGrid />
+
+		<!-- Contact Section -->
+		<Contact />
 	</main>
 </div>
