@@ -42,7 +42,7 @@
 	}
 </script>
 
-<div class="mx-auto max-w-4xl px-4 py-20">
+<div class="mx-auto max-w-4xl px-4 pb-20">
 	<div class="relative flex flex-col space-y-8">
 		<!-- User Message -->
 		<div class="flex justify-end">

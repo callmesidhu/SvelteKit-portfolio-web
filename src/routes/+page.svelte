@@ -39,7 +39,17 @@
 
 		<!-- About Section (AI Chat Style) -->
 		<section id="about" class="relative bg-black py-24">
-			<AboutAI />
+			<div class="mx-auto max-w-7xl px-6">
+				<div class="mb-16 text-center">
+					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+						About <span class="text-[#B58A6C]">Me</span>
+					</h2>
+					<p class="mt-4 text-lg text-white/40">
+						Get to know the person behind the code and the designs.
+					</p>
+				</div>
+				<AboutAI />
+			</div>
 		</section>
 	</main>
 </div>
