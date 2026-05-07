@@ -54,6 +54,10 @@
 	]);
 </script>
 
+<svelte:head>
+	<title>Admin Dashboard | callmesidhu</title>
+</svelte:head>
+
 <div class="space-y-8">
 	<header>
 		<h1 class="text-3xl font-bold text-admin-charcoal">Dashboard Overview</h1>
