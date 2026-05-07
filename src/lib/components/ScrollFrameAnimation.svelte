@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { db } from '$lib/firebase';
 	import { collection, getDocs } from 'firebase/firestore';
+	import { appState } from '$lib/state.svelte';
 
 	// ─── Config ────────────────────────────────────────────────────────────────
 	const TOTAL_FRAMES = 373;
@@ -19,6 +20,11 @@
 	let loadedCount = $state(0);
 	let isReady = $state(false);
 	let currentFrame = $state(0);
+
+	// ─── Scroll Lock ───────────────────────────────────────────────────────────
+	$effect(() => {
+		appState.isInitialLoading = !isReady;
+	});
 
 	// ─── Internal (non-reactive) ───────────────────────────────────────────────
 	const images: HTMLImageElement[] = new Array(TOTAL_FRAMES);
@@ -64,6 +70,8 @@
 
 		setTimeout(type, typeSpeed);
 	}
+
+
 
 	// ─── Preload ───────────────────────────────────────────────────────────────
 	function preloadFrames() {
@@ -203,7 +211,7 @@
 					<div class="loader-ring"></div>
 					<span class="loader-pct">{loadProgress}%</span>
 				</div>
-				<p class="loader-label">Loading frames…</p>
+				<p class="loader-label">Loading…</p>
 			</div>
 		{/if}
 
