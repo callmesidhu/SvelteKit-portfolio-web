@@ -6,15 +6,10 @@
 	import ExperienceTimeline from '$lib/components/ExperienceTimeline.svelte';
 	import ProjectsGrid from '$lib/components/ProjectsGrid.svelte';
 	import Contact from '$lib/components/Contact.svelte';
+	import SEO from '$lib/components/SEO.svelte';
 </script>
 
-<svelte:head>
-	<title>callmesidhu</title>
-	<meta
-		name="description"
-		content="Portfolio of S SIDHARTH (callmesidhu)"
-	/>
-</svelte:head>
+<SEO />
 
 <div class="bg-black">
 	<!-- Navbar floats above everything -->

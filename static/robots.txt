@@ -1,3 +1,6 @@
-# allow crawling everything by default
 User-agent: *
-Disallow:
+Allow: /
+Allow: /resume
+Allow: /admin
+
+Sitemap: https://callmesidhu.xyphx.com/sitemap.xml
