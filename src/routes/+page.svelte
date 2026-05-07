@@ -2,6 +2,7 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 	import ScrollFrameAnimation from '$lib/components/ScrollFrameAnimation.svelte';
 	import IconCloud from '$lib/components/IconCloud.svelte';
+	import AboutAI from '$lib/components/AboutAI.svelte';
 </script>
 
 <svelte:head>
@@ -34,6 +35,11 @@
 
 				<IconCloud />
 			</div>
+		</section>
+
+		<!-- About Section (AI Chat Style) -->
+		<section id="about" class="relative bg-black py-24">
+			<AboutAI />
 		</section>
 	</main>
 </div>
