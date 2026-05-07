@@ -7,7 +7,7 @@
 	<title>callmesidhu</title>
 	<meta
 		name="description"
-		content="Portfolio of S Sidharth (callmesidhu), a premium Full Stack Developer building AI-powered web experiences."
+		content="Portfolio of S SIDHARTH (callmesidhu)"
 	/>
 </svelte:head>
 

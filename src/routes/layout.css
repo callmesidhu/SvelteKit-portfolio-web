@@ -161,3 +161,35 @@ body {
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
 }
+
+/* ─── Custom Scrollbar ─── */
+::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background: #2A292D;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #B58A6C;
+	border-radius: 10px;
+	border: 1px solid #C2B7A9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #B58A6C;
+}
+
+::-webkit-scrollbar-corner {
+	background: #A39889;
+}
+
+/* Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #B58A6C #2A292D;
+}
+
+
