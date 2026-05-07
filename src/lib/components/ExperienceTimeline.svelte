@@ -24,7 +24,8 @@
 	let progress = $state(0);
 	let pathLen  = $state(8000);
 	let vh = 0, vw = 0;
-	let outerH = $state(4000); // updated after data loads
+	let outerH = $state(4000);
+	let isMobile = $state(false);
 
 	const count  = $derived(loading ? 5 : experiences.length);
 	const trackW = $derived(PAD + count * STEP + CARD_W + PAD);
@@ -60,8 +61,10 @@
 	function recalc() {
 		vh = window.innerHeight;
 		vw = window.innerWidth;
-		// outer height = viewport height + horizontal scroll distance
-		outerH = vh + Math.max(0, trackW - vw) + 60;
+		isMobile = vw <= 768;
+		// On desktop: outer height gives horizontal scroll distance
+		// On mobile: outer height is auto (content-driven)
+		outerH = isMobile ? 0 : vh + Math.max(0, trackW - vw) + 60;
 	}
 
 	onMount(async () => {
@@ -116,8 +119,13 @@
 	});
 </script>
 
-<!-- Tall outer div gives browser real scroll distance -->
-<div bind:this={outer} style="position:relative; height:{outerH}px">
+<!-- Desktop: tall outer div gives browser real scroll distance -->
+<!-- Mobile: outer is just a normal block container -->
+<div
+	bind:this={outer}
+	class="exp-outer"
+	style={isMobile ? '' : `height:${outerH}px`}
+>
 
 <!-- Sticky inner: pins at top while user scrolls through outer -->
 <div bind:this={section} class="exp-section" id="experience">
@@ -208,7 +216,46 @@
 		<span>Scroll to explore</span>
 	</div>
 </div> <!-- /exp-section (sticky) -->
-</div> <!-- /outer (tall scroll container) -->
+
+<!-- Mobile layout: vertical card list (rendered instead of sticky section) -->
+{#if isMobile}
+	<div class="mobile-list">
+		<div class="mobile-heading">
+			<p class="mobile-sub">The journey that shaped my craft</p>
+			<h2 class="mobile-title">Work <span>Experience</span></h2>
+		</div>
+		<div class="mobile-line"></div>
+		{#if loading}
+			{#each Array(4) as _, i (i)}
+				<div class="mob-card skel">
+					<div class="mob-dot"></div>
+					<div class="sk l"></div><div class="sk m mt2"></div>
+					<div class="sk f mt4"></div><div class="sk s"></div>
+				</div>
+			{/each}
+		{:else}
+			{#each experiences as exp, i (exp.id)}
+				<div class="mob-card">
+					<div class="mob-dot"></div>
+					<div class="mob-num">{String(i+1).padStart(2,'0')}</div>
+					<h3 class="mob-title">{exp.title}</h3>
+					<p class="mob-company"><span class="pip"></span>{exp.company}</p>
+					{#if exp.type}<span class="badge">{exp.type}</span>{/if}
+					<div class="meta">
+						{#if exp.duration}<span class="pill">📅 {exp.duration}</span>{/if}
+						{#if exp.location}<span class="pill">📍 {exp.location}</span>{/if}
+					</div>
+					{#if exp.description}<p class="cd">{exp.description}</p>{/if}
+					{#if exp.skills?.length}
+						<div class="skills">{#each exp.skills as sk (sk)}<span class="sk-tag">{sk}</span>{/each}</div>
+					{/if}
+				</div>
+			{/each}
+		{/if}
+	</div>
+{/if}
+
+</div> <!-- /outer -->
 
 <style>
 	/* ── Section ───────────────────────────────────────────────────────── */
@@ -352,11 +399,54 @@
 	}
 	@keyframes nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(7px)} }
 
-	/* ── Mobile ───────────────────────────────────────────────────────── */
-	@media (max-width:768px) {
-		.exp-section { overflow-x:auto; scrollbar-width:none; }
-		.exp-section::-webkit-scrollbar { display:none; }
-		.track { transform:none !important; }
-		.ref-line, .prog-bar, .cue, .heading { display:none; }
+	/* ── Mobile: hide sticky section, show vertical list ──────────────── */
+	@media (max-width: 768px) {
+		.exp-section { display: none; }
+		.exp-outer { background: #000; }
+
+		.mobile-list {
+			position: relative;
+			padding: 60px 20px 60px 52px;
+			background: #000;
+		}
+		.mobile-line {
+			position: absolute;
+			top: 148px; bottom: 60px; left: 28px;
+			width: 1px;
+			background: rgba(181,138,108,0.18);
+			box-shadow: 0 0 10px rgba(181,138,108,0.2);
+		}
+		.mobile-heading { margin-bottom: 40px; }
+		.mobile-sub {
+			font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+			color: rgba(255,255,255,.28); margin-bottom: 6px;
+		}
+		.mobile-title {
+			font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0; letter-spacing: -.02em;
+		}
+		.mobile-title span { color: #B58A6C; }
+		.mob-card {
+			position: relative;
+			background: rgba(255,255,255,.03);
+			border: 1px solid rgba(255,255,255,.07);
+			border-radius: 14px;
+			padding: 16px 14px;
+			margin-bottom: 18px;
+			backdrop-filter: blur(8px);
+		}
+		.mob-dot {
+			position: absolute; top: 20px; left: -38px;
+			width: 12px; height: 12px; border-radius: 50%;
+			background: #B58A6C;
+			box-shadow: 0 0 0 3px rgba(181,138,108,.2), 0 0 10px rgba(181,138,108,.4);
+		}
+		.mob-num { font-size: 1.3rem; font-weight: 800; color: rgba(181,138,108,.12); line-height: 1; margin-bottom: 5px; }
+		.mob-title { font-size: .92rem; font-weight: 700; color: #fff; margin: 0 0 4px; }
+		.mob-company { display: flex; align-items: center; gap: 5px; font-size: .7rem; font-weight: 600; color: #B58A6C; margin-bottom: 10px; }
+	}
+
+	/* Desktop: hide mobile-list */
+	@media (min-width: 769px) {
+		.mobile-list { display: none; }
 	}
 </style>
