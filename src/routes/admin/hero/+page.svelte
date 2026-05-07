@@ -69,22 +69,22 @@
 
 <div class="mx-auto max-w-3xl space-y-8">
 	<header>
-		<h1 class="flex items-center gap-3 text-3xl font-bold text-white">
-			<Rocket class="text-violet-400" />
+		<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
+			<Rocket class="text-admin-clay" />
 			Manage Hero Roles
 		</h1>
-		<p class="mt-2 text-gray-400">These roles will cycle through your hero section text.</p>
+		<p class="mt-2 text-admin-charcoal/70">These roles will cycle through your hero section text.</p>
 	</header>
 
 	<!-- Add Role Form -->
-	<div class="rounded-2xl border border-violet-900/20 bg-[#121212] p-6 shadow-xl">
+	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-6 shadow-xl">
 		<div class="flex gap-4">
 			<div class="relative flex-grow">
 				<label for="new-role" class="sr-only">New Role</label>
 				<input
 					id="new-role"
 					type="text"
-					class="w-full rounded-xl border border-violet-900/30 bg-[#1a1a1a] px-4 py-4 text-white placeholder-gray-600 transition-all focus:ring-2 focus:ring-violet-600 focus:outline-none"
+					class="w-full rounded-xl border border-admin-stone bg-admin-offwhite px-4 py-4 text-admin-charcoal placeholder-admin-charcoal/40 transition-all focus:ring-2 focus:ring-admin-clay focus:outline-none"
 					placeholder="e.g., Full Stack Developer"
 					bind:value={newRole}
 					onkeydown={(e) => e.key === 'Enter' && addRole()}
@@ -93,7 +93,7 @@
 			<button
 				onclick={addRole}
 				disabled={adding || !newRole.trim()}
-				class="flex items-center gap-2 rounded-xl bg-violet-600 px-8 font-bold text-white transition-all hover:bg-violet-700 disabled:opacity-50"
+				class="flex items-center gap-2 rounded-xl bg-admin-clay px-8 font-bold text-white transition-all hover:bg-[#A37B60] disabled:opacity-50"
 			>
 				{#if adding}
 					<div
@@ -111,22 +111,22 @@
 	<div class="space-y-4">
 		{#if loading}
 			{#each Array(3) as _, i (i)}
-				<div class="h-20 animate-pulse rounded-2xl border border-violet-900/10 bg-[#121212]"></div>
+				<div class="h-20 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"></div>
 			{/each}
 		{:else if roles.length === 0}
-			<div class="rounded-2xl border border-violet-900/20 bg-[#121212] py-12 text-center">
-				<p class="text-gray-500">No roles added yet.</p>
+			<div class="rounded-2xl border border-admin-stone bg-admin-coolgray py-12 text-center">
+				<p class="text-admin-charcoal/50">No roles added yet.</p>
 			</div>
 		{:else}
 			{#each roles as role (role.id)}
 				<div
-					class="group flex items-center justify-between rounded-2xl border border-violet-900/20 bg-[#121212] p-5 transition-all duration-300 hover:border-violet-600/30 hover:bg-[#1a1a1a]"
+					class="group flex items-center justify-between rounded-2xl border border-admin-stone bg-admin-coolgray p-5 transition-all duration-300 hover:border-admin-taupe/50 hover:bg-admin-stone/10"
 				>
 					<div class="flex items-center gap-4">
-						<div class="cursor-grab text-gray-600 hover:text-gray-400 active:cursor-grabbing">
+						<div class="cursor-grab text-admin-charcoal/40 hover:text-admin-charcoal/60 active:cursor-grabbing">
 							<GripVertical size={20} />
 						</div>
-						<span class="text-lg font-medium text-gray-200">{role.role}</span>
+						<span class="text-lg font-medium text-admin-charcoal">{role.role}</span>
 					</div>
 
 					<button
