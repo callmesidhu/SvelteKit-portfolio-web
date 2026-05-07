@@ -44,6 +44,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Edit About | Admin Panel</title>
+</svelte:head>
+
 <div class="mx-auto max-w-4xl space-y-8">
 	<header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 		<div>
