@@ -271,7 +271,7 @@
 						</div>
 					</div>
 
-					<div class="mb-6 grid grid-cols-2 gap-4">
+					<div class="mb-6 flex flex-col gap-2 sm:grid sm:grid-cols-2 sm:gap-4">
 						<div class="flex items-center gap-2 text-sm text-admin-charcoal/50">
 							<Calendar size={14} />
 							{exp.duration || 'N/A'}
