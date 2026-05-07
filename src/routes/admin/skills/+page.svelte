@@ -84,6 +84,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Skill Management | Admin Panel</title>
+</svelte:head>
+
 <div class="mx-auto max-w-5xl space-y-8">
 	<header>
 		<h1 class="flex items-center gap-3 text-3xl font-bold text-admin-charcoal">
