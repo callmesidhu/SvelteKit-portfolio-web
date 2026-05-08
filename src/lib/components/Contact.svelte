@@ -118,13 +118,13 @@
 	.contact-section {
 		position: relative;
 		width: 100%;
-		min-height: 100vh;
+		min-height: 100svh;
 		background: #000;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		padding: 140px 20px 10px;
+		padding: 100px 16px 50px;
 	}
 
 	/* ── Animated grid background ────────────────────────────────────── */
@@ -281,11 +281,13 @@
 
 	.email-text {
 		flex: 1;
-		font-size: .88rem;
+		font-size: clamp(0.65rem, 3vw, 0.88rem);
 		font-weight: 600;
 		color: #fff;
 		font-family: 'Courier New', monospace;
 		letter-spacing: .02em;
+		word-break: break-all;
+		min-width: 0;
 	}
 
 	.email-badge {
@@ -393,9 +395,19 @@
 	.footer-note span { color: rgba(181,138,108,.5); }
 
 	/* ── Responsive ──────────────────────────────────────────────────── */
+	@media (max-width: 480px) {
+		.contact-section { padding: 90px 14px 48px; min-height: auto; }
+		.title { font-size: 1.8rem; letter-spacing: -.02em; }
+		.email-badge { display: none; }
+		.email-btn { padding: 12px 14px; gap: 10px; }
+		.email-icon { width: 30px; height: 30px; }
+		.social-card { padding: 12px 14px; gap: 10px; }
+		.subtitle { font-size: .8rem; margin-bottom: 24px; }
+		.socials { gap: 8px; margin-bottom: 28px; }
+	}
 	@media (max-width: 768px) {
 		.orb-wrap { display: none; }
-		.title { font-size: 2.2rem; }
-		.contact-section { padding: 80px 16px; }
+		.title { font-size: 2rem; }
+		.content { max-width: 100%; }
 	}
 </style>

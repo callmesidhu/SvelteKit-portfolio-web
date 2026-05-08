@@ -6,9 +6,14 @@
 	import { LayoutDashboard, User, Briefcase, Rocket, Star, Code, LogOut, Menu, X } from 'lucide-svelte';
 	import { auth } from '$lib/firebase';
 	import { signOut } from 'firebase/auth';
+	import { appState } from '$lib/state.svelte';
 
 	let { children } = $props();
 	let isMobileMenuOpen = $state(false);
+
+	onMount(() => {
+		appState.isInitialLoading = false;
+	});
 
 	const toggleMobileMenu = () => {
 		isMobileMenuOpen = !isMobileMenuOpen;

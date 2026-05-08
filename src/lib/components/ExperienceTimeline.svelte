@@ -406,12 +406,12 @@
 
 		.mobile-list {
 			position: relative;
-			padding: 60px 20px 60px 52px;
+			padding: 60px 16px 60px 48px;
 			background: #000;
 		}
 		.mobile-line {
 			position: absolute;
-			top: 148px; bottom: 60px; left: 28px;
+			top: 148px; bottom: 60px; left: 24px;
 			width: 1px;
 			background: rgba(181,138,108,0.18);
 			box-shadow: 0 0 10px rgba(181,138,108,0.2);
@@ -422,7 +422,7 @@
 			color: rgba(255,255,255,.28); margin-bottom: 6px;
 		}
 		.mobile-title {
-			font-size: 1.8rem; font-weight: 800; color: #fff; margin: 0; letter-spacing: -.02em;
+			font-size: clamp(1.4rem, 7vw, 1.8rem); font-weight: 800; color: #fff; margin: 0; letter-spacing: -.02em;
 		}
 		.mobile-title span { color: #B58A6C; }
 		.mob-card {
@@ -430,19 +430,19 @@
 			background: rgba(255,255,255,.03);
 			border: 1px solid rgba(255,255,255,.07);
 			border-radius: 14px;
-			padding: 16px 14px;
-			margin-bottom: 18px;
+			padding: 14px 12px;
+			margin-bottom: 16px;
 			backdrop-filter: blur(8px);
 		}
 		.mob-dot {
-			position: absolute; top: 20px; left: -38px;
+			position: absolute; top: 18px; left: -34px;
 			width: 12px; height: 12px; border-radius: 50%;
 			background: #B58A6C;
 			box-shadow: 0 0 0 3px rgba(181,138,108,.2), 0 0 10px rgba(181,138,108,.4);
 		}
-		.mob-num { font-size: 1.3rem; font-weight: 800; color: rgba(181,138,108,.12); line-height: 1; margin-bottom: 5px; }
-		.mob-title { font-size: .92rem; font-weight: 700; color: #fff; margin: 0 0 4px; }
-		.mob-company { display: flex; align-items: center; gap: 5px; font-size: .7rem; font-weight: 600; color: #B58A6C; margin-bottom: 10px; }
+		.mob-num { font-size: 1.2rem; font-weight: 800; color: rgba(181,138,108,.12); line-height: 1; margin-bottom: 5px; }
+		.mob-title { font-size: .88rem; font-weight: 700; color: #fff; margin: 0 0 4px; }
+		.mob-company { display: flex; align-items: center; gap: 5px; font-size: .68rem; font-weight: 600; color: #B58A6C; margin-bottom: 10px; }
 	}
 
 	/* Desktop: hide mobile-list */

@@ -20,13 +20,13 @@
 		<ScrollFrameAnimation />
 
 		<!-- About Section (AI Chat Style) -->
-		<section id="about" class="relative bg-black py-24">
-			<div class="mx-auto max-w-7xl px-6">
-				<div class="mb-16 text-center">
-					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+		<section id="about" class="relative bg-black py-16 sm:py-24">
+			<div class="mx-auto max-w-7xl px-4 sm:px-6">
+				<div class="mb-10 text-center sm:mb-16">
+					<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
 						About <span class="text-[#B58A6C]">Me</span>
 					</h2>
-					<p class="mt-4 text-lg text-white/40">
+					<p class="mt-4 text-base text-white/40 sm:text-lg">
 						Get to know the person behind the code and the designs.
 					</p>
 				</div>
@@ -35,13 +35,13 @@
 		</section>
 
 		<!-- Tech Stack Section -->
-		<section id="skills" class="relative bg-black py-24">
-			<div class="mx-auto max-w-7xl px-6">
-				<div class="mb-16 text-center">
-					<h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+		<section id="skills" class="relative bg-black py-16 sm:py-24">
+			<div class="mx-auto max-w-7xl px-4 sm:px-6">
+				<div class="mb-10 text-center sm:mb-16">
+					<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
 						My <span class="text-[#B58A6C]">Tech Stack</span>
 					</h2>
-					<p class="mt-4 text-lg text-white/40">
+					<p class="mt-4 text-base text-white/40 sm:text-lg">
 						Tools and technologies I use to bring ideas to life.
 					</p>
 				</div>

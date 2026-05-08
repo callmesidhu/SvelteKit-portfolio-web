@@ -19,7 +19,7 @@
 	let loading = $state(true);
 
 	// ─── Constants ─────────────────────────────────────────────────────────────
-	const RADIUS = 220;
+	let RADIUS = 220;
 	const ICON_SIZE = 50;
 	const ROTATION_SPEED = 0.015;
 	const PARTICLE_COUNT = 60;
@@ -315,8 +315,12 @@
 		init();
 		const resize = () => {
 			if (!canvas) return;
-			canvas.width = canvas.parentElement?.clientWidth || 800;
-			canvas.height = canvas.parentElement?.clientHeight || 650;
+			const w = canvas.parentElement?.clientWidth || 800;
+			const h = canvas.parentElement?.clientHeight || 600;
+			canvas.width = w;
+			canvas.height = h;
+			// Shrink radius on small screens for better visual fit
+			RADIUS = Math.min(220, w * 0.38);
 		};
 		window.addEventListener('resize', resize);
 		resize();
@@ -333,7 +337,7 @@
 	function handleMouseLeave() { isMouseOver = false; }
 </script>
 
-<div class="group relative flex h-[650px] w-full items-center justify-center overflow-hidden bg-black">
+<div class="group relative flex h-[400px] w-full items-center justify-center overflow-hidden bg-black sm:h-[500px] lg:h-[650px]">
 	<!-- Holographic Scanline -->
 	<div class="pointer-events-none absolute inset-0 z-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[size:100%_4px,3px_100%] opacity-40"></div>
 	

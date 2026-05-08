@@ -510,14 +510,33 @@
 		}
 	}
 
-	@media (max-width: 640px) {
+	@media (max-width: 768px) {
 		.hero-role-wrapper {
-			font-size: 28px;
+			font-size: 30px;
 			flex-direction: column;
 			gap: 4px;
+			align-items: center;
+			text-align: center;
 		}
 		.hero-cursor {
-			height: 30px;
+			height: 32px;
+		}
+		.hero-content {
+			padding: 0 16px;
+		}
+	}
+	@media (max-width: 480px) {
+		.hero-role-wrapper {
+			font-size: 22px;
+			gap: 2px;
+		}
+		.hero-cursor {
+			height: 24px;
+			width: 2px;
+		}
+		.hero-name {
+			font-size: 11px;
+			letter-spacing: 0.3em;
 		}
 	}
 </style>

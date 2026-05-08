@@ -117,11 +117,12 @@
 </section>
 
 <style>
-	/* ── Section ─────────────────────────────────────────────────────── */
+	/* ── Section ───────────────────────────────────────────────────── */
 	.projects-section {
 		position: relative;
 		width: 100%;
-		height: 100vh;
+		height: 100svh;
+		min-height: 480px;
 		background: #000;
 		overflow: hidden;
 		display: flex;
@@ -293,7 +294,21 @@
 		backdrop-filter: blur(4px);
 	}
 
-	/* ── Mobile ──────────────────────────────────────────────────────── */
+	/* ── Mobile ───────────────────────────────────────────────────── */
+	@media (max-width: 480px) {
+		.card { width: 160px; }
+		.center-overlay { padding: 16px 12px; max-width: 85vw; }
+		.center-title { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+		.vig-top    { height: 22%; }
+		.vig-bottom { height: 22%; }
+	}
+	@media (max-width: 400px) {
+		.card { width: 140px; }
+		.center-overlay { padding: 12px 10px; max-width: 90vw; }
+		.center-title { font-size: clamp(1.4rem, 8vw, 1.8rem); }
+		.rows-wrap { gap: 6px; padding: 6px 0; }
+		.row-strip { gap: 6px; }
+	}
 	@media (max-width: 768px) {
 		.card { width: 200px; }
 		.vig-left, .vig-right { display: none; }

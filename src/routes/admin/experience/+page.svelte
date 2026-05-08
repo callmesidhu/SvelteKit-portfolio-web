@@ -75,11 +75,6 @@
 
 	const handleAdd = async (e: SubmitEvent) => {
 		e.preventDefault();
-		if (!editingId && experiences.length >= 6) {
-			status = '⚠️ Max 6 entries allowed.';
-			return;
-		}
-
 		if (!title || !company || !rank) {
 			status = '⚠️ Title, Company, and Rank are required.';
 			return;
@@ -140,7 +135,7 @@
 			<Briefcase class="text-admin-clay" />
 			Work Experience
 		</h1>
-		<p class="mt-2 text-admin-charcoal/70">Manage your career timeline (Max 6 entries).</p>
+		<p class="mt-2 text-admin-charcoal/70">Manage your career timeline.</p>
 	</header>
 
 	<!-- Add/Edit Experience Form -->
@@ -253,7 +248,7 @@
 			<div class="pt-4 lg:col-span-3">
 				<button
 					type="submit"
-					disabled={adding || (!editingId && experiences.length >= 6)}
+					disabled={adding}
 					class="flex items-center gap-2 rounded-xl bg-admin-clay px-10 py-4 font-bold text-white shadow-lg shadow-admin-clay/20 transition-all hover:bg-[#A37B60] disabled:opacity-50"
 				>
 					{#if adding}
