@@ -207,11 +207,11 @@
 			const id = requestAnimationFrame(animate);
 
 			if (isOver) {
-				tRY = mX * 0.03;
-				tRX = -mY * 0.03;
+				tRY = mX * 0.06;
+				tRX = -mY * 0.06;
 			} else {
-				tRY = 0.008;
-				tRX = 0.008;
+				tRY = 0.015;
+				tRX = 0.015;
 			}
 
 			curSY = THREE.MathUtils.lerp(curSY, tRY, 0.05);
@@ -219,7 +219,7 @@
 
 			group.rotation.y += curSY;
 			group.rotation.x += curSX;
-			group.position.y = Math.sin(Date.now() * 0.001) * 0.15; // Subtle float
+			group.position.y = Math.sin(Date.now() * 0.002) * 0.15; // Faster float
 			particles.rotation.y += 0.001;
 			
 			// Icons stay fully opaque
