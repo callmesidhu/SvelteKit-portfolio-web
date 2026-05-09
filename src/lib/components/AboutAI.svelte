@@ -112,16 +112,26 @@
 			loading = false;
 		}
 
+		const observer = new IntersectionObserver((entries) => {
+			if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
+				typeEffect(aboutContent);
+				observer.disconnect();
+			}
+		}, { threshold: 0.1 });
+
+		if (container) observer.observe(container);
+
 		return () => {
+			observer.disconnect();
 			window.speechSynthesis.cancel();
 		};
 	});
 
 	$effect(() => {
+		// Start typing immediately if content is already loaded and we're in view
 		if (!loading && aboutContent && container && !hasStartedTyping) {
 			const rect = container.getBoundingClientRect();
-			const isInView = rect.top < window.innerHeight && rect.bottom > 0;
-			if (isInView) {
+			if (rect.top < window.innerHeight && rect.bottom > 0) {
 				typeEffect(aboutContent);
 			}
 		}
