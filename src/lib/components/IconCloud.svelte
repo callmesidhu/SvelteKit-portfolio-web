@@ -134,8 +134,8 @@
 				const sprite = new THREE.Sprite(material);
 				sprite.position.copy(pos);
 				
-				const size = window.innerWidth < 640 ? 1.5 : 2.0;
-				sprite.scale.set(size, size, 1);
+				const size = window.innerWidth < 640 ? 1.5 : 1.5;
+				sprite.scale.set(size, size, 1);	
 				
 				group.add(sprite);
 				iconSprites.push(sprite);
