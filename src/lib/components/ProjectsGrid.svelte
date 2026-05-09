@@ -250,14 +250,6 @@
 		max-width: 480px;
 	}
 
-	.center-sub {
-		font-size: .62rem;
-		letter-spacing: .3em;
-		text-transform: uppercase;
-		color: rgba(255,255,255,.3);
-		margin-bottom: 8px;
-	}
-
 	.center-title {
 		font-size: clamp(2.2rem, 5vw, 3.6rem);
 		font-weight: 800;
@@ -273,25 +265,6 @@
 		color: rgba(255,255,255,.38);
 		line-height: 1.65;
 		margin-bottom: 18px;
-	}
-
-	.chips {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 6px;
-	}
-	.chip {
-		font-size: .6rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: .08em;
-		color: rgba(255,255,255,.55);
-		background: rgba(255,255,255,.06);
-		border: 1px solid rgba(255,255,255,.1);
-		border-radius: 99px;
-		padding: 3px 11px;
-		backdrop-filter: blur(4px);
 	}
 
 	/* ── Mobile ───────────────────────────────────────────────────── */

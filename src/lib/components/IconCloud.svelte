@@ -13,6 +13,41 @@
 		src: string;
 	}
 
+	const ALL_ICONS: Icon[] = [
+		{ id: 1, name: 'C', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg' },
+		{ id: 2, name: 'C++', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' },
+		{ id: 3, name: 'Java', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
+		{ id: 4, name: 'JavaScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
+		{ id: 5, name: 'TypeScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
+		{ id: 6, name: 'PHP', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg' },
+		{ id: 7, name: 'Python', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+		{ id: 8, name: 'Rust', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-original.svg' },
+		{ id: 9, name: 'Go', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg' },
+		{ id: 10, name: 'R', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/r/r-original.svg' },
+		{ id: 11, name: 'Dart', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg' },
+		{ id: 12, name: 'Firebase', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' },
+		{ id: 13, name: 'Supabase', src: 'https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg' },
+		{ id: 14, name: 'Docker', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
+		{ id: 15, name: 'Arduino', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg' },
+		{ id: 16, name: 'Figma', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
+		{ id: 17, name: 'Power BI', src: 'https://www.vectorlogo.zone/logos/microsoft_powerbi/microsoft_powerbi-icon.svg' },
+		{ id: 18, name: 'Jupyter', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg' },
+		{ id: 19, name: 'React', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
+		{ id: 20, name: 'Next.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
+		{ id: 21, name: 'Vue', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
+		{ id: 22, name: 'Nuxt', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg' },
+		{ id: 23, name: 'Flutter', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg' },
+		{ id: 24, name: 'SvelteKit', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' },
+		{ id: 25, name: 'Django', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg' },
+		{ id: 26, name: 'FastAPI', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
+		{ id: 27, name: 'Flask', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg' },
+		{ id: 28, name: 'Node.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+		{ id: 29, name: 'NestJS', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-plain.svg' },
+		{ id: 30, name: 'Spring Boot', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg' },
+		{ id: 31, name: 'Fastify', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastify/fastify-original.svg' },
+		{ id: 32, name: 'Laravel', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg' }
+	];
+
 	let canvas: HTMLCanvasElement;
 	let icons = $state<Icon[]>([]);
 	let loading = $state(true);
@@ -152,45 +187,13 @@
 	let particles: Particle[] = [];
 
 	function init() {
+		if (RADIUS <= 0 || points.length > 0) return;
+		
 		try {
-			const allIcons: Icon[] = [
-				{ id: 1, name: 'C', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg' },
-				{ id: 2, name: 'C++', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg' },
-				{ id: 3, name: 'Java', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
-				{ id: 4, name: 'JavaScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
-				{ id: 5, name: 'TypeScript', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg' },
-				{ id: 6, name: 'PHP', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg' },
-				{ id: 7, name: 'Python', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-				{ id: 8, name: 'Rust', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/rust/rust-original.svg' },
-				{ id: 9, name: 'Go', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original.svg' },
-				{ id: 10, name: 'R', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/r/r-original.svg' },
-				{ id: 11, name: 'Dart', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg' },
-				{ id: 12, name: 'Firebase', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg' },
-				{ id: 13, name: 'Supabase', src: 'https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg' },
-				{ id: 14, name: 'Docker', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-				{ id: 15, name: 'Arduino', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original.svg' },
-				{ id: 16, name: 'Figma', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg' },
-				{ id: 17, name: 'Power BI', src: 'https://www.vectorlogo.zone/logos/microsoft_powerbi/microsoft_powerbi-icon.svg' },
-				{ id: 18, name: 'Jupyter', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original.svg' },
-				{ id: 19, name: 'React', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-				{ id: 20, name: 'Next.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg' },
-				{ id: 21, name: 'Vue', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg' },
-				{ id: 22, name: 'Nuxt', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg' },
-				{ id: 23, name: 'Flutter', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg' },
-				{ id: 24, name: 'SvelteKit', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/svelte/svelte-original.svg' },
-				{ id: 25, name: 'Django', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg' },
-				{ id: 26, name: 'FastAPI', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
-				{ id: 27, name: 'Flask', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg' },
-				{ id: 28, name: 'Node.js', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-				{ id: 29, name: 'NestJS', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-plain.svg' },
-				{ id: 30, name: 'Spring Boot', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg' },
-				{ id: 31, name: 'Fastify', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastify/fastify-original.svg' },
-				{ id: 32, name: 'Laravel', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg' }
-			];
-
-			icons = allIcons;
+			icons = ALL_ICONS;
 			const n = icons.length;
 			const phi = Math.PI * (3 - Math.sqrt(5));
+			
 			points = icons.map((icon, i) => {
 				const y = 1 - (i / (n - 1)) * 2;
 				const radiusAtY = Math.sqrt(1 - y * y);
@@ -212,8 +215,10 @@
 				p.neighbors = distances.slice(0, 5).map(d => d.index);
 			});
 
-			for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-			console.log(`Initialized ${points.length} points and ${particles.length} particles`);
+			if (particles.length === 0) {
+				for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+			}
+			
 			loading = false;
 		} catch (e) {
 			console.error('Error initializing IconCloud:', e);
@@ -276,7 +281,7 @@
 					const lineOpacity = Math.min(p1.opacity, p2.opacity) * 0.8 * lineFlicker;
 					if (lineOpacity > 0.02) {
 						ctx.beginPath();
-						ctx.strokeStyle = `rgba(255, 255, 255, ${lineOpacity})`;
+						ctx.strokeStyle = `rgba(181, 138, 108, ${lineOpacity})`;
 						ctx.lineWidth = 1.2 * Math.min(scale1, scale2);
 						ctx.moveTo(x1, y1);
 						ctx.lineTo(x2, y2);
@@ -297,20 +302,33 @@
 	}
 
 	onMount(() => {
-		init();
 		const resize = () => {
-			if (!canvas) return;
-			const w = canvas.parentElement?.clientWidth || 800;
-			const h = canvas.parentElement?.clientHeight || 600;
+			if (!canvas || !canvas.parentElement) return;
+			const w = canvas.parentElement.clientWidth;
+			const h = canvas.parentElement.clientHeight;
+			if (w === 0 || h === 0) return;
+
 			canvas.width = w;
 			canvas.height = h;
-			// Shrink radius on small screens for better visual fit
 			RADIUS = Math.min(220, w * 0.38);
+			
+			// Initialize if not already done and we have valid dimensions
+			if (points.length === 0 && RADIUS > 0) {
+				init();
+			}
 		};
-		window.addEventListener('resize', resize);
+
+		const observer = new ResizeObserver(resize);
+		if (canvas && canvas.parentElement) {
+			observer.observe(canvas.parentElement);
+		}
+
 		resize();
 		requestAnimationFrame(render);
-		return () => window.removeEventListener('resize', resize);
+		
+		return () => {
+			observer.disconnect();
+		};
 	});
 
 	function handleMouseMove(e: MouseEvent) {

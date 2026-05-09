@@ -14,16 +14,16 @@
 
 	let experiences = $state<Experience[]>([]);
 	let loading     = $state(true);
-	let outer: HTMLElement;  // tall outer div
-	let section: HTMLElement; // sticky inner div
-	let pathEl: SVGPathElement | null = null;
+	let outer = $state<HTMLElement>();  // tall outer div
+	let section = $state<HTMLElement>(); // sticky inner div
+	let pathEl = $state<SVGPathElement | null>(null);
 
 	// Smooth scroll state (lerped)
 	let displayX = $state(0);
 	let targetX  = 0;
 	let progress = $state(0);
 	let pathLen  = $state(8000);
-	let vh = 0, vw = 0;
+	let vh = $state(0), vw = $state(0);
 	let outerH = $state(4000);
 	let isMobile = $state(false);
 
