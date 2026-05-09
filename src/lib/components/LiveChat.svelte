@@ -94,11 +94,12 @@
 
 {#if open}
 	<div 
-		class="fixed bottom-24 right-4 z-[100] w-[calc(100vw-32px)] max-w-[380px] overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0B] shadow-2xl backdrop-blur-xl sm:bottom-28 sm:right-8"
+		class="fixed bottom-auto top-22 md:top-auto md:bottom-4 right-2 md:right-4 z-[100] w-[calc(100vw-32px)] max-w-[380px] overflow-hidden rounded-3xl border border-white/10 bg-[#0A0A0B] shadow-2xl backdrop-blur-xl "
 		transition:fly={{ y: 20, duration: 400, easing: quintOut }}
 	>
 		<!-- Header -->
-		<div class="flex items-center justify-between border-b border-white/5 bg-white/5 px-5 py-4">
+		<div class="flex items-center justify-between 
+		+border-b border-white/5 bg-white/5 px-5 py-4">
 			<div class="flex items-center gap-3">
 				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#B58A6C] overflow-hidden border-2 border-white/10 shadow-lg">
 					<img src={botAvatar} alt="Luttappi" class="h-full w-full object-cover" />
