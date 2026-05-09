@@ -232,17 +232,23 @@
 	}
 
 	let isMounted = false;
+	let ctx: CanvasRenderingContext2D | null = null;
+	
 	function render() {
 		if (!isMounted || !canvas) return;
-		const ctx = canvas.getContext('2d', { alpha: true });
-		if (!ctx) return;
-		
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		
-		if (loading || points.length === 0) {
+		if (!ctx) ctx = canvas.getContext('2d', { alpha: true });
+		if (!ctx) {
 			requestAnimationFrame(render);
 			return;
 		}
+		
+		try {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			if (loading || points.length === 0) {
+				requestAnimationFrame(render);
+				return;
+			}
 
 		ctx.globalAlpha = 1;
 
@@ -304,7 +310,11 @@
 			p.draw(ctx, canvas.width, canvas.height, RADIUS);
 		});
 
-		requestAnimationFrame(render);
+			requestAnimationFrame(render);
+		} catch (e) {
+			console.error('IconCloud render error:', e);
+			requestAnimationFrame(render);
+		}
 	}
 
 	onMount(() => {
@@ -316,7 +326,7 @@
 
 			canvas.width = w;
 			canvas.height = h;
-			RADIUS = Math.min(220, w * 0.4);
+			RADIUS = Math.max(140, Math.min(220, w * 0.4));
 			
 			forceInit();
 		};
@@ -478,7 +488,7 @@
 		bind:this={canvas}
 		onmousemove={handleMouseMove}
 		onmouseleave={handleMouseLeave}
-		class="absolute inset-0 z-10 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
+		class="absolute inset-0 z-40 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
 	></canvas>
 
 	<div class="pointer-events-none absolute inset-0 z-20 bg-radial-[circle_at_center,_transparent_0%,_black_95%] opacity-70"></div>
