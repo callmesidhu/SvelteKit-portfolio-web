@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-
+	import * as THREE from 'three';
 	import { 
 		Code2, Cpu, Globe, Cloud, Database, Layers, 
 		Brain, Network, ShieldCheck, Terminal, 
@@ -48,323 +48,217 @@
 		{ id: 32, name: 'Laravel', src: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg' }
 	];
 
-	let canvas: HTMLCanvasElement;
-	let icons = $state<Icon[]>([]);
+	let container: HTMLDivElement;
 	let loading = $state(true);
 
-	// ─── Constants ─────────────────────────────────────────────────────────────
-	let RADIUS = 220;
-	let currentIconSize = $state(50);
-	const ROTATION_SPEED = 0.015;
-	const PARTICLE_COUNT = 60;
+	onMount(() => {
+		if (!container) return;
 
-	// ─── 3D State ─────────────────────────────────────────────────────────────
-	let rotationX = 0;
-	let rotationY = 0;
-	let mouseX = 0;
-	let mouseY = 0;
-	let isMouseOver = false;
-
-	class Point {
-		x: number;
-		y: number;
-		z: number;
-		img: HTMLImageElement | null = null;
-		name: string;
-		opacity: number = 0;
-		neighbors: number[] = [];
-
-		constructor(x: number, y: number, z: number, name: string, src: string) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-			this.name = name;
-			
-			const img = new Image();
-			img.src = src;
-			img.onload = () => {
-				this.img = img;
-			};
-		}
-
-		rotate(rx: number, ry: number) {
-			const cosY = Math.cos(ry);
-			const sinY = Math.sin(ry);
-			const x1 = this.x * cosY - this.z * sinY;
-			const z1 = this.x * sinY + this.z * cosY;
-
-			const cosX = Math.cos(rx);
-			const sinX = Math.sin(rx);
-			const y1 = this.y * cosX - z1 * sinX;
-			const z2 = this.y * sinX + z1 * cosX;
-
-			this.x = x1;
-			this.y = y1;
-			this.z = z2;
-		}
-
-		update(width: number, height: number, radius: number) {
-			if (!width || !height) return { x2d: 0, y2d: 0, scale: 1, edgeFade: 1 };
-			const depth = 500;
-			const scale = depth / (depth + this.z * radius);
-			const x2d = (this.x * radius) * scale + width / 2;
-			const y2d = (this.y * radius) * scale + height / 2;
-
-			// Simplified visibility
-			this.opacity = Math.max(0.1, scale); 
-			return { x2d, y2d, scale, edgeFade: 1 };
-		}
-
-		draw(ctx: CanvasRenderingContext2D, width: number, height: number, radius: number, iconSize: number) {
-			const { x2d, y2d, scale } = this.update(width, height, radius);
-			const size = iconSize * scale;
-
-			if (this.img && this.img.complete) {
-				ctx.globalAlpha = this.opacity;
-				ctx.drawImage(this.img, x2d - size / 2, y2d - size / 2, size, size);
-			} else {
-				// Fallback: draw a glowing dot if image isn't ready
-				ctx.globalAlpha = this.opacity * 0.5;
-				ctx.fillStyle = '#B58A6C';
-				ctx.beginPath();
-				ctx.arc(x2d, y2d, 4 * scale, 0, Math.PI * 2);
-				ctx.fill();
-			}
-
-			if (scale > 0.8) {
-				ctx.globalAlpha = this.opacity;
-				ctx.font = `700 ${Math.round(10 * scale)}px Inter, sans-serif`;
-				ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.8})`;
-				ctx.textAlign = 'center';
-				ctx.fillText(this.name.toUpperCase(), x2d, y2d + size / 2 + 15);
-			}
-		}
-	}
-
-	class Particle {
-		x: number;
-		y: number;
-		z: number;
-		vx: number;
-		vy: number;
-		vz: number;
-
-		constructor() {
-			this.x = (Math.random() - 0.5) * 2000;
-			this.y = (Math.random() - 0.5) * 2000;
-			this.z = (Math.random() - 0.5) * 2000;
-			this.vx = (Math.random() - 0.5) * 0.2;
-			this.vy = (Math.random() - 0.5) * 0.2;
-			this.vz = (Math.random() - 0.5) * 0.2;
-		}
-
-		update() {
-			this.x += this.vx;
-			this.y += this.vy;
-			this.z += this.vz;
-			if (Math.abs(this.x) > 1000) this.vx *= -1;
-			if (Math.abs(this.y) > 1000) this.vy *= -1;
-			if (Math.abs(this.z) > 1000) this.vz *= -1;
-		}
-
-		draw(ctx: CanvasRenderingContext2D, width: number, height: number) {
-			const depth = 500;
-			const scale = depth / (depth + this.z);
-			const x2d = this.x * scale + width / 2;
-			const y2d = this.y * scale + height / 2;
-			
-			if (x2d < 0 || x2d > width || y2d < 0 || y2d > height) return;
-			
-			ctx.globalAlpha = Math.max(0, (scale - 0.2) * 0.3);
-			ctx.fillStyle = '#B58A6C';
-			ctx.beginPath();
-			ctx.arc(x2d, y2d, 1 * scale, 0, Math.PI * 2);
-			ctx.fill();
-		}
-	}
-
-	let points: Point[] = [];
-	let particles: Particle[] = [];
-
-	function init() {
-		if (RADIUS <= 0 || points.length > 0) return;
+		// --- Three.js Initialization ---
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer({ 
+			alpha: true, 
+			antialias: true,
+			powerPreference: 'high-performance'
+		});
+		renderer.outputColorSpace = THREE.SRGBColorSpace; // Match texture color space
 		
-		try {
-			const n = ALL_ICONS.length;
-			const phi = Math.PI * (3 - Math.sqrt(5));
-			
-			points = ALL_ICONS.map((icon, i) => {
-				const y = 1 - (i / (n - 1)) * 2;
-				const radiusAtY = Math.sqrt(1 - y * y);
-				const theta = phi * i;
-				const x = Math.cos(theta) * radiusAtY;
-				const z = Math.sin(theta) * radiusAtY;
-				return new Point(x, y, z, icon.name, icon.src);
-			});
+		renderer.setSize(container.clientWidth, container.clientHeight);
+		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+		container.appendChild(renderer.domElement);
 
-			// Fullerene Logic
-			points.forEach((p, i) => {
-				const distances = points.map((p2, j) => ({
-					index: j,
-					dist: Math.sqrt(Math.pow(p.x - p2.x, 2) + Math.pow(p.y - p2.y, 2) + Math.pow(p.z - p2.z, 2))
-				}))
+		renderer.domElement.classList.add('three-canvas');
+		if (window.innerWidth <= 640) {
+			renderer.domElement.classList.add('mobile-fade');
+		}
+
+		camera.position.z = 12;
+
+		const group = new THREE.Group();
+		scene.add(group);
+
+		const iconSprites: THREE.Sprite[] = [];
+		const points: THREE.Vector3[] = [];
+		const n = ALL_ICONS.length;
+		const phi = Math.PI * (3 - Math.sqrt(5));
+		const radius = 4.5;
+
+		// Helper to create combined icon + text texture
+		function createIconTexture(img: HTMLImageElement, name: string) {
+			const canvas = document.createElement('canvas');
+			const ctx = canvas.getContext('2d')!;
+			canvas.width = 512; // Higher resolution for sharpness
+			canvas.height = 512;
+			
+			// Draw icon
+			ctx.drawImage(img, 96, 40, 320, 320);
+			
+			// Draw label
+			ctx.font = '700 48px Inter, sans-serif';
+			ctx.fillStyle = '#FFFFFF'; // Solid white
+			ctx.textAlign = 'center';
+			ctx.fillText(name.toUpperCase(), 256, 420);
+			
+			const texture = new THREE.CanvasTexture(canvas);
+			texture.colorSpace = THREE.SRGBColorSpace; // Critical for "full color"
+			texture.minFilter = THREE.LinearFilter;
+			texture.magFilter = THREE.LinearFilter;
+			texture.generateMipmaps = false;
+			return texture;
+		}
+
+		// Load images and create sprites
+		let loadedCount = 0;
+		ALL_ICONS.forEach((icon, i) => {
+			const y = 1 - (i / (n - 1)) * 2;
+			const radiusAtY = Math.sqrt(1 - y * y);
+			const theta = phi * i;
+			const x = Math.cos(theta) * radiusAtY;
+			const z = Math.sin(theta) * radiusAtY;
+
+			const pos = new THREE.Vector3(x * radius, y * radius, z * radius);
+			points.push(pos);
+
+			const img = new Image();
+			img.crossOrigin = 'anonymous';
+			img.src = icon.src;
+			img.onload = () => {
+				const texture = createIconTexture(img, icon.name);
+				const material = new THREE.SpriteMaterial({ 
+					map: texture, 
+					transparent: true,
+					opacity: 1.0, 
+					depthTest: false
+				});
+				const sprite = new THREE.Sprite(material);
+				sprite.position.copy(pos);
+				
+				const size = window.innerWidth < 640 ? 1.5 : 2.0;
+				sprite.scale.set(size, size, 1);
+				
+				group.add(sprite);
+				iconSprites.push(sprite);
+
+				loadedCount++;
+				if (loadedCount === n) loading = false;
+			};
+			img.onerror = () => {
+				console.warn(`Failed to load icon: ${icon.name}`);
+				loadedCount++;
+				if (loadedCount === n) loading = false;
+			};
+		});
+
+		// Safety timeout to ensure it loads even if images hang
+		const safetyTimeout = setTimeout(() => { loading = false; }, 3000);
+
+		// --- Mesh Lines ---
+		const lineMaterial = new THREE.LineBasicMaterial({ 
+			color: 0xB58A6C, 
+			transparent: true, 
+			opacity: 0.1 
+		});
+		const lineGeometry = new THREE.BufferGeometry();
+		const linePoints: number[] = [];
+
+		points.forEach((p1, i) => {
+			const distances = points
+				.map((p2, j) => ({ index: j, dist: p1.distanceTo(p2) }))
 				.filter(d => d.index !== i)
 				.sort((a, b) => a.dist - b.dist);
-				
-				p.neighbors = distances.slice(0, 5).map(d => d.index);
-			});
-
-			if (particles.length === 0) {
-				for (let i = 0; i < PARTICLE_COUNT; i++) {
-					particles.push(new Particle());
-				}
-			}
 			
-			loading = false;
-		} catch (e) {
-			console.error('Error initializing IconCloud:', e);
-			loading = false;
-		}
-	}
-
-	function forceInit() {
-		if (points.length === 0) init();
-	}
-
-	let isMounted = false;
-	let ctx: CanvasRenderingContext2D | null = null;
-	
-	function render() {
-		if (!isMounted || !canvas) return;
-		if (!ctx) ctx = canvas.getContext('2d', { alpha: true });
-		if (!ctx) {
-			requestAnimationFrame(render);
-			return;
-		}
-		
-		try {
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			
-			if (loading || points.length === 0) {
-				requestAnimationFrame(render);
-				return;
-			}
-
-		ctx.globalAlpha = 1;
-
-		let targetRX = ROTATION_SPEED;
-		let targetRY = ROTATION_SPEED;
-		if (isMouseOver) {
-			targetRX = (mouseY - canvas.height / 2) * 0.0002;
-			targetRY = (mouseX - canvas.width / 2) * 0.0002;
-		}
-		rotationX += (targetRX - rotationX) * 0.03;
-		rotationY += (targetRY - rotationY) * 0.03;
-
-		// Draw Particles
-		particles.forEach(p => {
-			p.update();
-			p.draw(ctx, canvas.width, canvas.height);
-		});
-
-		// Update and Rotate Points
-		points.forEach(p => {
-			p.rotate(rotationX, rotationY);
-			p.update(canvas.width, canvas.height, RADIUS);
-		});
-
-		const depth = 500;
-		// Draw Mesh Lines
-		const drawnLines = new Set<string>();
-		points.forEach((p1, i) => {
-			p1.neighbors.forEach(neighborIdx => {
-				const p2 = points[neighborIdx];
-				const lineKey = [i, neighborIdx].sort().join('-');
-				if (!drawnLines.has(lineKey)) {
-					drawnLines.add(lineKey);
-					const scale1 = depth / (depth + p1.z * RADIUS);
-					const scale2 = depth / (depth + p2.z * RADIUS);
-					const x1 = (p1.x * RADIUS) * scale1 + canvas.width / 2;
-					const y1 = (p1.y * RADIUS) * scale1 + canvas.height / 2;
-					const x2 = (p2.x * RADIUS) * scale2 + canvas.width / 2;
-					const y2 = (p2.y * RADIUS) * scale2 + canvas.height / 2;
-					
-					const lineFlicker = Math.random() > 0.95 ? Math.random() * 0.4 : 1;
-					const lineOpacity = Math.min(p1.opacity, p2.opacity) * 0.8 * lineFlicker;
-					if (lineOpacity > 0.02) {
-						ctx.beginPath();
-						ctx.strokeStyle = `rgba(181, 138, 108, ${lineOpacity})`;
-						ctx.lineWidth = 1.2 * Math.min(scale1, scale2);
-						ctx.moveTo(x1, y1);
-						ctx.lineTo(x2, y2);
-						ctx.stroke();
-					}
-				}
+			const neighbors = distances.slice(0, 5);
+			neighbors.forEach(n => {
+				linePoints.push(p1.x, p1.y, p1.z);
+				linePoints.push(points[n.index].x, points[n.index].y, points[n.index].z);
 			});
 		});
 
-		// Draw Icons
-		const sortedPoints = [...points].sort((a, b) => b.z - a.z);
-		sortedPoints.forEach(p => {
-			ctx.globalAlpha = 1; 
-			p.draw(ctx, canvas.width, canvas.height, RADIUS, currentIconSize);
-		});
+		lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
+		const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+		group.add(lines);
 
-			requestAnimationFrame(render);
-		} catch (e) {
-			console.error('IconCloud render error:', e);
-			requestAnimationFrame(render);
-		}
-	}
+		// --- Background Particles ---
+		const pCount = 80;
+		const pGeom = new THREE.BufferGeometry();
+		const pPos = new Float32Array(pCount * 3);
+		for(let i=0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 30;
+		pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+		const pMat = new THREE.PointsMaterial({ color: 0xB58A6C, size: 0.04, transparent: true, opacity: 0.3 });
+		const particles = new THREE.Points(pGeom, pMat);
+		scene.add(particles);
 
-	onMount(() => {
-		isMounted = true;
-		const resize = () => {
-			if (!canvas || !canvas.parentElement) return;
-			const w = canvas.parentElement.clientWidth || 400;
-			const h = canvas.parentElement.clientHeight || 400;
+		// --- Interaction ---
+		let mX = 0, mY = 0, tRX = 0.005, tRY = 0.005, isOver = false;
+		let curSX = 0.005, curSY = 0.005;
 
-			canvas.width = w;
-			canvas.height = h;
-			
-			const isSmall = w < 640;
-			RADIUS = isSmall ? Math.min(150, w * 0.45) : Math.max(140, Math.min(220, w * 0.4));
-			currentIconSize = isSmall ? 35 : 50;
-			
-			forceInit();
+		const onMM = (e: MouseEvent) => {
+			const r = container.getBoundingClientRect();
+			mX = ((e.clientX - r.left) / container.clientWidth) * 2 - 1;
+			mY = -((e.clientY - r.top) / container.clientHeight) * 2 + 1;
+			isOver = true;
 		};
 
-		const observer = new ResizeObserver(resize);
-		if (canvas && canvas.parentElement) {
-			observer.observe(canvas.parentElement);
-		}
+		container.addEventListener('mousemove', onMM);
+		container.addEventListener('mouseleave', () => isOver = false);
 
-		resize();
-		const rafId = requestAnimationFrame(render);
-		
-		// Fallback trigger
-		const timeout = setTimeout(forceInit, 500);
-		
+		const animate = () => {
+			const id = requestAnimationFrame(animate);
+
+			if (isOver) {
+				tRY = mX * 0.03;
+				tRX = -mY * 0.03;
+			} else {
+				tRY = 0.008;
+				tRX = 0.008;
+			}
+
+			curSY = THREE.MathUtils.lerp(curSY, tRY, 0.05);
+			curSX = THREE.MathUtils.lerp(curSX, tRX, 0.05);
+
+			group.rotation.y += curSY;
+			group.rotation.x += curSX;
+			group.position.y = Math.sin(Date.now() * 0.001) * 0.15; // Subtle float
+			particles.rotation.y += 0.001;
+			
+			// Icons stay fully opaque
+			iconSprites.forEach(s => {
+				s.material.opacity = 1.0;
+			});
+
+			if (Math.random() > 0.98) lineMaterial.opacity = 0.05 + Math.random() * 0.15;
+			else lineMaterial.opacity = THREE.MathUtils.lerp(lineMaterial.opacity, 0.1, 0.05);
+
+			renderer.render(scene, camera);
+			return id;
+		};
+
+		const animationId = animate();
+
+		const onResize = () => {
+			if (!container) return;
+			camera.aspect = container.clientWidth / container.clientHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(container.clientWidth, container.clientHeight);
+		};
+
+		const ro = new ResizeObserver(onResize);
+		ro.observe(container);
+
 		return () => {
-			isMounted = false;
-			cancelAnimationFrame(rafId);
-			clearTimeout(timeout);
-			observer.disconnect();
+			clearTimeout(safetyTimeout);
+			cancelAnimationFrame(animationId);
+			ro.disconnect();
+			renderer.dispose();
+			scene.clear();
 		};
 	});
-
-	function handleMouseMove(e: MouseEvent) {
-		const rect = canvas.getBoundingClientRect();
-		mouseX = e.clientX - rect.left;
-		mouseY = e.clientY - rect.top;
-		isMouseOver = true;
-	}
-	function handleMouseLeave() { isMouseOver = false; }
 </script>
 
 <div class="group relative flex h-[400px] w-full items-center justify-center overflow-hidden bg-black sm:h-[500px] lg:h-[650px]">
 	<!-- Holographic Scanline -->
-	<div class="pointer-events-none absolute inset-0 z-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[size:100%_4px,3px_100%] opacity-40"></div>
+	<div class="pointer-events-none absolute inset-0 z-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,255,0,0.02))] bg-[size:100%_4px,3px_100%] opacity-40 animate-scan"></div>
 	
 	<!-- Background Mesh/Glow -->
 	<div class="absolute inset-0 z-0">
@@ -374,7 +268,6 @@
 
 	<!-- LEFT COLUMN BADGES -->
 	<div class="absolute left-[2%] top-[10%] z-20 flex flex-col gap-8 hidden lg:flex">
-		<!-- DSA & OS -->
 		<div class="animate-float">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-blue-500/10 p-2 text-blue-400 group-hover/badge:scale-110 transition-transform"><Layers size={18} /></div>
@@ -384,7 +277,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- System Design -->
 		<div class="animate-float-delayed">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Network size={18} /></div>
@@ -394,7 +286,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Full Stack Dev -->
 		<div class="animate-float-slower">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-emerald-500/10 p-2 text-emerald-400 group-hover/badge:scale-110 transition-transform"><Globe size={18} /></div>
@@ -404,7 +295,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Blockchain -->
 		<div class="animate-float">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-pink-500/10 p-2 text-pink-400 group-hover/badge:scale-110 transition-transform"><ShieldCheck size={18} /></div>
@@ -414,7 +304,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- DevOps -->
 		<div class="animate-float-delayed">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Cloud size={18} /></div>
@@ -428,7 +317,6 @@
 
 	<!-- RIGHT COLUMN BADGES -->
 	<div class="absolute right-[2%] top-[10%] z-20 flex flex-col gap-8 items-end hidden lg:flex">
-		<!-- Project Management -->
 		<div class="animate-float-delayed">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-rose-500/10 p-2 text-rose-400 group-hover/badge:scale-110 transition-transform"><Briefcase size={18} /></div>
@@ -438,7 +326,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Machine Learning -->
 		<div class="animate-float-slower">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-purple-500/10 p-2 text-purple-400 group-hover/badge:scale-110 transition-transform"><Brain size={18} /></div>
@@ -448,7 +335,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- AI Agents -->
 		<div class="animate-float">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-orange-500/10 p-2 text-orange-400 group-hover/badge:scale-110 transition-transform"><Bot size={18} /></div>
@@ -458,7 +344,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- IoT Systems -->
 		<div class="animate-float-delayed">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-yellow-500/10 p-2 text-yellow-400 group-hover/badge:scale-110 transition-transform"><Zap size={18} /></div>
@@ -468,7 +353,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Cloud Computing -->
 		<div class="animate-float">
 			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
 				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Cloud size={18} /></div>
@@ -487,42 +371,45 @@
 		</div>
 	{/if}
 	
-	<canvas
-		bind:this={canvas}
-		onmousemove={handleMouseMove}
-		onmouseleave={handleMouseLeave}
-		class="absolute inset-0 z-40 cursor-grab active:cursor-grabbing transition-opacity duration-1000 mobile-fade {loading ? 'opacity-0' : 'opacity-100'}"
-	></canvas>
+	<div 
+		bind:this={container} 
+		class="absolute inset-0 z-40 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
+	></div>
 
 	<div class="pointer-events-none absolute inset-0 z-20 bg-radial-[circle_at_center,_transparent_0%,_black_95%] opacity-70"></div>
 </div>
 
 <style>
-	canvas {
+	:global(.three-canvas) {
 		max-width: 100%;
 		max-height: 100%;
+		outline: none;
 	}
 	
-	/* Mobile Fade: instead of clipping, fade out at top and bottom */
-	@media (max-width: 640px) {
-		.mobile-fade {
-			mask-image: linear-gradient(to bottom, 
-				transparent 0%, 
-				black 15%, 
-				black 85%, 
-				transparent 100%
-			);
-			-webkit-mask-image: linear-gradient(to bottom, 
-				transparent 0%, 
-				black 15%, 
-				black 85%, 
-				transparent 100%
-			);
-		}
+	:global(.mobile-fade) {
+		mask-image: linear-gradient(to bottom, 
+			transparent 0%, 
+			black 15%, 
+			black 85%, 
+			transparent 100%
+		);
+		-webkit-mask-image: linear-gradient(to bottom, 
+			transparent 0%, 
+			black 15%, 
+			black 85%, 
+			transparent 100%
+		);
 	}
+
 	.animate-float { animation: float 7s ease-in-out infinite; }
 	.animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
 	.animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
+	.animate-scan { animation: scan 10s linear infinite; }
+
+	@keyframes scan {
+		0% { background-position: 0 0; }
+		100% { background-position: 0 100%; }
+	}
 
 	@keyframes float {
 		0%, 100% { transform: translateY(0); }
