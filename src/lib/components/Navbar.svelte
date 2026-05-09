@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Icons from './Icons.svelte';
+	import LiveChat from './LiveChat.svelte';
 	const logo = '/favicon.png';
 
 	const links = ['Home', 'About', 'Skills', 'Experiences', 'Projects', 'Contact'];
 	let isDark = $state(true);
 	let menuOpen = $state(false);
+	let chatOpen = $state(false);
 
 	onMount(() => {
 		isDark = document.documentElement.classList.contains('dark');
@@ -79,19 +81,16 @@
 			Admin
 			<Icons name="ArrowUpRight" size={14} />
 		</a>
-
-		<!-- Theme toggle — always visible -->
+		
+		<!-- Chatbot toggle -->
 		<button
-			onclick={toggleTheme}
-			class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-md transition-all hover:bg-black/60"
-			aria-label="Toggle Theme"
+			onclick={() => chatOpen = !chatOpen}
+			class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-md transition-all hover:bg-[#B58A6C]/20 hover:border-[#B58A6C]/40 group"
+			aria-label="Open Chat"
 		>
-			{#if isDark}
-				<Icons name="Sun" size={18} />
-			{:else}
-				<Icons name="Moon" size={18} />
-			{/if}
+			<Icons name="MessageSquare" size={18} />
 		</button>
+
 
 		<a
 			href="/resume"
@@ -156,6 +155,8 @@
 		</div>
 	</div>
 {/if}
+
+<LiveChat bind:open={chatOpen} />
 
 <style>
 	.mobile-menu {

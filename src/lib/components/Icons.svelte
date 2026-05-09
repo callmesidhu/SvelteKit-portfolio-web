@@ -107,14 +107,12 @@
 		stroke-linejoin="round"
 	>
 		<circle cx="12" cy="12" r="4" />
-		<path d="M12 2v2" />
-		<path d="M12 20v2" />
-		<path d="m4.93 4.93 1.41 1.41" />
-		<path d="m17.66 17.66 1.41 1.41" />
-		<path d="M2 12h2" />
-		<path d="M20 12h2" />
-		<path d="m6.34 17.66-1.41 1.41" />
-		<path d="m19.07 4.93-1.41 1.41" />
+		<path d="M12 2v2" /><path d="M12 20v2" />
+		<path d="m4.93 4.93 1.41 1.41" /><path d="m17.66 17.66 1.41 1.41" />
+		<path d="M2 12h2" /><path d="M20 12h2" />
+		<path d="m6.34 17.66-1.41 1.41" /><path d="m19.07 4.93-1.41 1.41" />
+		<path d="m8.36 8.36 1.42 1.42" /><path d="m14.22 14.22 1.42 1.42" />
+		<path d="m15.64 8.36-1.42 1.42" /><path d="m9.78 14.22-1.42 1.42" />
 	</svg>
 {:else if name === 'Moon'}
 	<svg
@@ -129,5 +127,35 @@
 		stroke-linejoin="round"
 	>
 		<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+		<path d="M19 3v4" /><path d="M17 5h4" />
+		<path d="M22 10v2" /><path d="M21 11h2" />
+	</svg>
+{:else if name === 'MessageSquare'}
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+	</svg>
+{:else if name === 'ChevronDown'}
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={size}
+		height={size}
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+	>
+		<path d="m6 9 6 6 6-6" />
 	</svg>
 {/if}
