@@ -54,7 +54,7 @@
 
 	// ─── Constants ─────────────────────────────────────────────────────────────
 	let RADIUS = 220;
-	const ICON_SIZE = 50;
+	let currentIconSize = $state(50);
 	const ROTATION_SPEED = 0.015;
 	const PARTICLE_COUNT = 60;
 
@@ -115,9 +115,9 @@
 			return { x2d, y2d, scale, edgeFade: 1 };
 		}
 
-		draw(ctx: CanvasRenderingContext2D, width: number, height: number, radius: number) {
+		draw(ctx: CanvasRenderingContext2D, width: number, height: number, radius: number, iconSize: number) {
 			const { x2d, y2d, scale } = this.update(width, height, radius);
-			const size = ICON_SIZE * scale;
+			const size = iconSize * scale;
 
 			if (this.img && this.img.complete) {
 				ctx.globalAlpha = this.opacity;
@@ -307,7 +307,7 @@
 		const sortedPoints = [...points].sort((a, b) => b.z - a.z);
 		sortedPoints.forEach(p => {
 			ctx.globalAlpha = 1; 
-			p.draw(ctx, canvas.width, canvas.height, RADIUS);
+			p.draw(ctx, canvas.width, canvas.height, RADIUS, currentIconSize);
 		});
 
 			requestAnimationFrame(render);
@@ -326,7 +326,10 @@
 
 			canvas.width = w;
 			canvas.height = h;
-			RADIUS = Math.max(140, Math.min(220, w * 0.4));
+			
+			const isSmall = w < 640;
+			RADIUS = isSmall ? Math.min(150, w * 0.45) : Math.max(140, Math.min(220, w * 0.4));
+			currentIconSize = isSmall ? 35 : 50;
 			
 			forceInit();
 		};
@@ -488,7 +491,7 @@
 		bind:this={canvas}
 		onmousemove={handleMouseMove}
 		onmouseleave={handleMouseLeave}
-		class="absolute inset-0 z-40 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
+		class="absolute inset-0 z-40 cursor-grab active:cursor-grabbing transition-opacity duration-1000 mobile-fade {loading ? 'opacity-0' : 'opacity-100'}"
 	></canvas>
 
 	<div class="pointer-events-none absolute inset-0 z-20 bg-radial-[circle_at_center,_transparent_0%,_black_95%] opacity-70"></div>
@@ -498,6 +501,24 @@
 	canvas {
 		max-width: 100%;
 		max-height: 100%;
+	}
+	
+	/* Mobile Fade: instead of clipping, fade out at top and bottom */
+	@media (max-width: 640px) {
+		.mobile-fade {
+			mask-image: linear-gradient(to bottom, 
+				transparent 0%, 
+				black 15%, 
+				black 85%, 
+				transparent 100%
+			);
+			-webkit-mask-image: linear-gradient(to bottom, 
+				transparent 0%, 
+				black 15%, 
+				black 85%, 
+				transparent 100%
+			);
+		}
 	}
 	.animate-float { animation: float 7s ease-in-out infinite; }
 	.animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
