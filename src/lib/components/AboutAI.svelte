@@ -33,10 +33,20 @@
 		const chunks = text.split(/(\s+)/);
 		let currentText = '';
 		
+		const scrollTarget = container?.querySelector('.custom-scrollbar');
+
 		for (const chunk of chunks) {
 			currentText += chunk;
 			displayedContent = currentText;
-			await new Promise(resolve => setTimeout(resolve, Math.random() * 10 + 5));
+			
+			if (scrollTarget) {
+				scrollTarget.scrollTo({
+					top: scrollTarget.scrollHeight,
+					behavior: 'smooth'
+				});
+			}
+			
+			await new Promise(resolve => setTimeout(resolve, Math.random() * 20 + 10));
 		}
 		hasFinishedTyping = true;
 	}
@@ -102,17 +112,7 @@
 			loading = false;
 		}
 
-		const observer = new IntersectionObserver((entries) => {
-			if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
-				typeEffect(aboutContent);
-				observer.disconnect();
-			}
-		}, { threshold: 0.1 });
-
-		if (container) observer.observe(container);
-
 		return () => {
-			observer.disconnect();
 			window.speechSynthesis.cancel();
 		};
 	});

@@ -103,20 +103,20 @@
 			this.z = z2;
 		}
 
-		update(width: number, height: number) {
+		update(width: number, height: number, radius: number) {
 			if (!width || !height) return { x2d: 0, y2d: 0, scale: 1, edgeFade: 1 };
 			const depth = 500;
-			const scale = depth / (depth + this.z);
-			const x2d = this.x * scale + width / 2;
-			const y2d = this.y * scale + height / 2;
+			const scale = depth / (depth + this.z * radius);
+			const x2d = (this.x * radius) * scale + width / 2;
+			const y2d = (this.y * radius) * scale + height / 2;
 
 			// Simplified visibility
 			this.opacity = Math.max(0.1, scale); 
 			return { x2d, y2d, scale, edgeFade: 1 };
 		}
 
-		draw(ctx: CanvasRenderingContext2D, width: number, height: number) {
-			const { x2d, y2d, scale } = this.update(width, height);
+		draw(ctx: CanvasRenderingContext2D, width: number, height: number, radius: number) {
+			const { x2d, y2d, scale } = this.update(width, height, radius);
 			const size = ICON_SIZE * scale;
 
 			if (this.img && this.img.complete) {
@@ -190,17 +190,16 @@
 		if (RADIUS <= 0 || points.length > 0) return;
 		
 		try {
-			icons = ALL_ICONS;
-			const n = icons.length;
+			const n = ALL_ICONS.length;
 			const phi = Math.PI * (3 - Math.sqrt(5));
 			
-			points = icons.map((icon, i) => {
+			points = ALL_ICONS.map((icon, i) => {
 				const y = 1 - (i / (n - 1)) * 2;
 				const radiusAtY = Math.sqrt(1 - y * y);
 				const theta = phi * i;
 				const x = Math.cos(theta) * radiusAtY;
 				const z = Math.sin(theta) * radiusAtY;
-				return new Point(x * RADIUS, y * RADIUS, z * RADIUS, icon.name, icon.src);
+				return new Point(x, y, z, icon.name, icon.src);
 			});
 
 			// Fullerene Logic
@@ -216,7 +215,9 @@
 			});
 
 			if (particles.length === 0) {
-				for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+				for (let i = 0; i < PARTICLE_COUNT; i++) {
+					particles.push(new Particle());
+				}
 			}
 			
 			loading = false;
@@ -226,9 +227,14 @@
 		}
 	}
 
+	function forceInit() {
+		if (points.length === 0) init();
+	}
+
+	let isMounted = false;
 	function render() {
-		if (!canvas) return;
-		const ctx = canvas.getContext('2d');
+		if (!isMounted || !canvas) return;
+		const ctx = canvas.getContext('2d', { alpha: true });
 		if (!ctx) return;
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -258,7 +264,7 @@
 		// Update and Rotate Points
 		points.forEach(p => {
 			p.rotate(rotationX, rotationY);
-			p.update(canvas.width, canvas.height);
+			p.update(canvas.width, canvas.height, RADIUS);
 		});
 
 		const depth = 500;
@@ -270,12 +276,12 @@
 				const lineKey = [i, neighborIdx].sort().join('-');
 				if (!drawnLines.has(lineKey)) {
 					drawnLines.add(lineKey);
-					const scale1 = depth / (depth + p1.z);
-					const scale2 = depth / (depth + p2.z);
-					const x1 = p1.x * scale1 + canvas.width / 2;
-					const y1 = p1.y * scale1 + canvas.height / 2;
-					const x2 = p2.x * scale2 + canvas.width / 2;
-					const y2 = p2.y * scale2 + canvas.height / 2;
+					const scale1 = depth / (depth + p1.z * RADIUS);
+					const scale2 = depth / (depth + p2.z * RADIUS);
+					const x1 = (p1.x * RADIUS) * scale1 + canvas.width / 2;
+					const y1 = (p1.y * RADIUS) * scale1 + canvas.height / 2;
+					const x2 = (p2.x * RADIUS) * scale2 + canvas.width / 2;
+					const y2 = (p2.y * RADIUS) * scale2 + canvas.height / 2;
 					
 					const lineFlicker = Math.random() > 0.95 ? Math.random() * 0.4 : 1;
 					const lineOpacity = Math.min(p1.opacity, p2.opacity) * 0.8 * lineFlicker;
@@ -294,28 +300,25 @@
 		// Draw Icons
 		const sortedPoints = [...points].sort((a, b) => b.z - a.z);
 		sortedPoints.forEach(p => {
-			ctx.globalAlpha = 1; // Reset for each icon's own alpha logic
-			p.draw(ctx, canvas.width, canvas.height);
+			ctx.globalAlpha = 1; 
+			p.draw(ctx, canvas.width, canvas.height, RADIUS);
 		});
 
 		requestAnimationFrame(render);
 	}
 
 	onMount(() => {
+		isMounted = true;
 		const resize = () => {
 			if (!canvas || !canvas.parentElement) return;
-			const w = canvas.parentElement.clientWidth;
-			const h = canvas.parentElement.clientHeight;
-			if (w === 0 || h === 0) return;
+			const w = canvas.parentElement.clientWidth || 400;
+			const h = canvas.parentElement.clientHeight || 400;
 
 			canvas.width = w;
 			canvas.height = h;
-			RADIUS = Math.min(220, w * 0.38);
+			RADIUS = Math.min(220, w * 0.4);
 			
-			// Initialize if not already done and we have valid dimensions
-			if (points.length === 0 && RADIUS > 0) {
-				init();
-			}
+			forceInit();
 		};
 
 		const observer = new ResizeObserver(resize);
@@ -324,9 +327,15 @@
 		}
 
 		resize();
-		requestAnimationFrame(render);
+		const rafId = requestAnimationFrame(render);
+		
+		// Fallback trigger
+		const timeout = setTimeout(forceInit, 500);
 		
 		return () => {
+			isMounted = false;
+			cancelAnimationFrame(rafId);
+			clearTimeout(timeout);
 			observer.disconnect();
 		};
 	});
@@ -469,7 +478,7 @@
 		bind:this={canvas}
 		onmousemove={handleMouseMove}
 		onmouseleave={handleMouseLeave}
-		class="z-10 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
+		class="absolute inset-0 z-10 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
 	></canvas>
 
 	<div class="pointer-events-none absolute inset-0 z-20 bg-radial-[circle_at_center,_transparent_0%,_black_95%] opacity-70"></div>

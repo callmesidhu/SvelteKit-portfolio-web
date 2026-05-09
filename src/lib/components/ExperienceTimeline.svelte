@@ -22,7 +22,6 @@
 	let displayX = $state(0);
 	let targetX  = 0;
 	let progress = $state(0);
-	let pathLen  = $state(8000);
 	let vh = $state(0), vw = $state(0);
 	let outerH = $state(4000);
 	let isMobile = $state(false);
@@ -39,8 +38,8 @@
 	}
 	function cardTop(i: number) { return vh / 2 + cardY(i) - CARD_H / 2; }
 
-	function buildPath(): string {
-		if (!vh) return '';
+	const pathD = $derived.by(() => {
+		if (!vh || !count) return '';
 		const mid = vh / 2;
 		const pts = [
 			{ x: 0, y: mid },
@@ -56,7 +55,7 @@
 			d += ` C ${cx} ${a.y} ${cx} ${b.y} ${b.x} ${b.y}`;
 		}
 		return d;
-	}
+	});
 
 	function recalc() {
 		vh = window.innerHeight;
@@ -78,18 +77,27 @@
 		// Recalc after data (trackW changes when count changes)
 		requestAnimationFrame(() => {
 			recalc();
-			if (pathEl) pathLen = pathEl.getTotalLength();
 		});
 
 		// ── RAF loop: lerp displayX toward targetX ────────────────────────
-		let rafId: number;
+		let rafId: number | null = null;
 		function loop() {
 			const dist = targetX - displayX;
-			displayX = Math.abs(dist) > 0.3 ? displayX + dist * 0.09 : targetX;
+			if (Math.abs(dist) < 0.1) {
+				displayX = targetX;
+				progress = maxX() > 0 ? displayX / maxX() : 0;
+				rafId = null;
+				return;
+			}
+			displayX += dist * 0.1;
 			progress = maxX() > 0 ? displayX / maxX() : 0;
 			rafId = requestAnimationFrame(loop);
 		}
-		rafId = requestAnimationFrame(loop);
+		
+		function startLoop() {
+			if (rafId === null) rafId = requestAnimationFrame(loop);
+		}
+		startLoop();
 
 		// ── Native scroll drives horizontal progress ──────────────────────
 		// Outer div is tall; as page scrolls INTO it, targetX increases.
@@ -100,11 +108,11 @@
 			const scrolled   = Math.max(0, Math.min(scrollable, -outer.getBoundingClientRect().top));
 			const raw = scrollable > 0 ? scrolled / scrollable : 0;
 			targetX = raw * Math.max(0, trackW - vw);
+			startLoop();
 		}
 
 		function onResize() {
 			recalc();
-			if (pathEl) pathLen = pathEl.getTotalLength();
 			onScroll();
 		}
 
@@ -112,7 +120,7 @@
 		window.addEventListener('resize', onResize);
 
 		return () => {
-			cancelAnimationFrame(rafId);
+			if (rafId !== null) cancelAnimationFrame(rafId);
 			window.removeEventListener('scroll', onScroll);
 			window.removeEventListener('resize', onResize);
 		};
@@ -151,15 +159,16 @@
 						<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
 					</filter>
 				</defs>
-				<path d={buildPath()} fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1.5"/>
+				<path d={pathD} fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1.5"/>
 				<path
 					bind:this={pathEl}
-					d={buildPath()}
+					d={pathD}
 					fill="none"
 					stroke="#B58A6C"
 					stroke-width="2.5"
-					stroke-dasharray={pathLen}
-					stroke-dashoffset={pathLen * (1 - progress)}
+					pathLength="1"
+					stroke-dasharray="1"
+					stroke-dashoffset={1 - progress}
 					filter="url(#wave-glow)"
 					style="transition:stroke-dashoffset .05s linear"
 				/>
