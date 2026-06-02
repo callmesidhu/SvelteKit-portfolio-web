@@ -3,6 +3,7 @@
 	import Lenis from 'lenis';
 	import { appState } from '$lib/state.svelte';
 	import { getVisitorLocation } from '$lib/analytics';
+	import CustomCursor from '$lib/components/CustomCursor.svelte';
 	import './layout.css';
 
 	let { children } = $props();
@@ -140,4 +141,5 @@
 	</style>
 </svelte:head>
 
+<CustomCursor />
 {@render children()}

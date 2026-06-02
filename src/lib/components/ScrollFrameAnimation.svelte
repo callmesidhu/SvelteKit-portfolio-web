@@ -219,8 +219,7 @@
 	<div class="sticky-viewport">
 		<canvas bind:this={canvas} class="frame-canvas"></canvas>
 
-		<!-- Top-fade gradient -->
-		<div class="top-fade" aria-hidden="true"></div>
+		<!-- Top fade removed per user request -->
 
 		<!-- Bottom-fade gradient — hides Veo watermark, blends into next section -->
 		<div class="bottom-fade" aria-hidden="true"></div>
@@ -237,6 +236,10 @@
 					class="spotlight-image"
 					style="--mouse-x: {mouseX}px; --mouse-y: {mouseY}px;"
 				></div>
+
+				<!-- Fades applied specifically to the loading background image -->
+				<div class="top-fade" aria-hidden="true"></div>
+				<div class="bottom-fade" aria-hidden="true"></div>
 				<div class="subtle-loader" aria-live="polite">
 					{loadProgress}%
 				</div>
