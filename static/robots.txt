@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Allow: /resume
-Allow: /admin
+Disallow: /admin
+Disallow: /api/
 
 Sitemap: https://callmesidhu.xyphx.com/sitemap.xml

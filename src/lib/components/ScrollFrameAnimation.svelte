@@ -21,6 +21,24 @@
 	let isReady = $state(false);
 	let currentFrame = $state(0);
 
+	// Loading Screen State
+	let mouseX = $state(-1000);
+	let mouseY = $state(-1000);
+	let showLoadingScreen = $state(true);
+
+	function handleMouseMove(e: MouseEvent) {
+		mouseX = e.clientX;
+		mouseY = e.clientY;
+	}
+
+	$effect(() => {
+		if (isReady) {
+			setTimeout(() => {
+				showLoadingScreen = false;
+			}, 1000); // 1s dissolve duration
+		}
+	});
+
 	// ─── Scroll Lock ───────────────────────────────────────────────────────────
 	$effect(() => {
 		appState.isInitialLoading = !isReady;
@@ -201,17 +219,27 @@
 	<div class="sticky-viewport">
 		<canvas bind:this={canvas} class="frame-canvas"></canvas>
 
+		<!-- Top-fade gradient -->
+		<div class="top-fade" aria-hidden="true"></div>
+
 		<!-- Bottom-fade gradient — hides Veo watermark, blends into next section -->
 		<div class="bottom-fade" aria-hidden="true"></div>
 
-		<!-- Loading overlay -->
-		{#if !isReady}
-			<div class="loading-overlay" aria-live="polite">
-				<div class="loader-inner">
-					<div class="loader-ring"></div>
-					<span class="loader-pct">{loadProgress}%</span>
+		<!-- Custom Spotlight Loading overlay -->
+		{#if showLoadingScreen}
+			<div 
+				class="custom-loading-screen" 
+				class:dissolving={isReady}
+				onmousemove={handleMouseMove}
+				role="presentation"
+			>
+				<div 
+					class="spotlight-image"
+					style="--mouse-x: {mouseX}px; --mouse-y: {mouseY}px;"
+				></div>
+				<div class="subtle-loader" aria-live="polite">
+					{loadProgress}%
 				</div>
-				<p class="loader-label">Loading…</p>
 			</div>
 		{/if}
 
@@ -291,6 +319,25 @@
 		display: block;
 	}
 
+	/* ── Top-fade: black → transparent gradient overlay ───────────────────────
+     Adds a cinematic letterbox fade at the top edge of the frame.          */
+	.top-fade {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 35%;
+		background: linear-gradient(
+			to bottom,
+			#000 0%,
+			rgba(0, 0, 0, 0.65) 20%,
+			rgba(0, 0, 0, 0.15) 50%,
+			transparent 100%
+		);
+		pointer-events: none;
+		z-index: 2;
+	}
+
 	/* ── Bottom-fade: transparent → black gradient overlay ──────────────────
      Covers bottom ~50% of the frame — hides the Veo watermark and creates
      the cinematic blend into the next section.                              */
@@ -311,56 +358,50 @@
 		z-index: 2; /* above canvas, below UI overlays               */
 	}
 
-	/* ── Loading overlay ─────────────────────────────────────────────────────── */
-	.loading-overlay {
+	/* ── Custom Spotlight Loading overlay ─────────────────────────────────────── */
+	.custom-loading-screen {
 		position: absolute;
 		inset: 0;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		background: #000;
-		gap: 16px;
-		z-index: 10;
+		background-color: #000;
+		z-index: 100;
+		transition: opacity 1s ease-in-out;
+		overflow: hidden;
 	}
 
-	.loader-inner {
-		position: relative;
-		width: 80px;
-		height: 80px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+	.custom-loading-screen.dissolving {
+		opacity: 0;
+		pointer-events: none;
 	}
 
-	.loader-ring {
+	.spotlight-image {
 		position: absolute;
 		inset: 0;
-		border-radius: 50%;
-		border: 3px solid rgba(255, 255, 255, 0.1);
-		border-top-color: rgba(255, 255, 255, 0.9);
-		animation: spin 0.9s linear infinite;
+		background-image: url('/frames/frame_0001.jpg');
+		background-size: cover;
+		background-position: center;
+		opacity: 0.5;
+		mask-image: radial-gradient(
+			circle 100px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
+			black 0%, 
+			transparent 100%
+		);
+		-webkit-mask-image: radial-gradient(
+			circle 100px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
+			black 0%, 
+			transparent 100%
+		);
+		transition: opacity 0.3s;
 	}
 
-	.loader-pct {
-		font-family: 'Barlow', sans-serif;
-		font-size: 14px;
-		font-weight: 600;
-		color: rgba(255, 255, 255, 0.85);
-		letter-spacing: 0.5px;
-	}
-
-	.loader-label {
+	.subtle-loader {
+		position: absolute;
+		bottom: 30px;
+		right: 40px;
 		font-family: 'Barlow', sans-serif;
 		font-size: 13px;
-		color: rgba(255, 255, 255, 0.4);
-		letter-spacing: 0.3px;
-	}
-
-	@keyframes spin {
-		to {
-			transform: rotate(360deg);
-		}
+		color: rgba(255, 255, 255, 0.3);
+		letter-spacing: 3px;
+		font-weight: 500;
 	}
 
 	/* ── Progress bar ─────────────────────────────────────────────────────────── */

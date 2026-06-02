@@ -9,13 +9,32 @@
 	import SEO from '$lib/components/SEO.svelte';
 </script>
 
-<SEO />
+<SEO 
+	title="CallMeSidhu | Full Stack Developer & Founder of XyphX"
+	description="Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare, DevOps, AI and modern web technologies."
+	canonical="https://callmesidhu.xyphx.com"
+	breadcrumbs={[
+		{ name: 'Home', item: 'https://callmesidhu.xyphx.com' }
+	]}
+/>
 
 <div class="bg-black">
 	<!-- Navbar floats above everything -->
 	<Navbar />
 
 	<main>
+		<!-- SEO Boost Content (Visually Hidden for Screen Readers & Search Engines) -->
+		<div class="sr-only">
+			<h1>CallMeSidhu - Full Stack Developer & Founder of XyphX</h1>
+			<p>
+				Sidharth, known as CallMeSidhu, is a Full Stack Developer,
+				Founder & CEO of XyphX, Freelancer, and Software Engineer
+				specializing in React, Node.js, Flutter, Cloudflare, DevOps,
+				AI and modern web technologies.
+			</p>
+			<a href="https://github.com/callmesidhu">GitHub</a>
+			<a href="https://linkedin.com/in/callmesidhu">LinkedIn</a>
+		</div>
 		<!-- Scroll-scrubbed frame animation (full viewport hero) -->
 		<ScrollFrameAnimation />
 

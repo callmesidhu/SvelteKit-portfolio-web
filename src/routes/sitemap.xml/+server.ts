@@ -4,7 +4,9 @@ export const GET: RequestHandler = async () => {
     const pages = [
         '',
         'resume',
-        'admin' // Included per user request, though usually admin is hidden from search
+        'admin',
+        'projects',
+        'contact'
     ];
 
     const body = `<?xml version="1.0" encoding="UTF-8" ?>

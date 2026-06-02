@@ -7,7 +7,7 @@
 	let aboutContent = $state('');
 	let displayedContent = $state('');
 	let loading = $state(true);
-	let selectedModel = $state('xyphx 1.0 thinking');
+	let selectedModel = $state('XyphX 1.0 thinking');
 	let showModels = $state(false);
 	let container: HTMLElement | null = $state(null);
 	let hasStartedTyping = $state(false);
@@ -20,9 +20,9 @@
 	let showLimitWarning = $state(false);
 
 	const models = [
-		'xyphx 1.0 fast',
-		'xyphx 1.0 thinking',
-		'xyphx 1.0 max'
+		'XyphX 1.0 fast',
+		'XyphX 1.0 thinking',
+		'XyphX 1.0 max'
 	];
 
 	async function typeEffect(text: string) {

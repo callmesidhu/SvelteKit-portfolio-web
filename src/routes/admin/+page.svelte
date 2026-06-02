@@ -3,6 +3,7 @@
 	import { db } from '$lib/firebase';
 	import { doc, getDoc, collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 	import { Eye, Users, MousePointer2, TrendingUp, Inbox } from 'lucide-svelte';
+	import SEO from '$lib/components/SEO.svelte';
 
 	interface ActivityLog {
 		docId: string;
@@ -115,9 +116,11 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Admin Dashboard | callmesidhu</title>
-</svelte:head>
+<SEO 
+	title="Admin Dashboard | CallMeSidhu"
+	description="Admin dashboard for CallMeSidhu portfolio."
+	robots="noindex, nofollow"
+/>
 
 <div class="space-y-8">
 	<header>
