@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Icons from './Icons.svelte';
 	import LiveChat from './LiveChat.svelte';
+	import { getVisitorLocation } from '$lib/analytics';
 	const logo = '/favicon.png';
 
 	const links = ['Home', 'About', 'Skills', 'Experiences', 'Projects', 'Contact'];
@@ -26,6 +27,30 @@
 
 	function closeMenu() {
 		menuOpen = false;
+	}
+
+	async function trackResumeClick() {
+		try {
+			const { db } = await import('$lib/firebase');
+			const { doc, setDoc, increment, collection, addDoc } = await import('firebase/firestore');
+			const docRef = doc(db, 'dashboard', 'visitors');
+			await setDoc(docRef, {
+				clicks: increment(1)
+			}, { merge: true });
+
+			const location = await getVisitorLocation();
+			const description = location === 'Someone'
+				? 'Someone viewed/downloaded resume'
+				: `Someone from ${location} viewed/downloaded resume`;
+
+			await addDoc(collection(db, 'activity_logs'), {
+				type: 'resume_download',
+				description,
+				createdAt: new Date()
+			});
+		} catch (e) {
+			console.error('Error tracking resume click:', e);
+		}
 	}
 </script>
 
@@ -95,6 +120,7 @@
 		<a
 			href="/resume"
 			target="_blank"
+			onclick={trackResumeClick}
 			class="hidden items-center gap-1.5 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm font-medium backdrop-blur-md transition-transform duration-200 hover:scale-105 md:flex"
 		>
 			Resume
@@ -148,6 +174,7 @@
 			<a
 				href="/resume"
 				target="_blank"
+				onclick={trackResumeClick}
 				class="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10"
 			>
 				Resume <Icons name="ArrowUpRight" size={13} />

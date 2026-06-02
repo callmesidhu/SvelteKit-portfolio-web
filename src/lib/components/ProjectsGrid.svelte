@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { db } from '$lib/firebase';
 	import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+	import { getVisitorLocation } from '$lib/analytics';
 
 	interface Project {
 		id: string;
@@ -28,6 +29,29 @@
 		}
 	});
 
+	async function trackProjectClick(projectTitle: string) {
+		try {
+			const { doc, setDoc, increment, collection, addDoc } = await import('firebase/firestore');
+			const docRef = doc(db, 'dashboard', 'visitors');
+			await setDoc(docRef, {
+				clicks: increment(1)
+			}, { merge: true });
+
+			const location = await getVisitorLocation();
+			const description = location === 'Someone'
+				? `Someone viewed project: ${projectTitle}`
+				: `Someone from ${location} viewed project: ${projectTitle}`;
+
+			await addDoc(collection(db, 'activity_logs'), {
+				type: 'project_click',
+				description,
+				createdAt: new Date()
+			});
+		} catch (e) {
+			console.error('Error tracking project click:', e);
+		}
+	}
+
 	// Split projects into 3 rows (cycle through if fewer than needed)
 	function makeRow(all: Project[], rowIndex: number, total = 5): Project[] {
 		if (!all.length) return [];
@@ -44,7 +68,7 @@
 	const SKEL = Array(6).fill(null);
 </script>
 
-<section id="projects" class="projects-section">
+<section id="projects" class="snap-start projects-section">
 
 	<!-- Scrolling rows -->
 	<div class="rows-wrap">
@@ -65,7 +89,7 @@
 						{@const row = makeRow(projects, rowIdx)}
 						<!-- Original set -->
 						{#each row as proj (proj.id + '-' + rowIdx + '-a')}
-							<a class="card" href={proj.link || '#'} target="_blank" rel="noopener" title={proj.title}>
+							<a class="card" href={proj.link || '#'} target="_blank" rel="noopener" title={proj.title} onclick={() => trackProjectClick(proj.title)}>
 								<img
 									src={proj.image || PLACEHOLDER}
 									alt={proj.title}
@@ -80,7 +104,7 @@
 						{/each}
 						<!-- Duplicate for seamless loop -->
 						{#each row as proj (proj.id + '-' + rowIdx + '-b')}
-							<a class="card" href={proj.link || '#'} target="_blank" rel="noopener" title={proj.title} aria-hidden="true" tabindex="-1">
+							<a class="card" href={proj.link || '#'} target="_blank" rel="noopener" title={proj.title} aria-hidden="true" tabindex="-1" onclick={() => trackProjectClick(proj.title)}>
 								<img
 									src={proj.image || PLACEHOLDER}
 									alt=""

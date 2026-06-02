@@ -66,18 +66,26 @@
 		outerH = isMobile ? 0 : vh + Math.max(0, trackW - vw) + 60;
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		recalc();
 
-		try {
-			const snap = await getDocs(query(collection(db, 'experience'), orderBy('rank', 'asc')));
-			experiences = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Experience);
-		} catch (e) { console.error(e); } finally { loading = false; }
+		const loadExperiences = async () => {
+			try {
+				const snap = await getDocs(query(collection(db, 'experience'), orderBy('rank', 'asc')));
+				experiences = snap.docs.map(d => ({ id: d.id, ...d.data() }) as Experience);
+			} catch (e) { 
+				console.error(e); 
+			} finally { 
+				loading = false; 
+			}
 
-		// Recalc after data (trackW changes when count changes)
-		requestAnimationFrame(() => {
-			recalc();
-		});
+			// Recalc after data (trackW changes when count changes)
+			requestAnimationFrame(() => {
+				recalc();
+			});
+		};
+
+		loadExperiences();
 
 		// ── RAF loop: lerp displayX toward targetX ────────────────────────
 		let rafId: number | null = null;
@@ -100,6 +108,8 @@
 		startLoop();
 
 		// ── Native scroll drives horizontal progress ──────────────────────
+		// Outer div is tall; as page scrolls INTO it, targetX increases.
+		// Scrolling back UP decreases targetX. No wheel interception needed.
 		// Outer div is tall; as page scrolls INTO it, targetX increases.
 		// Scrolling back UP decreases targetX. No wheel interception needed.
 		function onScroll() {
@@ -131,7 +141,7 @@
 <!-- Mobile: outer is just a normal block container -->
 <div
 	bind:this={outer}
-	class="exp-outer"
+	class="exp-outer snap-start"
 	style={isMobile ? '' : `height:${outerH}px`}
 >
 

@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { LayoutDashboard, User, Briefcase, Rocket, Star, Code, LogOut, Menu, X } from 'lucide-svelte';
+	import { LayoutDashboard, User, Briefcase, Rocket, Star, Code, LogOut, Menu, X, MessageSquare } from 'lucide-svelte';
 	import { auth } from '$lib/firebase';
 	import { signOut } from 'firebase/auth';
 	import { appState } from '$lib/state.svelte';
@@ -39,7 +39,8 @@
 		{ name: 'About', path: '/admin/about', icon: User },
 		{ name: 'Experience', path: '/admin/experience', icon: Briefcase },
 		{ name: 'Projects', path: '/admin/projects', icon: Star },
-		{ name: 'Skills', path: '/admin/skills', icon: Code }
+		{ name: 'Skills', path: '/admin/skills', icon: Code },
+		{ name: 'Chat Submissions', path: '/admin/chats', icon: MessageSquare }
 	];
 </script>
 

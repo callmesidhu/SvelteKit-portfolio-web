@@ -36,7 +36,7 @@
 	];
 </script>
 
-<section id="contact" class="contact-section">
+<section id="contact" class="snap-start contact-section">
 
 	<!-- Animated grid background -->
 	<div class="grid-bg" aria-hidden="true"></div>
@@ -124,7 +124,7 @@
 		align-items: center;
 		justify-content: center;
 		overflow: hidden;
-		padding: 100px 16px 50px;
+		padding: 100px 1px 20px;
 	}
 
 	/* ── Animated grid background ────────────────────────────────────── */
@@ -261,7 +261,7 @@
 		padding: 14px 18px;
 		cursor: pointer;
 		transition: background .25s, border-color .25s, box-shadow .25s;
-		margin-bottom: 28px;
+		margin-bottom: 10px;
 		text-align: left;
 	}
 	.email-btn:hover {
@@ -396,10 +396,10 @@
 
 	/* ── Responsive ──────────────────────────────────────────────────── */
 	@media (max-width: 480px) {
-		.contact-section { padding: 90px 14px 48px; min-height: auto; }
+		.contact-section { padding: 90px 14px 20px; min-height: auto; }
 		.title { font-size: 1.8rem; letter-spacing: -.02em; }
 		.email-badge { display: none; }
-		.email-btn { padding: 12px 14px; gap: 10px; }
+		.email-btn { padding: 12px 14px; gap: 10px; margin-bottom: 8px; }
 		.email-icon { width: 30px; height: 30px; }
 		.social-card { padding: 12px 14px; gap: 10px; }
 		.subtitle { font-size: .8rem; margin-bottom: 24px; }

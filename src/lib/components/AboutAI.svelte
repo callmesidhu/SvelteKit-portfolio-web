@@ -99,30 +99,36 @@
 		setTimeout(() => showLimitWarning = false, 10000);
 	}
 
-	onMount(async () => {
-		try {
-			const docRef = doc(db, 'about', 'zPae0pmZUUI8p6dmga76');
-			const docSnap = await getDoc(docRef);
-			if (docSnap.exists()) {
-				aboutContent = docSnap.data().content;
-			}
-		} catch (err) {
-			console.error('Error fetching about content:', err);
-		} finally {
-			loading = false;
-		}
+	onMount(() => {
+		let observer: IntersectionObserver | null = null;
 
-		const observer = new IntersectionObserver((entries) => {
-			if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
-				typeEffect(aboutContent);
-				observer.disconnect();
+		const loadAbout = async () => {
+			try {
+				const docRef = doc(db, 'about', 'zPae0pmZUUI8p6dmga76');
+				const docSnap = await getDoc(docRef);
+				if (docSnap.exists()) {
+					aboutContent = docSnap.data().content;
+				}
+			} catch (err) {
+				console.error('Error fetching about content:', err);
+			} finally {
+				loading = false;
 			}
-		}, { threshold: 0.1 });
 
-		if (container) observer.observe(container);
+			observer = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
+					typeEffect(aboutContent);
+					observer?.disconnect();
+				}
+			}, { threshold: 0.1 });
+
+			if (container && observer) observer.observe(container);
+		};
+
+		loadAbout();
 
 		return () => {
-			observer.disconnect();
+			if (observer) observer.disconnect();
 			window.speechSynthesis.cancel();
 		};
 	});
@@ -155,9 +161,9 @@
 	accept="image/*"
 />
 
-<div bind:this={container} class="mx-auto max-w-4xl px-3 sm:px-4 pb-16 sm:pb-20">
-	<!-- Mobile: natural column flow; sm+: fixed 550px card -->
-	<div class="relative flex flex-col gap-5 sm:gap-8 sm:h-[550px]">
+<div bind:this={container} class="mx-auto max-w-4xl px-3 sm:px-4 w-full pb-2 sm:pb-4">
+	<!-- Mobile: natural column flow; sm+: fixed 480px card -->
+	<div class="relative flex flex-col gap-5 sm:gap-8 sm:h-[480px]">
 
 		<!-- User Message -->
 		<div class="flex justify-end shrink-0">

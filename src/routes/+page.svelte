@@ -19,24 +19,27 @@
 		<!-- Scroll-scrubbed frame animation (full viewport hero) -->
 		<ScrollFrameAnimation />
 
-		<!-- About Section (AI Chat Style) -->
-		<section id="about" class="relative bg-black py-16 sm:py-24">
-			<div class="mx-auto max-w-7xl px-4 sm:px-6">
-				<div class="mb-10 text-center sm:mb-16">
-					<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-						About <span class="text-[#B58A6C]">Me</span>
-					</h2>
-					<p class="mt-4 text-base text-white/40 sm:text-lg">
-						Get to know the person behind the code and the designs.
-					</p>
+		<!-- About Section Container (Handles sticky pinning on desktop) -->
+		<div class="about-container">
+			<!-- About Section (AI Chat Style) -->
+			<section id="about" class="about-sticky bg-black pt-24 pb-6 sm:pt-36 sm:pb-8 min-h-screen flex flex-col justify-between">
+				<div class="mx-auto max-w-7xl px-4 sm:px-6 w-full flex-1 flex flex-col justify-between">
+					<div class="mb-6 text-center sm:mb-8">
+						<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+							About <span class="text-[#B58A6C]">Me</span>
+						</h2>
+						<p class="mt-3 text-base text-white/40 sm:text-lg">
+							Get to know the person behind the code and the designs.
+						</p>
+					</div>
+					<AboutAI />
 				</div>
-				<AboutAI />
-			</div>
-		</section>
+			</section>
+		</div>
 
 		<!-- Tech Stack Section -->
-		<section id="skills" class="relative bg-black py-16 sm:py-24">
-			<div class="mx-auto max-w-7xl px-4 sm:px-6">
+		<section id="skills" class="skills-stack snap-start bg-black pt-24 pb-10 sm:pt-28 sm:pb-16 min-h-screen flex flex-col justify-center">
+			<div class="mx-auto max-w-7xl px-4 sm:px-6 w-full">
 				<div class="mb-10 text-center sm:mb-16">
 					<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
 						My <span class="text-[#B58A6C]">Tech Stack</span>

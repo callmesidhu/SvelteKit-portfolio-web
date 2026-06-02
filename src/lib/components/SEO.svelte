@@ -10,7 +10,7 @@
 	let {
 		title = 'S SIDHARTH | Full Stack Web & App Developer',
 		description = 'Portfolio of S SIDHARTH (callmesidhu). Full Stack Web & App Developer, Tech Founder, and AI & ML Enthusiast based in India.',
-		image = '/og-image.png', // You should create this image
+		image = '/favicon.png', 
 		canonical = 'https://callmesidhu.xyphx.com',
 		type = 'website'
 	}: Props = $props();
@@ -59,7 +59,7 @@
 			"sameAs": [
 				"https://github.com/callmesidhu",
 				"https://linkedin.com/in/callmesidhu",
-				"https://instagram.com/callmesidhu"
+				"https://instagram.com/callmesidhu.x"
 			],
 			"jobTitle": "Full Stack Web & App Developer",
 			"worksFor": {

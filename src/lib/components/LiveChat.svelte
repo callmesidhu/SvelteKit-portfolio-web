@@ -3,6 +3,10 @@
 	import Icons from './Icons.svelte';
 	import { fade, scale, slide, fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import botAvatar from '$lib/assets/luttappi.png';
+	import { db } from '$lib/firebase';
+	import { collection, addDoc } from 'firebase/firestore';
+	import { getVisitorLocation } from '$lib/analytics';
 
 	let { open = $bindable(false) } = $props();
 
@@ -17,7 +21,6 @@
 	let isTyping = $state(false);
 	let inputValue = $state('');
 	let container: HTMLElement | null = $state(null);
-	const botAvatar = "https://scontent.fcok10-1.fna.fbcdn.net/v/t39.30808-1/301889657_487543196711459_1978820073548572472_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=Dnt-X4xysAUQ7kNvwH8wtnV&_nc_oc=AdqjZa-36NzFcrEy4px5nCczQsSfpWW2h1sa0en-K4tR5UODotCS16F2vKtU6rtd_Qg&_nc_zt=24&_nc_ht=scontent.fcok10-1.fna&_nc_gid=tBbeerYIJ1NkGqx-qkIh9w&_nc_ss=7b289&oh=00_Af4hr4E0UztQl5LGRkZfVUa06rpsA0dT3uGRGQkbD7FTlg&oe=6A04E30C";
 
 	const steps = [
 		{ 
@@ -72,6 +75,34 @@
 			await addMessage('user', text);
 			
 			step++;
+
+			// Save to Firestore when all details are collected (email is step 3, step 4 is done)
+			if (step === 4) {
+				try {
+					await addDoc(collection(db, 'chat_submissions'), {
+						name: userData.name,
+						reason: userData.reason,
+						phone: userData.phone,
+						email: userData.email,
+						createdAt: new Date()
+					});
+
+					const location = await getVisitorLocation();
+					const description = location === 'Someone'
+						? `Visitor ${userData.name} submitted contact details via Luttappi`
+						: `Visitor ${userData.name} from ${location} submitted contact details via Luttappi`;
+
+					// Also log chat submission activity
+					await addDoc(collection(db, 'activity_logs'), {
+						type: 'chat_submission',
+						description,
+						createdAt: new Date()
+					});
+				} catch (err) {
+					console.error('Error saving chat submission to Firestore:', err);
+				}
+			}
+
 			const nextQ = steps[step].question.replace('{name}', userData.name);
 			await addMessage('ai', nextQ);
 		}
@@ -80,6 +111,35 @@
 	onMount(async () => {
 		if (messages.length === 0) {
 			await addMessage('ai', steps[0].question);
+		}
+	});
+
+	let hasLoggedOpen = false;
+	$effect(() => {
+		if (open) {
+			if (!hasLoggedOpen) {
+				hasLoggedOpen = true;
+				const logChatOpen = async () => {
+					try {
+						const { addDoc, collection } = await import('firebase/firestore');
+						const location = await getVisitorLocation();
+						const description = location === 'Someone'
+							? 'Visitor opened Luttappi chat bot'
+							: `Visitor from ${location} opened Luttappi chat bot`;
+
+						await addDoc(collection(db, 'activity_logs'), {
+							type: 'chat_open',
+							description,
+							createdAt: new Date()
+						});
+					} catch (e) {
+						console.error('Error logging chat open:', e);
+					}
+				};
+				logChatOpen();
+			}
+		} else {
+			hasLoggedOpen = false;
 		}
 	});
 
