@@ -384,12 +384,12 @@
 		background-position: center;
 		opacity: 0.5;
 		mask-image: radial-gradient(
-			circle 100px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
+			circle 200px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
 			black 0%, 
 			transparent 100%
 		);
 		-webkit-mask-image: radial-gradient(
-			circle 100px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
+			circle 200px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
 			black 0%, 
 			transparent 100%
 		);
@@ -401,10 +401,12 @@
 		bottom: 30px;
 		right: 40px;
 		font-family: 'Barlow', sans-serif;
-		font-size: 13px;
-		color: rgba(255, 255, 255, 0.3);
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.85);
 		letter-spacing: 3px;
-		font-weight: 500;
+		font-weight: 600;
+		z-index: 10;
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 	}
 
 	/* ── Progress bar ─────────────────────────────────────────────────────────── */
@@ -568,6 +570,12 @@
 		.hero-content {
 			padding: 0 16px;
 		}
+		.subtle-loader {
+			bottom: 24px;
+			left: 24px;
+			font-size: 12px;
+			letter-spacing: 2px;
+		}
 	}
 	@media (max-width: 480px) {
 		.hero-role-wrapper {
@@ -581,6 +589,12 @@
 		.hero-name {
 			font-size: 11px;
 			letter-spacing: 0.3em;
+		}
+		.subtle-loader {
+			bottom: 16px;
+			left: 16px;
+			font-size: 11px;
+			letter-spacing: 2px;
 		}
 	}
 </style>

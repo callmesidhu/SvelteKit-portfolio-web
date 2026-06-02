@@ -132,7 +132,7 @@
 
 	<!-- Center text overlay -->
 	<div class="center-overlay">
-		<h2 class="center-title">My <span>Projects</span></h2>
+		<h2 class="center-title">My <span>Highlights</span></h2>
 		<p class="center-desc">
 			Ideas built into reality — each one a story of creativity and code.
 		</p>
