@@ -162,6 +162,12 @@
 		flex-direction: column;
 		gap: 8px;
 		padding: 8px 0;
+		opacity: 0.35; /* Reduced opacity to make the Highlights text overlay highly visible */
+		transition: opacity 0.4s ease;
+	}
+
+	.projects-section:hover .rows-wrap {
+		opacity: 0.85; /* Fades back in when user hovers to explore projects */
 	}
 
 	/* ── Single row track ────────────────────────────────────────────── */
@@ -272,6 +278,7 @@
 		text-align: center;
 		padding: 36px 28px;
 		max-width: 480px;
+		pointer-events: none; /* Let hovers and clicks pass through to cards behind the text */
 	}
 
 	.center-title {
