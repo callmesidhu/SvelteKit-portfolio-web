@@ -582,8 +582,6 @@
 			padding: 0 16px;
 		}
 		.subtle-loader {
-			bottom: 24px;
-			left: 24px;
 			font-size: 12px;
 			letter-spacing: 2px;
 		}
@@ -602,9 +600,7 @@
 			letter-spacing: 0.3em;
 		}
 		.subtle-loader {
-			bottom: 16px;
-			left: 16px;
-			font-size: 11px;
+			font-size: 12px;
 			letter-spacing: 2px;
 		}
 	}

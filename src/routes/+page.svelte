@@ -40,9 +40,9 @@
 			<!-- About Section (AI Chat Style) -->
 			<section
 				id="about"
-				class="about-sticky flex min-h-screen flex-col justify-between bg-black pt-24 pb-6 sm:pt-36 sm:pb-8"
+				class="about-sticky flex min-h-screen flex-col justify-start bg-black pt-24 pb-6 sm:justify-between sm:pt-36 sm:pb-8"
 			>
-				<div class="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-between px-4 sm:px-6">
+				<div class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 sm:flex-1 sm:justify-between sm:px-6">
 					<div class="mb-6 text-center sm:mb-8">
 						<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
 							About <span class="text-[#B58A6C]">Me</span>

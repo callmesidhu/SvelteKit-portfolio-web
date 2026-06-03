@@ -78,6 +78,9 @@ body {
 		rgba(255, 255, 255, 0.15) 80%,
 		rgba(255, 255, 255, 0.45) 100%
 	);
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
 	-webkit-mask:
 		linear-gradient(#fff 0 0) content-box,
 		linear-gradient(#fff 0 0);
@@ -114,6 +117,9 @@ body {
 		rgba(255, 255, 255, 0.2) 80%,
 		rgba(255, 255, 255, 0.5) 100%
 	);
+	mask:
+		linear-gradient(#fff 0 0) content-box,
+		linear-gradient(#fff 0 0);
 	-webkit-mask:
 		linear-gradient(#fff 0 0) content-box,
 		linear-gradient(#fff 0 0);
@@ -225,6 +231,35 @@ body {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
+		background: #000;
+	}
+}
+
+@media (max-width: 768px) {
+	.about-container {
+		position: relative;
+		height: 190vh;
+	}
+	.about-sticky {
+		position: sticky;
+		top: 0;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+		z-index: 10;
+		overflow: hidden;
+		background: #000;
+	}
+	.skills-stack {
+		position: relative;
+		z-index: 20;
+		margin-top: -70vh;
+		min-height: auto;
+		padding-bottom: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
 		background: #000;
 	}
 }
