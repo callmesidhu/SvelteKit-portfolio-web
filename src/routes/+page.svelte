@@ -9,13 +9,11 @@
 	import SEO from '$lib/components/SEO.svelte';
 </script>
 
-<SEO 
+<SEO
 	title="CallMeSidhu | Full Stack Developer & Founder of XyphX"
 	description="Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare, DevOps, AI and modern web technologies."
 	canonical="https://callmesidhu.xyphx.com"
-	breadcrumbs={[
-		{ name: 'Home', item: 'https://callmesidhu.xyphx.com' }
-	]}
+	breadcrumbs={[{ name: 'Home', item: 'https://callmesidhu.xyphx.com' }]}
 />
 
 <div class="bg-black">
@@ -27,10 +25,9 @@
 		<div class="sr-only">
 			<h1>CallMeSidhu - Full Stack Developer & Founder of XyphX</h1>
 			<p>
-				Sidharth, known as CallMeSidhu, is a Full Stack Developer,
-				Founder & CEO of XyphX, Freelancer, and Software Engineer
-				specializing in React, Node.js, Flutter, Cloudflare, DevOps,
-				AI and modern web technologies.
+				Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX,
+				Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare,
+				DevOps, AI and modern web technologies.
 			</p>
 			<a href="https://github.com/callmesidhu">GitHub</a>
 			<a href="https://linkedin.com/in/callmesidhu">LinkedIn</a>
@@ -41,8 +38,11 @@
 		<!-- About Section Container (Handles sticky pinning on desktop) -->
 		<div class="about-container">
 			<!-- About Section (AI Chat Style) -->
-			<section id="about" class="about-sticky bg-black pt-24 pb-6 sm:pt-36 sm:pb-8 min-h-screen flex flex-col justify-between">
-				<div class="mx-auto max-w-7xl px-4 sm:px-6 w-full flex-1 flex flex-col justify-between">
+			<section
+				id="about"
+				class="about-sticky flex min-h-screen flex-col justify-between bg-black pt-24 pb-6 sm:pt-36 sm:pb-8"
+			>
+				<div class="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-between px-4 sm:px-6">
 					<div class="mb-6 text-center sm:mb-8">
 						<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
 							About <span class="text-[#B58A6C]">Me</span>
@@ -57,8 +57,11 @@
 		</div>
 
 		<!-- Tech Stack Section -->
-		<section id="skills" class="skills-stack snap-start bg-black pt-24 pb-10 sm:pt-28 sm:pb-16 min-h-screen flex flex-col justify-center">
-			<div class="mx-auto max-w-7xl px-4 sm:px-6 w-full">
+		<section
+			id="skills"
+			class="skills-stack flex min-h-screen snap-start flex-col justify-center bg-black pt-24 pb-10 sm:pt-28 sm:pb-16"
+		>
+			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6">
 				<div class="mb-10 text-center sm:mb-16">
 					<h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
 						My <span class="text-[#B58A6C]">Tech Stack</span>

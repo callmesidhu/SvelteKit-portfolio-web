@@ -1,8 +1,27 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { db } from '$lib/firebase';
-	import { collection, getDocs, addDoc, deleteDoc, doc, query, orderBy, updateDoc } from 'firebase/firestore';
-	import { Briefcase, Trash2, Plus, MapPin, Calendar, Building, Tag, Pencil, X } from 'lucide-svelte';
+	import {
+		collection,
+		getDocs,
+		addDoc,
+		deleteDoc,
+		doc,
+		query,
+		orderBy,
+		updateDoc
+	} from 'firebase/firestore';
+	import {
+		Briefcase,
+		Trash2,
+		Plus,
+		MapPin,
+		Calendar,
+		Building,
+		Tag,
+		Pencil,
+		X
+	} from 'lucide-svelte';
 
 	interface Experience {
 		id: string;
@@ -155,7 +174,9 @@
 		</div>
 		<form onsubmit={handleAdd} class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			<div class="space-y-2">
-				<label for="exp-title" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				<label
+					for="exp-title"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
 					><Building size={14} /> Title *</label
 				>
 				<input
@@ -167,7 +188,9 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="exp-company" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				<label
+					for="exp-company"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
 					><Briefcase size={14} /> Company *</label
 				>
 				<input
@@ -179,7 +202,8 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="exp-rank" class="text-sm font-medium text-admin-charcoal/70">Order/Rank *</label>
+				<label for="exp-rank" class="text-sm font-medium text-admin-charcoal/70">Order/Rank *</label
+				>
 				<input
 					id="exp-rank"
 					type="number"
@@ -189,7 +213,9 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="exp-type" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				<label
+					for="exp-type"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
 					><Tag size={14} /> Type</label
 				>
 				<input
@@ -201,7 +227,9 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="exp-duration" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				<label
+					for="exp-duration"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
 					><Calendar size={14} /> Duration</label
 				>
 				<input
@@ -213,7 +241,9 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="exp-location" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				<label
+					for="exp-location"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
 					><MapPin size={14} /> Location</label
 				>
 				<input
@@ -225,7 +255,9 @@
 				/>
 			</div>
 			<div class="space-y-2 lg:col-span-2">
-				<label for="exp-skills" class="text-sm font-medium text-admin-charcoal/70">Skills (Comma separated)</label>
+				<label for="exp-skills" class="text-sm font-medium text-admin-charcoal/70"
+					>Skills (Comma separated)</label
+				>
 				<input
 					id="exp-skills"
 					type="text"
@@ -235,7 +267,9 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="exp-description" class="text-sm font-medium text-admin-charcoal/70">Description</label>
+				<label for="exp-description" class="text-sm font-medium text-admin-charcoal/70"
+					>Description</label
+				>
 				<input
 					id="exp-description"
 					type="text"
@@ -280,7 +314,9 @@
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 		{#if loading}
 			{#each Array(2) as _, i (i)}
-				<div class="h-64 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"></div>
+				<div
+					class="h-64 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"
+				></div>
 			{/each}
 		{:else}
 			{#each experiences as exp (exp.id)}

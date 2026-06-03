@@ -21,7 +21,7 @@ export async function getVisitorLocation(): Promise<string> {
 		// Try primary IP geolocation API (ipapi.co)
 		const res = await fetch('https://ipapi.co/json/');
 		if (res.ok) {
-			const data = await res.json() as IpapiResponse;
+			const data = (await res.json()) as IpapiResponse;
 			if (data && data.city) {
 				const region = data.region ? `, ${data.region}` : '';
 				const country = data.country_name ? `, ${data.country_name}` : '';
@@ -37,7 +37,7 @@ export async function getVisitorLocation(): Promise<string> {
 		try {
 			const res = await fetch('https://geolocation-db.com/json/');
 			if (res.ok) {
-				const data = await res.json() as GeolocationDbResponse;
+				const data = (await res.json()) as GeolocationDbResponse;
 				if (data && data.city && data.city !== 'Not Found') {
 					const stateStr = data.state && data.state !== 'null' ? `${data.state}, ` : '';
 					const formatted = `${data.city}, ${stateStr}${data.country_name || ''}`;

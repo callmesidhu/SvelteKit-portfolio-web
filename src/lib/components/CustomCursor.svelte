@@ -44,13 +44,13 @@
 		// Animation loop for trails
 		const updateTrails = () => {
 			let newTrails = [...trails];
-			
+
 			// First trail follows mouse
 			newTrails[0] = {
 				x: newTrails[0].x + (mouseX - newTrails[0].x) * 0.35,
 				y: newTrails[0].y + (mouseY - newTrails[0].y) * 0.35
 			};
-			
+
 			// Subsequent trails follow the previous one
 			for (let i = 1; i < NUM_TRAILS; i++) {
 				newTrails[i] = {
@@ -58,11 +58,11 @@
 					y: newTrails[i].y + (newTrails[i - 1].y - newTrails[i].y) * 0.4
 				};
 			}
-			
+
 			trails = newTrails;
 			rafId = requestAnimationFrame(updateTrails);
 		};
-		
+
 		rafId = requestAnimationFrame(updateTrails);
 
 		return () => {
@@ -78,11 +78,11 @@
 <!-- Trails rendered separately so they follow behind smoothly -->
 {#if isVisible && !isHovering}
 	{#each trails as trail, i}
-		<div 
+		<div
 			class="cursor-trail"
 			style="
 				transform: translate({trail.x}px, {trail.y}px) translate(-50%, -50%);
-				opacity: {1 - (i / NUM_TRAILS)};
+				opacity: {1 - i / NUM_TRAILS};
 				width: {8 - i}px;
 				height: {8 - i}px;
 			"
@@ -91,7 +91,7 @@
 {/if}
 
 <!-- Main dot -->
-<div 
+<div
 	class="cursor-dot"
 	class:visible={isVisible}
 	class:hovering={isHovering}
@@ -99,18 +99,22 @@
 ></div>
 
 <!-- Text Wrapper -->
-<div 
-	class="custom-cursor-wrapper" 
+<div
+	class="custom-cursor-wrapper"
 	class:visible={isVisible}
 	class:hovering={isHovering}
 	style="transform: translate({mouseX}px, {mouseY}px);"
 >
 	<div class="cursor-text">
 		<svg viewBox="0 0 100 100" width="80" height="80">
-			<path id="cursor-curve" d="M 50 50 m -35 0 a 35 35 0 1 1 70 0 a 35 35 0 1 1 -70 0" fill="transparent" />
+			<path
+				id="cursor-curve"
+				d="M 50 50 m -35 0 a 35 35 0 1 1 70 0 a 35 35 0 1 1 -70 0"
+				fill="transparent"
+			/>
 			<text class="svg-text">
 				<textPath href="#cursor-curve" startOffset="0" textLength="220">
-					CALLMESIDHU • CALLMESIDHU • 
+					CALLMESIDHU • CALLMESIDHU •
 				</textPath>
 			</text>
 		</svg>
@@ -123,7 +127,10 @@
 		cursor: none;
 	}
 
-	:global(a), :global(button), :global(input), :global(textarea) {
+	:global(a),
+	:global(button),
+	:global(input),
+	:global(textarea) {
 		cursor: none !important;
 	}
 
@@ -153,13 +160,17 @@
 		left: 0;
 		width: 8px;
 		height: 8px;
-		background-color: #B58A6C; 
+		background-color: #b58a6c;
 		border-radius: 50%;
 		pointer-events: none;
 		z-index: 100000;
 		opacity: 0;
 		/* Use transition only for scale/color on hover, position tracks instantly */
-		transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, opacity 0.3s ease;
+		transition:
+			width 0.2s ease,
+			height 0.2s ease,
+			background-color 0.2s ease,
+			opacity 0.3s ease;
 	}
 
 	.cursor-dot.visible {
@@ -170,7 +181,7 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		background-color: #B58A6C; 
+		background-color: #b58a6c;
 		border-radius: 50%;
 		pointer-events: none;
 		z-index: 99998;
@@ -182,7 +193,9 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		animation: spin 10s linear infinite;
-		transition: opacity 0.3s ease, transform 0.3s ease;
+		transition:
+			opacity 0.3s ease,
+			transform 0.3s ease;
 		opacity: 1;
 		display: flex;
 		align-items: center;
@@ -198,7 +211,7 @@
 		font-size: 13px;
 		letter-spacing: 2px;
 		font-weight: 600;
-		fill: #B58A6C;
+		fill: #b58a6c;
 		text-transform: uppercase;
 	}
 
@@ -228,7 +241,11 @@
 
 	/* Disable on mobile */
 	@media (max-width: 768px) {
-		:global(body), :global(a), :global(button), :global(input), :global(textarea) {
+		:global(body),
+		:global(a),
+		:global(button),
+		:global(input),
+		:global(textarea) {
 			cursor: auto !important;
 		}
 		.custom-cursor-wrapper {

@@ -5,7 +5,7 @@
 	async function copyEmail() {
 		await navigator.clipboard.writeText(EMAIL);
 		copied = true;
-		setTimeout(() => copied = false, 2000);
+		setTimeout(() => (copied = false), 2000);
 	}
 
 	const socials = [
@@ -36,8 +36,7 @@
 	];
 </script>
 
-<section id="contact" class="snap-start contact-section">
-
+<section id="contact" class="contact-section snap-start">
 	<!-- Animated grid background -->
 	<div class="grid-bg" aria-hidden="true"></div>
 
@@ -51,25 +50,22 @@
 
 	<!-- Main content -->
 	<div class="content">
-
 		<!-- Eyebrow -->
 		<p class="eyebrow">
 			<span class="blink">▮</span> CONNECT WITH ME
 		</p>
 
 		<!-- Heading -->
-		<h2 class="title">Let's Build<br/><span>Something</span> Together</h2>
+		<h2 class="title">Let's Build<br /><span>Something</span> Together</h2>
 
-		<p class="subtitle">
-			Pick your preferred channel — I'll respond fast.
-		</p>
+		<p class="subtitle">Pick your preferred channel — I'll respond fast.</p>
 
 		<!-- Email CTA -->
 		<button class="email-btn" onclick={copyEmail} aria-label="Copy email address">
 			<span class="email-icon">
 				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<rect x="2" y="4" width="20" height="16" rx="2"/>
-					<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+					<rect x="2" y="4" width="20" height="16" rx="2" />
+					<path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
 				</svg>
 			</span>
 			<span class="email-text">{EMAIL}</span>
@@ -95,7 +91,7 @@
 					</div>
 					<div class="s-arrow">
 						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-							<path d="M5 12h14M12 5l7 7-7 7"/>
+							<path d="M5 12h14M12 5l7 7-7 7" />
 						</svg>
 					</div>
 					<!-- Corner accent -->
@@ -110,7 +106,6 @@
 			© {new Date().getFullYear()} <span>callmesidhu</span> — Built with SvelteKit
 		</p>
 	</div>
-
 </section>
 
 <style>
@@ -132,14 +127,18 @@
 		position: absolute;
 		inset: 0;
 		background-image:
-			linear-gradient(rgba(181,138,108,.04) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(181,138,108,.04) 1px, transparent 1px);
+			linear-gradient(rgba(181, 138, 108, 0.04) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(181, 138, 108, 0.04) 1px, transparent 1px);
 		background-size: 60px 60px;
 		animation: grid-drift 20s linear infinite;
 	}
 	@keyframes grid-drift {
-		from { background-position: 0 0; }
-		to   { background-position: 60px 60px; }
+		from {
+			background-position: 0 0;
+		}
+		to {
+			background-position: 60px 60px;
+		}
 	}
 
 	/* ── Orbital rings ───────────────────────────────────────────────── */
@@ -158,43 +157,68 @@
 		position: absolute;
 		inset: 0;
 		border-radius: 50%;
-		border: 1px solid rgba(181,138,108,0.12);
+		border: 1px solid rgba(181, 138, 108, 0.12);
 	}
-	.orb1 { animation: spin 18s linear infinite; border-color: rgba(181,138,108,.15); }
+	.orb1 {
+		animation: spin 18s linear infinite;
+		border-color: rgba(181, 138, 108, 0.15);
+	}
 	.orb2 {
 		inset: 12%;
-		border-color: rgba(181,138,108,.1);
+		border-color: rgba(181, 138, 108, 0.1);
 		animation: spin 26s linear infinite reverse;
 	}
 	.orb3 {
 		inset: 26%;
-		border-color: rgba(181,138,108,.08);
+		border-color: rgba(181, 138, 108, 0.08);
 		animation: spin 34s linear infinite;
 	}
 	/* Orbit dots */
-	.orb1::before, .orb2::before, .orb3::before {
+	.orb1::before,
+	.orb2::before,
+	.orb3::before {
 		content: '';
 		position: absolute;
-		top: -4px; left: 50%;
-		width: 8px; height: 8px;
+		top: -4px;
+		left: 50%;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
-		background: #B58A6C;
-		box-shadow: 0 0 12px #B58A6C, 0 0 24px rgba(181,138,108,.5);
+		background: #b58a6c;
+		box-shadow:
+			0 0 12px #b58a6c,
+			0 0 24px rgba(181, 138, 108, 0.5);
 		transform: translateX(-50%);
 	}
 	.orb-core {
 		position: absolute;
 		inset: 38%;
 		border-radius: 50%;
-		background: radial-gradient(circle, rgba(181,138,108,.08) 0%, transparent 70%);
-		border: 1px solid rgba(181,138,108,.2);
-		box-shadow: inset 0 0 40px rgba(181,138,108,.05), 0 0 60px rgba(181,138,108,.06);
+		background: radial-gradient(circle, rgba(181, 138, 108, 0.08) 0%, transparent 70%);
+		border: 1px solid rgba(181, 138, 108, 0.2);
+		box-shadow:
+			inset 0 0 40px rgba(181, 138, 108, 0.05),
+			0 0 60px rgba(181, 138, 108, 0.06);
 		animation: pulse-core 4s ease-in-out infinite;
 	}
-	@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
+	}
 	@keyframes pulse-core {
-		0%,100% { transform: scale(1); opacity: 0.6; }
-		50%      { transform: scale(1.08); opacity: 1; }
+		0%,
+		100% {
+			transform: scale(1);
+			opacity: 0.6;
+		}
+		50% {
+			transform: scale(1.08);
+			opacity: 1;
+		}
 	}
 
 	/* ── Content ─────────────────────────────────────────────────────── */
@@ -207,17 +231,27 @@
 
 	/* Eyebrow */
 	.eyebrow {
-		font-size: .6rem;
-		letter-spacing: .35em;
+		font-size: 0.6rem;
+		letter-spacing: 0.35em;
 		text-transform: uppercase;
-		color: #B58A6C;
+		color: #b58a6c;
 		margin-bottom: 18px;
 		display: flex;
 		align-items: center;
 		gap: 8px;
 	}
-	.blink { animation: blink 1s step-end infinite; }
-	@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+	.blink {
+		animation: blink 1s step-end infinite;
+	}
+	@keyframes blink {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
+	}
 
 	/* Heading */
 	.title {
@@ -226,25 +260,27 @@
 		color: #fff;
 		line-height: 1.1;
 		margin: 0 0 16px;
-		letter-spacing: -.03em;
+		letter-spacing: -0.03em;
 	}
 	.title span {
-		color: #B58A6C;
+		color: #b58a6c;
 		position: relative;
 	}
 	.title span::after {
 		content: '';
 		position: absolute;
-		bottom: -2px; left: 0; right: 0;
+		bottom: -2px;
+		left: 0;
+		right: 0;
 		height: 2px;
-		background: linear-gradient(90deg, #B58A6C, transparent);
+		background: linear-gradient(90deg, #b58a6c, transparent);
 		border-radius: 2px;
 	}
 
 	/* Subtitle */
 	.subtitle {
-		font-size: .88rem;
-		color: rgba(255,255,255,.38);
+		font-size: 0.88rem;
+		color: rgba(255, 255, 255, 0.38);
 		line-height: 1.7;
 		margin-bottom: 36px;
 	}
@@ -255,29 +291,38 @@
 		align-items: center;
 		gap: 12px;
 		width: 100%;
-		background: rgba(181,138,108,.06);
-		border: 1px solid rgba(181,138,108,.22);
+		background: rgba(181, 138, 108, 0.06);
+		border: 1px solid rgba(181, 138, 108, 0.22);
 		border-radius: 14px;
 		padding: 14px 18px;
 		cursor: pointer;
-		transition: background .25s, border-color .25s, box-shadow .25s;
+		transition:
+			background 0.25s,
+			border-color 0.25s,
+			box-shadow 0.25s;
 		margin-bottom: 10px;
 		text-align: left;
 	}
 	.email-btn:hover {
-		background: rgba(181,138,108,.1);
-		border-color: rgba(181,138,108,.45);
-		box-shadow: 0 0 30px rgba(181,138,108,.12);
+		background: rgba(181, 138, 108, 0.1);
+		border-color: rgba(181, 138, 108, 0.45);
+		box-shadow: 0 0 30px rgba(181, 138, 108, 0.12);
 	}
 	.email-icon {
 		flex-shrink: 0;
-		width: 36px; height: 36px;
+		width: 36px;
+		height: 36px;
 		border-radius: 10px;
-		background: rgba(181,138,108,.1);
-		display: flex; align-items: center; justify-content: center;
-		color: #B58A6C;
+		background: rgba(181, 138, 108, 0.1);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #b58a6c;
 	}
-	.email-icon svg { width: 18px; height: 18px; }
+	.email-icon svg {
+		width: 18px;
+		height: 18px;
+	}
 
 	.email-text {
 		flex: 1;
@@ -285,27 +330,30 @@
 		font-weight: 600;
 		color: #fff;
 		font-family: 'Courier New', monospace;
-		letter-spacing: .02em;
+		letter-spacing: 0.02em;
 		word-break: break-all;
 		min-width: 0;
 	}
 
 	.email-badge {
-		font-size: .6rem;
+		font-size: 0.6rem;
 		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: .1em;
-		color: rgba(255,255,255,.35);
-		border: 1px solid rgba(255,255,255,.12);
+		letter-spacing: 0.1em;
+		color: rgba(255, 255, 255, 0.35);
+		border: 1px solid rgba(255, 255, 255, 0.12);
 		border-radius: 99px;
 		padding: 3px 10px;
-		transition: color .2s, border-color .2s, background .2s;
+		transition:
+			color 0.2s,
+			border-color 0.2s,
+			background 0.2s;
 		white-space: nowrap;
 	}
 	.email-badge.copied {
-		color: #B58A6C;
-		border-color: rgba(181,138,108,.4);
-		background: rgba(181,138,108,.08);
+		color: #b58a6c;
+		border-color: rgba(181, 138, 108, 0.4);
+		background: rgba(181, 138, 108, 0.08);
 	}
 
 	/* ── Social cards ────────────────────────────────────────────────── */
@@ -322,51 +370,77 @@
 		align-items: center;
 		gap: 14px;
 		padding: 14px 18px;
-		background: rgba(255,255,255,.02);
-		border: 1px solid rgba(255,255,255,.06);
+		background: rgba(255, 255, 255, 0.02);
+		border: 1px solid rgba(255, 255, 255, 0.06);
 		border-radius: 14px;
 		text-decoration: none;
-		transition: background .25s, border-color .25s, transform .25s;
+		transition:
+			background 0.25s,
+			border-color 0.25s,
+			transform 0.25s;
 		overflow: hidden;
 	}
 	.social-card::before {
 		content: '';
 		position: absolute;
 		inset: 0;
-		background: linear-gradient(90deg, rgba(181,138,108,.05), transparent);
+		background: linear-gradient(90deg, rgba(181, 138, 108, 0.05), transparent);
 		opacity: 0;
-		transition: opacity .3s;
+		transition: opacity 0.3s;
 	}
 	.social-card:hover {
-		background: rgba(255,255,255,.04);
-		border-color: rgba(181,138,108,.25);
+		background: rgba(255, 255, 255, 0.04);
+		border-color: rgba(181, 138, 108, 0.25);
 		transform: translateX(4px);
 	}
-	.social-card:hover::before { opacity: 1; }
+	.social-card:hover::before {
+		opacity: 1;
+	}
 
 	/* Corner accents */
 	.s-corner {
 		position: absolute;
-		width: 10px; height: 10px;
+		width: 10px;
+		height: 10px;
 		opacity: 0;
-		transition: opacity .3s;
+		transition: opacity 0.3s;
 	}
-	.s-corner.tl { top: 5px; left: 5px; border-top: 1px solid #B58A6C; border-left: 1px solid #B58A6C; }
-	.s-corner.br { bottom: 5px; right: 5px; border-bottom: 1px solid #B58A6C; border-right: 1px solid #B58A6C; }
-	.social-card:hover .s-corner { opacity: 1; }
+	.s-corner.tl {
+		top: 5px;
+		left: 5px;
+		border-top: 1px solid #b58a6c;
+		border-left: 1px solid #b58a6c;
+	}
+	.s-corner.br {
+		bottom: 5px;
+		right: 5px;
+		border-bottom: 1px solid #b58a6c;
+		border-right: 1px solid #b58a6c;
+	}
+	.social-card:hover .s-corner {
+		opacity: 1;
+	}
 
 	.s-icon {
 		flex-shrink: 0;
-		width: 36px; height: 36px;
+		width: 36px;
+		height: 36px;
 		border-radius: 10px;
-		background: rgba(181,138,108,.08);
-		border: 1px solid rgba(181,138,108,.12);
-		display: flex; align-items: center; justify-content: center;
-		color: #B58A6C;
-		transition: background .25s;
+		background: rgba(181, 138, 108, 0.08);
+		border: 1px solid rgba(181, 138, 108, 0.12);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #b58a6c;
+		transition: background 0.25s;
 	}
-	.social-card:hover .s-icon { background: rgba(181,138,108,.15); }
-	.s-icon :global(svg) { width: 16px; height: 16px; }
+	.social-card:hover .s-icon {
+		background: rgba(181, 138, 108, 0.15);
+	}
+	.s-icon :global(svg) {
+		width: 16px;
+		height: 16px;
+	}
 
 	.s-info {
 		flex: 1;
@@ -374,40 +448,87 @@
 		flex-direction: column;
 		gap: 2px;
 	}
-	.s-label  { font-size: .78rem; font-weight: 700; color: #fff; }
-	.s-handle { font-size: .65rem; color: rgba(255,255,255,.3); }
+	.s-label {
+		font-size: 0.78rem;
+		font-weight: 700;
+		color: #fff;
+	}
+	.s-handle {
+		font-size: 0.65rem;
+		color: rgba(255, 255, 255, 0.3);
+	}
 
 	.s-arrow {
 		flex-shrink: 0;
-		color: rgba(181,138,108,.4);
-		transition: color .25s, transform .25s;
+		color: rgba(181, 138, 108, 0.4);
+		transition:
+			color 0.25s,
+			transform 0.25s;
 	}
-	.social-card:hover .s-arrow { color: #B58A6C; transform: translateX(3px); }
-	.s-arrow svg { width: 16px; height: 16px; }
+	.social-card:hover .s-arrow {
+		color: #b58a6c;
+		transform: translateX(3px);
+	}
+	.s-arrow svg {
+		width: 16px;
+		height: 16px;
+	}
 
 	/* ── Footer note ─────────────────────────────────────────────────── */
 	.footer-note {
-		font-size: .65rem;
-		color: rgba(255,255,255,.18);
+		font-size: 0.65rem;
+		color: rgba(255, 255, 255, 0.18);
 		text-align: center;
-		letter-spacing: .05em;
+		letter-spacing: 0.05em;
 	}
-	.footer-note span { color: rgba(181,138,108,.5); }
+	.footer-note span {
+		color: rgba(181, 138, 108, 0.5);
+	}
 
 	/* ── Responsive ──────────────────────────────────────────────────── */
 	@media (max-width: 480px) {
-		.contact-section { padding: 90px 14px 20px; min-height: auto; }
-		.title { font-size: 1.8rem; letter-spacing: -.02em; }
-		.email-badge { display: none; }
-		.email-btn { padding: 12px 14px; gap: 10px; margin-bottom: 8px; }
-		.email-icon { width: 30px; height: 30px; }
-		.social-card { padding: 12px 14px; gap: 10px; }
-		.subtitle { font-size: .8rem; margin-bottom: 24px; }
-		.socials { gap: 8px; margin-bottom: 28px; }
+		.contact-section {
+			padding: 90px 14px 20px;
+			min-height: auto;
+		}
+		.title {
+			font-size: 1.8rem;
+			letter-spacing: -0.02em;
+		}
+		.email-badge {
+			display: none;
+		}
+		.email-btn {
+			padding: 12px 14px;
+			gap: 10px;
+			margin-bottom: 8px;
+		}
+		.email-icon {
+			width: 30px;
+			height: 30px;
+		}
+		.social-card {
+			padding: 12px 14px;
+			gap: 10px;
+		}
+		.subtitle {
+			font-size: 0.8rem;
+			margin-bottom: 24px;
+		}
+		.socials {
+			gap: 8px;
+			margin-bottom: 28px;
+		}
 	}
 	@media (max-width: 768px) {
-		.orb-wrap { display: none; }
-		.title { font-size: 2rem; }
-		.content { max-width: 100%; }
+		.orb-wrap {
+			display: none;
+		}
+		.title {
+			font-size: 2rem;
+		}
+		.content {
+			max-width: 100%;
+		}
 	}
 </style>

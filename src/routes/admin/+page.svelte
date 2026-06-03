@@ -38,7 +38,9 @@
 			// Fetch recent activity logs
 			const q = query(collection(db, 'activity_logs'), orderBy('createdAt', 'desc'), limit(5));
 			const querySnapshot = await getDocs(q);
-			activityLogs = querySnapshot.docs.map((doc) => ({ docId: doc.id, ...doc.data() }) as ActivityLog);
+			activityLogs = querySnapshot.docs.map(
+				(doc) => ({ docId: doc.id, ...doc.data() }) as ActivityLog
+			);
 		} catch (err) {
 			console.error('Error fetching dashboard overview data:', err);
 		} finally {
@@ -55,7 +57,7 @@
 	// Calculate session growth dynamically
 	const growth = $derived.by(() => {
 		if (sessions === null) return '...';
-		return '+' + Math.min(100, Math.round((sessions / 10) + 5)) + '%';
+		return '+' + Math.min(100, Math.round(sessions / 10 + 5)) + '%';
 	});
 
 	// Calculate performance percentile dynamically
@@ -101,7 +103,7 @@
 		if (!timestamp) return 'Just now';
 		const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
 		const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-		
+
 		let interval = Math.floor(seconds / 31536000);
 		if (interval >= 1) return interval + ' year' + (interval > 1 ? 's' : '') + ' ago';
 		interval = Math.floor(seconds / 2592000);
@@ -116,7 +118,7 @@
 	}
 </script>
 
-<SEO 
+<SEO
 	title="Admin Dashboard | CallMeSidhu"
 	description="Admin dashboard for CallMeSidhu portfolio."
 	robots="noindex, nofollow"
@@ -137,8 +139,7 @@
 					<div class="h-12 w-12 {stat.bg} {stat.color} flex items-center justify-center rounded-xl">
 						<stat.icon size={24} />
 					</div>
-					<span
-						class="rounded-full bg-admin-clay/10 px-2 py-1 text-xs font-medium text-admin-clay"
+					<span class="rounded-full bg-admin-clay/10 px-2 py-1 text-xs font-medium text-admin-clay"
 						>Active</span
 					>
 				</div>
@@ -153,14 +154,14 @@
 	<div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
 		<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-8">
 			<h3 class="mb-6 text-xl font-bold text-admin-charcoal">Recent Activity</h3>
-			<div class="space-y-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+			<div class="custom-scrollbar max-h-[300px] space-y-6 overflow-y-auto pr-2">
 				{#if loading}
 					{#each Array(4) as _, i (i)}
-						<div class="flex items-start gap-4 animate-pulse">
+						<div class="flex animate-pulse items-start gap-4">
 							<div class="mt-2 h-2 w-2 rounded-full bg-admin-clay/45"></div>
 							<div class="flex-1 space-y-2">
-								<div class="h-3 rounded bg-admin-stone/40 w-3/4"></div>
-								<div class="h-2 rounded bg-admin-stone/30 w-1/4"></div>
+								<div class="h-3 w-3/4 rounded bg-admin-stone/40"></div>
+								<div class="h-2 w-1/4 rounded bg-admin-stone/30"></div>
 							</div>
 						</div>
 					{/each}
@@ -172,9 +173,9 @@
 				{:else}
 					{#each activityLogs as log (log.docId)}
 						<div class="flex items-start gap-4">
-							<div class="mt-2 h-2 w-2 rounded-full bg-admin-clay shrink-0"></div>
+							<div class="mt-2 h-2 w-2 shrink-0 rounded-full bg-admin-clay"></div>
 							<div>
-								<p class="text-sm text-admin-charcoal/90 leading-normal">
+								<p class="text-sm leading-normal text-admin-charcoal/90">
 									{log.description}
 								</p>
 								<p class="mt-1 text-xs text-admin-charcoal/50">{timeAgo(log.createdAt)}</p>
@@ -190,8 +191,9 @@
 		>
 			<h3 class="mb-4 text-2xl font-bold text-admin-charcoal">Portfolio Performance</h3>
 			<p class="mb-6 leading-relaxed text-admin-charcoal/80">
-				Your portfolio is performing better than <span class="font-bold text-admin-charcoal">{performancePercentile}</span> of other
-				creators this month. Keep updating your projects to maintain visibility.
+				Your portfolio is performing better than <span class="font-bold text-admin-charcoal"
+					>{performancePercentile}</span
+				> of other creators this month. Keep updating your projects to maintain visibility.
 			</p>
 			<button
 				class="self-start rounded-xl bg-admin-clay px-6 py-3 font-bold text-white transition-all hover:bg-[#A37B60]"
@@ -199,7 +201,6 @@
 				View Full Report
 			</button>
 		</div>
-
 	</div>
 </div>
 

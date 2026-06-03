@@ -50,7 +50,7 @@
 	let rafId: number;
 	let targetFrame = 0;
 	let renderedFrame = 0;
-	
+
 	// ─── Typing Animation ───────────────────────────────────────────────────────
 	let roles = $state<string[]>([]);
 	let roleIndex = $state(0);
@@ -62,7 +62,7 @@
 	function type() {
 		if (roles.length === 0) return;
 		const currentRole = roles[roleIndex];
-		
+
 		if (isDeleting) {
 			displayedText = currentRole.substring(0, charIndex - 1);
 			charIndex--;
@@ -88,8 +88,6 @@
 
 		setTimeout(type, typeSpeed);
 	}
-
-
 
 	// ─── Preload ───────────────────────────────────────────────────────────────
 	function preloadFrames() {
@@ -172,16 +170,18 @@
 		ctx = canvas.getContext('2d');
 		resizeCanvas();
 		preloadFrames();
-		
+
 		// Fetch roles from Firebase
 		const fetchRoles = async () => {
 			try {
 				const querySnapshot = await getDocs(collection(db, 'roles'));
-				const fetchedRoles = querySnapshot.docs.map(doc => doc.data() as { role: string; order: number });
+				const fetchedRoles = querySnapshot.docs.map(
+					(doc) => doc.data() as { role: string; order: number }
+				);
 				// Sort by order
 				fetchedRoles.sort((a, b) => (a.order || 0) - (b.order || 0));
-				roles = fetchedRoles.map(r => r.role);
-				
+				roles = fetchedRoles.map((r) => r.role);
+
 				if (roles.length > 0) {
 					type();
 				}
@@ -215,7 +215,13 @@
   Outer section is tall so the browser gives us real scroll distance.
   Inner sticky div holds the canvas at viewport height while the user scrolls.
 -->
-<section id="home" bind:this={section} class="frame-anim-section" style="height: {SCROLL_MULTIPLIER * 100}vh;" aria-label="Scroll-driven frame animation">
+<section
+	id="home"
+	bind:this={section}
+	class="frame-anim-section"
+	style="height: {SCROLL_MULTIPLIER * 100}vh;"
+	aria-label="Scroll-driven frame animation"
+>
 	<div class="sticky-viewport">
 		<canvas bind:this={canvas} class="frame-canvas"></canvas>
 
@@ -226,16 +232,13 @@
 
 		<!-- Custom Spotlight Loading overlay -->
 		{#if showLoadingScreen}
-			<div 
-				class="custom-loading-screen" 
+			<div
+				class="custom-loading-screen"
 				class:dissolving={isReady}
 				onmousemove={handleMouseMove}
 				role="presentation"
 			>
-				<div 
-					class="spotlight-image"
-					style="--mouse-x: {mouseX}px; --mouse-y: {mouseY}px;"
-				></div>
+				<div class="spotlight-image" style="--mouse-x: {mouseX}px; --mouse-y: {mouseY}px;"></div>
 
 				<!-- Fades applied specifically to the loading background image -->
 				<div class="top-fade" aria-hidden="true"></div>
@@ -260,13 +263,16 @@
 
 		<!-- Hero Text Overlay -->
 		{#if isReady}
-			<div class="hero-text-overlay" style:opacity={currentFrame < 15 ? 1 : Math.max(0, 1 - (currentFrame - 15) / 10)}>
+			<div
+				class="hero-text-overlay"
+				style:opacity={currentFrame < 15 ? 1 : Math.max(0, 1 - (currentFrame - 15) / 10)}
+			>
 				<div class="hero-content">
 					<h1 class="hero-title">
 						<span class="hero-name">S SIDHARTH</span>
 						<div class="hero-role-wrapper">
 							<span class="hero-role-prefix">Are you looking for a</span>
-							<br class="lg:hidden">
+							<br class="lg:hidden" />
 							<span class="hero-role-typing">{displayedText}?</span>
 							<span class="hero-cursor" class:blink={!isTyping}></span>
 						</div>
@@ -384,13 +390,13 @@
 		background-position: center;
 		opacity: 0.5;
 		mask-image: radial-gradient(
-			circle 200px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
-			black 0%, 
+			circle 200px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+			black 0%,
 			transparent 100%
 		);
 		-webkit-mask-image: radial-gradient(
-			circle 200px at var(--mouse-x, -1000px) var(--mouse-y, -1000px), 
-			black 0%, 
+			circle 200px at var(--mouse-x, -1000px) var(--mouse-y, -1000px),
+			black 0%,
 			transparent 100%
 		);
 		transition: opacity 0.3s;
@@ -481,7 +487,7 @@
 		z-index: 5;
 		pointer-events: none;
 		transition: opacity 0.4s ease;
-		background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, transparent 70%);
+		background: radial-gradient(circle at center, rgba(0, 0, 0, 0.4) 0%, transparent 70%);
 	}
 
 	.hero-content {
@@ -500,7 +506,7 @@
 		font-family: 'Barlow', sans-serif;
 		font-size: 14px;
 		letter-spacing: 0.4em;
-		color: #B58A6C;
+		color: #b58a6c;
 		font-weight: 700;
 		text-transform: uppercase;
 		opacity: 0.9;
@@ -531,9 +537,9 @@
 		display: inline-block;
 		width: 3px;
 		height: 40px;
-		background-color: #B58A6C;
+		background-color: #b58a6c;
 		margin-left: 4px;
-		box-shadow: 0 0 10px #B58A6C;
+		box-shadow: 0 0 10px #b58a6c;
 	}
 
 	.hero-cursor.blink {
@@ -541,8 +547,13 @@
 	}
 
 	@keyframes cursorBlink {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0; }
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
 	}
 
 	@keyframes fadeInDown {

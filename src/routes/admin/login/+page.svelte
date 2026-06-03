@@ -33,7 +33,8 @@
 					error = 'Invalid email or password. Please try again.';
 					break;
 				case 'auth/too-many-requests':
-					error = 'Too many failed attempts. Access is temporarily disabled. Please try again later.';
+					error =
+						'Too many failed attempts. Access is temporarily disabled. Please try again later.';
 					break;
 				case 'auth/network-request-failed':
 					error = 'Network error. Please check your internet connection.';
@@ -52,7 +53,9 @@
 </svelte:head>
 
 <div class="flex min-h-screen items-center justify-center bg-admin-offwhite p-4">
-	<div class="w-full max-w-md rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
+	<div
+		class="w-full max-w-md rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl"
+	>
 		<div class="mb-8 flex flex-col items-center">
 			<div
 				class="mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-admin-taupe/30 bg-admin-taupe/20"
@@ -65,7 +68,8 @@
 
 		<form onsubmit={handleLogin} class="space-y-6">
 			<div>
-				<label for="email" class="mb-2 block text-sm font-medium text-admin-charcoal/70">Email Address</label
+				<label for="email" class="mb-2 block text-sm font-medium text-admin-charcoal/70"
+					>Email Address</label
 				>
 				<input
 					id="email"
@@ -78,7 +82,9 @@
 			</div>
 
 			<div>
-				<label for="password" class="mb-2 block text-sm font-medium text-admin-charcoal/70">Password</label>
+				<label for="password" class="mb-2 block text-sm font-medium text-admin-charcoal/70"
+					>Password</label
+				>
 				<input
 					id="password"
 					type="password"
@@ -93,7 +99,11 @@
 				<div
 					class="animate-in fade-in zoom-in-95 flex items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm font-medium text-red-600"
 				>
-					<div class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500 text-[10px] text-white font-bold">!</div>
+					<div
+						class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
+					>
+						!
+					</div>
 					{error}
 				</div>
 			{/if}

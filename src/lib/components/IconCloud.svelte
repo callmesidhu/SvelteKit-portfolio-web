@@ -1,10 +1,21 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import * as THREE from 'three';
-	import { 
-		Code2, Cpu, Globe, Cloud, Database, Layers, 
-		Brain, Network, ShieldCheck, Terminal, 
-		Briefcase, Smartphone, Zap, Bot
+	import {
+		Code2,
+		Cpu,
+		Globe,
+		Cloud,
+		Database,
+		Layers,
+		Brain,
+		Network,
+		ShieldCheck,
+		Terminal,
+		Briefcase,
+		Smartphone,
+		Zap,
+		Bot
 	} from 'lucide-svelte';
 	import { ALL_ICONS } from '$lib/icons';
 
@@ -22,14 +33,19 @@
 
 		// --- Three.js Initialization ---
 		const scene = new THREE.Scene();
-		const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
-		const renderer = new THREE.WebGLRenderer({ 
-			alpha: true, 
+		const camera = new THREE.PerspectiveCamera(
+			50,
+			container.clientWidth / container.clientHeight,
+			0.1,
+			1000
+		);
+		const renderer = new THREE.WebGLRenderer({
+			alpha: true,
 			antialias: true,
 			powerPreference: 'high-performance'
 		});
 		renderer.outputColorSpace = THREE.SRGBColorSpace; // Match texture color space
-		
+
 		renderer.setSize(container.clientWidth, container.clientHeight);
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 		container.appendChild(renderer.domElement);
@@ -56,16 +72,16 @@
 			const ctx = canvas.getContext('2d')!;
 			canvas.width = 512; // Higher resolution for sharpness
 			canvas.height = 512;
-			
+
 			// Draw icon
 			ctx.drawImage(img, 96, 40, 320, 320);
-			
+
 			// Draw label
 			ctx.font = '700 48px Inter, sans-serif';
 			ctx.fillStyle = '#FFFFFF'; // Solid white
 			ctx.textAlign = 'center';
 			ctx.fillText(name.toUpperCase(), 256, 420);
-			
+
 			const texture = new THREE.CanvasTexture(canvas);
 			texture.colorSpace = THREE.SRGBColorSpace; // Critical for "full color"
 			texture.minFilter = THREE.LinearFilter;
@@ -91,18 +107,18 @@
 			img.src = icon.src;
 			img.onload = () => {
 				const texture = createIconTexture(img, icon.name);
-				const material = new THREE.SpriteMaterial({ 
-					map: texture, 
+				const material = new THREE.SpriteMaterial({
+					map: texture,
 					transparent: true,
-					opacity: 1.0, 
+					opacity: 1.0,
 					depthTest: false
 				});
 				const sprite = new THREE.Sprite(material);
 				sprite.position.copy(pos);
-				
+
 				const size = window.innerWidth < 640 ? 1.5 : 1.5;
-				sprite.scale.set(size, size, 1);	
-				
+				sprite.scale.set(size, size, 1);
+
 				group.add(sprite);
 				iconSprites.push(sprite);
 
@@ -117,13 +133,15 @@
 		});
 
 		// Safety timeout to ensure it loads even if images hang
-		const safetyTimeout = setTimeout(() => { loading = false; }, 3000);
+		const safetyTimeout = setTimeout(() => {
+			loading = false;
+		}, 3000);
 
 		// --- Mesh Lines ---
-		const lineMaterial = new THREE.LineBasicMaterial({ 
-			color: 0xB58A6C, 
-			transparent: true, 
-			opacity: 0.1 
+		const lineMaterial = new THREE.LineBasicMaterial({
+			color: 0xb58a6c,
+			transparent: true,
+			opacity: 0.1
 		});
 		const lineGeometry = new THREE.BufferGeometry();
 		const linePoints: number[] = [];
@@ -131,11 +149,11 @@
 		points.forEach((p1, i) => {
 			const distances = points
 				.map((p2, j) => ({ index: j, dist: p1.distanceTo(p2) }))
-				.filter(d => d.index !== i)
+				.filter((d) => d.index !== i)
 				.sort((a, b) => a.dist - b.dist);
-			
+
 			const neighbors = distances.slice(0, 5);
-			neighbors.forEach(n => {
+			neighbors.forEach((n) => {
 				linePoints.push(p1.x, p1.y, p1.z);
 				linePoints.push(points[n.index].x, points[n.index].y, points[n.index].z);
 			});
@@ -149,15 +167,25 @@
 		const pCount = 80;
 		const pGeom = new THREE.BufferGeometry();
 		const pPos = new Float32Array(pCount * 3);
-		for(let i=0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 30;
+		for (let i = 0; i < pCount * 3; i++) pPos[i] = (Math.random() - 0.5) * 30;
 		pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-		const pMat = new THREE.PointsMaterial({ color: 0xB58A6C, size: 0.04, transparent: true, opacity: 0.3 });
+		const pMat = new THREE.PointsMaterial({
+			color: 0xb58a6c,
+			size: 0.04,
+			transparent: true,
+			opacity: 0.3
+		});
 		const particles = new THREE.Points(pGeom, pMat);
 		scene.add(particles);
 
 		// --- Interaction ---
-		let mX = 0, mY = 0, tRX = 0.005, tRY = 0.005, isOver = false;
-		let curSX = 0.005, curSY = 0.005;
+		let mX = 0,
+			mY = 0,
+			tRX = 0.005,
+			tRY = 0.005,
+			isOver = false;
+		let curSX = 0.005,
+			curSY = 0.005;
 
 		const onMM = (e: MouseEvent) => {
 			const r = container.getBoundingClientRect();
@@ -167,7 +195,7 @@
 		};
 
 		container.addEventListener('mousemove', onMM);
-		container.addEventListener('mouseleave', () => isOver = false);
+		container.addEventListener('mouseleave', () => (isOver = false));
 
 		const animate = () => {
 			const id = requestAnimationFrame(animate);
@@ -187,9 +215,9 @@
 			group.rotation.x += curSX;
 			group.position.y = Math.sin(Date.now() * 0.002) * 0.15; // Faster float
 			particles.rotation.y += 0.001;
-			
+
 			// Icons stay fully opaque
-			iconSprites.forEach(s => {
+			iconSprites.forEach((s) => {
 				s.material.opacity = 1.0;
 			});
 
@@ -222,59 +250,103 @@
 	});
 </script>
 
-<div class="group relative flex h-[300px] w-full items-center justify-center overflow-hidden bg-black sm:h-[400px] lg:h-[500px]">
+<div
+	class="group relative flex h-[300px] w-full items-center justify-center overflow-hidden bg-black sm:h-[400px] lg:h-[500px]"
+>
 	<!-- Holographic Scanline -->
-	<div class="pointer-events-none absolute inset-0 z-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,255,0,0.02))] bg-[size:100%_4px,3px_100%] opacity-40 animate-scan"></div>
-	
+	<div
+		class="animate-scan pointer-events-none absolute inset-0 z-30 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,255,0,0.02))] bg-[size:100%_4px,3px_100%] opacity-40"
+	></div>
+
 	<!-- Background Mesh/Glow -->
 	<div class="absolute inset-0 z-0">
-		<div class="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#B58A6C]/10 blur-[120px] animate-pulse"></div>
-		<div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:80px_80px] [mask-image:radial-gradient(ellipse_at_center,black,transparent:90%)]"></div>
+		<div
+			class="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full bg-[#B58A6C]/10 blur-[120px]"
+		></div>
+		<div
+			class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_at_center,black,transparent:90%)] bg-[size:80px_80px]"
+		></div>
 	</div>
 
 	<!-- LEFT COLUMN BADGES -->
-	<div class="absolute left-[2%] top-[10%] z-20 flex flex-col gap-8 hidden lg:flex">
+	<div class="absolute top-[10%] left-[2%] z-20 flex hidden flex-col gap-8 lg:flex">
 		<div class="animate-float">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-blue-500/10 p-2 text-blue-400 group-hover/badge:scale-110 transition-transform"><Layers size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-blue-500/10 p-2 text-blue-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Layers size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40">Foundations</div>
+					<div class="text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Foundations
+					</div>
 					<div class="text-xs font-medium text-white/80">DSA & OS</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float-delayed">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Network size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Network size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40">Architecture</div>
+					<div class="text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Architecture
+					</div>
 					<div class="text-xs font-medium text-white/80">System Design</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float-slower">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-emerald-500/10 p-2 text-emerald-400 group-hover/badge:scale-110 transition-transform"><Globe size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-emerald-500/10 p-2 text-emerald-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Globe size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40">Web</div>
+					<div class="text-[9px] font-bold tracking-widest text-white/40 uppercase">Web</div>
 					<div class="text-xs font-medium text-white/80">Full Stack Dev</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-pink-500/10 p-2 text-pink-400 group-hover/badge:scale-110 transition-transform"><ShieldCheck size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-pink-500/10 p-2 text-pink-400 transition-transform group-hover/badge:scale-110"
+				>
+					<ShieldCheck size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40">Web3</div>
+					<div class="text-[9px] font-bold tracking-widest text-white/40 uppercase">Web3</div>
 					<div class="text-xs font-medium text-white/80">Blockchain</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float-delayed">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Cloud size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Cloud size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40">Infrastructure</div>
+					<div class="text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Infrastructure
+					</div>
 					<div class="text-xs font-medium text-white/80">DevOps</div>
 				</div>
 			</div>
@@ -282,67 +354,117 @@
 	</div>
 
 	<!-- RIGHT COLUMN BADGES -->
-	<div class="absolute right-[2%] top-[10%] z-20 flex flex-col gap-8 items-end hidden lg:flex">
+	<div class="absolute top-[10%] right-[2%] z-20 flex hidden flex-col items-end gap-8 lg:flex">
 		<div class="animate-float-delayed">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-rose-500/10 p-2 text-rose-400 group-hover/badge:scale-110 transition-transform"><Briefcase size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-rose-500/10 p-2 text-rose-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Briefcase size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40 text-right">Leadership</div>
-					<div class="text-xs font-medium text-white/80 text-right">Project Management</div>
+					<div class="text-right text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Leadership
+					</div>
+					<div class="text-right text-xs font-medium text-white/80">Project Management</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float-slower">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-purple-500/10 p-2 text-purple-400 group-hover/badge:scale-110 transition-transform"><Brain size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-purple-500/10 p-2 text-purple-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Brain size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40 text-right">Intelligence</div>
-					<div class="text-xs font-medium text-white/80 text-right">Machine Learning</div>
+					<div class="text-right text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Intelligence
+					</div>
+					<div class="text-right text-xs font-medium text-white/80">Machine Learning</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-orange-500/10 p-2 text-orange-400 group-hover/badge:scale-110 transition-transform"><Bot size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-orange-500/10 p-2 text-orange-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Bot size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40 text-right">Automation</div>
-					<div class="text-xs font-medium text-white/80 text-right">AI Agents</div>
+					<div class="text-right text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Automation
+					</div>
+					<div class="text-right text-xs font-medium text-white/80">AI Agents</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float-delayed">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-yellow-500/10 p-2 text-yellow-400 group-hover/badge:scale-110 transition-transform"><Zap size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-yellow-500/10 p-2 text-yellow-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Zap size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40 text-right">Hardware</div>
-					<div class="text-xs font-medium text-white/80 text-right">IoT Systems</div>
+					<div class="text-right text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Hardware
+					</div>
+					<div class="text-right text-xs font-medium text-white/80">IoT Systems</div>
 				</div>
 			</div>
 		</div>
 		<div class="animate-float">
-			<div class="flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10 group/badge">
-				<div class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 group-hover/badge:scale-110 transition-transform"><Cloud size={18} /></div>
+			<div
+				class="group/badge flex items-center gap-3 rounded-2xl border border-white/5 bg-white/5 p-3 backdrop-blur-xl transition-all hover:bg-white/10"
+			>
+				<div
+					class="rounded-lg bg-cyan-500/10 p-2 text-cyan-400 transition-transform group-hover/badge:scale-110"
+				>
+					<Cloud size={18} />
+				</div>
 				<div>
-					<div class="text-[9px] font-bold uppercase tracking-widest text-white/40 text-right">Infrastructure</div>
-					<div class="text-xs font-medium text-white/80 text-right">Cloud Computing</div>
+					<div class="text-right text-[9px] font-bold tracking-widest text-white/40 uppercase">
+						Infrastructure
+					</div>
+					<div class="text-right text-xs font-medium text-white/80">Cloud Computing</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	{#if loading}
-		<div class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm">
-			<div class="h-12 w-12 animate-spin rounded-full border-4 border-[#B58A6C]/20 border-t-[#B58A6C]"></div>
-			<p class="font-mono text-xs uppercase tracking-[0.3em] text-[#B58A6C] animate-pulse">Syncing Tech Ecosystem</p>
+		<div
+			class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-4 bg-black/40 backdrop-blur-sm"
+		>
+			<div
+				class="h-12 w-12 animate-spin rounded-full border-4 border-[#B58A6C]/20 border-t-[#B58A6C]"
+			></div>
+			<p class="animate-pulse font-mono text-xs tracking-[0.3em] text-[#B58A6C] uppercase">
+				Syncing Tech Ecosystem
+			</p>
 		</div>
 	{/if}
-	
-	<div 
-		bind:this={container} 
-		class="absolute inset-0 z-40 cursor-grab active:cursor-grabbing transition-opacity duration-1000 {loading ? 'opacity-0' : 'opacity-100'}"
+
+	<div
+		bind:this={container}
+		class="absolute inset-0 z-40 cursor-grab transition-opacity duration-1000 active:cursor-grabbing {loading
+			? 'opacity-0'
+			: 'opacity-100'}"
 	></div>
 
-	<div class="pointer-events-none absolute inset-0 z-20 bg-radial-[circle_at_center,_transparent_0%,_black_95%] opacity-70"></div>
+	<div
+		class="pointer-events-none absolute inset-0 z-20 bg-radial-[circle_at_center,_transparent_0%,_black_95%] opacity-70"
+	></div>
 </div>
 
 <style>
@@ -351,42 +473,65 @@
 		max-height: 100%;
 		outline: none;
 	}
-	
+
 	:global(.mobile-fade) {
-		mask-image: linear-gradient(to bottom, 
-			transparent 0%, 
-			black 15%, 
-			black 85%, 
-			transparent 100%
-		);
-		-webkit-mask-image: linear-gradient(to bottom, 
-			transparent 0%, 
-			black 15%, 
-			black 85%, 
+		mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			transparent 0%,
+			black 15%,
+			black 85%,
 			transparent 100%
 		);
 	}
 
-	.animate-float { animation: float 7s ease-in-out infinite; }
-	.animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
-	.animate-float-slower { animation: float-slower 12s ease-in-out infinite; }
-	.animate-scan { animation: scan 10s linear infinite; }
+	.animate-float {
+		animation: float 7s ease-in-out infinite;
+	}
+	.animate-float-delayed {
+		animation: float-delayed 8s ease-in-out infinite;
+	}
+	.animate-float-slower {
+		animation: float-slower 12s ease-in-out infinite;
+	}
+	.animate-scan {
+		animation: scan 10s linear infinite;
+	}
 
 	@keyframes scan {
-		0% { background-position: 0 0; }
-		100% { background-position: 0 100%; }
+		0% {
+			background-position: 0 0;
+		}
+		100% {
+			background-position: 0 100%;
+		}
 	}
 
 	@keyframes float {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(-15px); }
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-15px);
+		}
 	}
 	@keyframes float-delayed {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(15px); }
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(15px);
+		}
 	}
 	@keyframes float-slower {
-		0%, 100% { transform: translateY(0); }
-		50% { transform: translateY(-20px); }
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-20px);
+		}
 	}
 </style>

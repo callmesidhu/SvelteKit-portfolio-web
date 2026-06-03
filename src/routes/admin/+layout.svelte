@@ -3,7 +3,18 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { LayoutDashboard, User, Briefcase, Rocket, Star, Code, LogOut, Menu, X, MessageSquare } from 'lucide-svelte';
+	import {
+		LayoutDashboard,
+		User,
+		Briefcase,
+		Rocket,
+		Star,
+		Code,
+		LogOut,
+		Menu,
+		X,
+		MessageSquare
+	} from 'lucide-svelte';
 	import { auth } from '$lib/firebase';
 	import { signOut } from 'firebase/auth';
 	import { appState } from '$lib/state.svelte';

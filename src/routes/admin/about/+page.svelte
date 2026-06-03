@@ -87,8 +87,10 @@
 			<p class="text-admin-charcoal/70">Fetching current data...</p>
 		</div>
 	{:else}
-			<div class="space-y-2 rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-xl">
-			<label for="about-content" class="text-sm font-medium text-admin-charcoal/70">About Content</label>
+		<div class="space-y-2 rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-xl">
+			<label for="about-content" class="text-sm font-medium text-admin-charcoal/70"
+				>About Content</label
+			>
 			<textarea
 				id="about-content"
 				rows={16}

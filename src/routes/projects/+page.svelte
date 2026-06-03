@@ -4,7 +4,7 @@
 	import SEO from '$lib/components/SEO.svelte';
 </script>
 
-<SEO 
+<SEO
 	title="Projects | CallMeSidhu"
 	description="Explore the portfolio of web, mobile, and AI projects developed by S Sidharth (CallMeSidhu), including React, SvelteKit, and Flutter applications."
 	canonical="https://callmesidhu.xyphx.com/projects"
@@ -14,7 +14,7 @@
 	]}
 />
 
-<div class="bg-black min-h-screen">
+<div class="min-h-screen bg-black">
 	<Navbar />
 	<main>
 		<ProjectsGrid />

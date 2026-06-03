@@ -12,41 +12,37 @@
 	let container: HTMLElement | null = $state(null);
 	let hasStartedTyping = $state(false);
 	let hasFinishedTyping = $state(false);
-	
+
 	let userMessage = $state('who am i?');
 	let inputText = $state('');
 	let isReading = $state(false);
 	let fileInput: HTMLInputElement | null = $state(null);
 	let showLimitWarning = $state(false);
 
-	const models = [
-		'XyphX 1.0 fast',
-		'XyphX 1.0 thinking',
-		'XyphX 1.0 max'
-	];
+	const models = ['XyphX 1.0 fast', 'XyphX 1.0 thinking', 'XyphX 1.0 max'];
 
 	async function typeEffect(text: string) {
 		if (hasStartedTyping || !text || hasFinishedTyping) return;
 		hasStartedTyping = true;
 		displayedContent = '';
-		
+
 		const chunks = text.split(/(\s+)/);
 		let currentText = '';
-		
+
 		const scrollTarget = container?.querySelector('.custom-scrollbar');
 
 		for (const chunk of chunks) {
 			currentText += chunk;
 			displayedContent = currentText;
-			
+
 			if (scrollTarget) {
 				scrollTarget.scrollTo({
 					top: scrollTarget.scrollHeight,
 					behavior: 'smooth'
 				});
 			}
-			
-			await new Promise(resolve => setTimeout(resolve, Math.random() * 20 + 10));
+
+			await new Promise((resolve) => setTimeout(resolve, Math.random() * 20 + 10));
 		}
 		hasFinishedTyping = true;
 	}
@@ -55,7 +51,7 @@
 		if (!inputText.trim()) return;
 		showLimitWarning = true;
 		inputText = '';
-		setTimeout(() => showLimitWarning = false, 10000);
+		setTimeout(() => (showLimitWarning = false), 10000);
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
@@ -72,18 +68,20 @@
 		}
 
 		const utterance = new SpeechSynthesisUtterance(aboutContent);
-		utterance.onend = () => isReading = false;
+		utterance.onend = () => (isReading = false);
 		isReading = true;
 		window.speechSynthesis.speak(utterance);
 	}
 
 	function handleShare() {
 		if (navigator.share) {
-			navigator.share({
-				title: 'CallMeSidhu Portfolio',
-				text: "Check out Sidharth's portfolio!",
-				url: window.location.href
-			}).catch(console.error);
+			navigator
+				.share({
+					title: 'CallMeSidhu Portfolio',
+					text: "Check out Sidharth's portfolio!",
+					url: window.location.href
+				})
+				.catch(console.error);
 		} else {
 			navigator.clipboard.writeText(window.location.href);
 			alert('Link copied to clipboard!');
@@ -96,7 +94,7 @@
 
 	function handleFileChange() {
 		showLimitWarning = true;
-		setTimeout(() => showLimitWarning = false, 10000);
+		setTimeout(() => (showLimitWarning = false), 10000);
 	}
 
 	onMount(() => {
@@ -115,12 +113,15 @@
 				loading = false;
 			}
 
-			observer = new IntersectionObserver((entries) => {
-				if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
-					typeEffect(aboutContent);
-					observer?.disconnect();
-				}
-			}, { threshold: 0.1 });
+			observer = new IntersectionObserver(
+				(entries) => {
+					if (entries[0].isIntersecting && aboutContent && !hasStartedTyping) {
+						typeEffect(aboutContent);
+						observer?.disconnect();
+					}
+				},
+				{ threshold: 0.1 }
+			);
 
 			if (container && observer) observer.observe(container);
 		};
@@ -153,37 +154,42 @@
 	}
 </script>
 
-<input 
-	type="file" 
-	bind:this={fileInput} 
-	class="hidden" 
+<input
+	type="file"
+	bind:this={fileInput}
+	class="hidden"
 	onchange={handleFileChange}
 	accept="image/*"
 />
 
-<div bind:this={container} class="mx-auto max-w-4xl px-3 sm:px-4 w-full pb-2 sm:pb-4">
+<div bind:this={container} class="mx-auto w-full max-w-4xl px-3 pb-2 sm:px-4 sm:pb-4">
 	<!-- Mobile: natural column flow; sm+: fixed 480px card -->
-	<div class="relative flex flex-col gap-5 sm:gap-8 sm:h-[480px]">
-
+	<div class="relative flex flex-col gap-5 sm:h-[480px] sm:gap-8">
 		<!-- User Message -->
-		<div class="flex justify-end shrink-0">
-			<div class="rounded-2xl bg-[#2A292D] px-4 py-2.5 sm:px-6 sm:py-3 text-white shadow-lg border border-white/5 max-w-[88%] sm:max-w-[80%]">
+		<div class="flex shrink-0 justify-end">
+			<div
+				class="max-w-[88%] rounded-2xl border border-white/5 bg-[#2A292D] px-4 py-2.5 text-white shadow-lg sm:max-w-[80%] sm:px-6 sm:py-3"
+			>
 				<p class="text-sm font-medium">{userMessage}</p>
 			</div>
 		</div>
 
 		<!-- AI Response -->
-		<div class="flex flex-col flex-1 min-h-0">
-			<div class="flex gap-3 sm:gap-4 h-full items-start">
+		<div class="flex min-h-0 flex-1 flex-col">
+			<div class="flex h-full items-start gap-3 sm:gap-4">
 				<!-- Avatar -->
-				<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#B58A6C] text-white shrink-0 mt-0.5">
+				<div
+					class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#B58A6C] text-white"
+				>
 					<Sparkles size={16} />
 				</div>
 
 				<!-- Content -->
-				<div class="flex-1 flex flex-col min-h-0 pt-1">
+				<div class="flex min-h-0 flex-1 flex-col pt-1">
 					<!-- Scrollable text: capped on mobile, full-height on sm+ -->
-					<div class="overflow-y-auto pr-2 sm:pr-4 custom-scrollbar flex-1 max-h-[240px] sm:max-h-none">
+					<div
+						class="custom-scrollbar max-h-[240px] flex-1 overflow-y-auto pr-2 sm:max-h-none sm:pr-4"
+					>
 						{#if loading}
 							<div class="space-y-3">
 								<div class="h-4 w-3/4 animate-pulse rounded bg-white/5"></div>
@@ -191,26 +197,39 @@
 								<div class="h-4 w-5/6 animate-pulse rounded bg-white/5"></div>
 							</div>
 						{:else}
-							<div class="prose prose-invert max-w-none text-white/90 leading-relaxed text-sm">
-								{@html (hasFinishedTyping ? aboutContent : displayedContent || '').replace(/\n/g, '<br>')}
+							<div class="prose prose-invert max-w-none text-sm leading-relaxed text-white/90">
+								{@html (hasFinishedTyping ? aboutContent : displayedContent || '').replace(
+									/\n/g,
+									'<br>'
+								)}
 								{#if hasStartedTyping && !hasFinishedTyping}
-									<span class="inline-block w-2 h-4 ml-1 bg-[#B58A6C] animate-pulse"></span>
+									<span class="ml-1 inline-block h-4 w-2 animate-pulse bg-[#B58A6C]"></span>
 								{/if}
 							</div>
 						{/if}
 					</div>
 
 					<!-- Action icons -->
-					<div class="flex items-center gap-4 text-white/40 mt-5 shrink-0">
-						<button onclick={triggerFileUpload} class="hover:text-white transition-colors" title="Upload File">
+					<div class="mt-5 flex shrink-0 items-center gap-4 text-white/40">
+						<button
+							onclick={triggerFileUpload}
+							class="transition-colors hover:text-white"
+							title="Upload File"
+						>
 							<Plus size={17} />
 						</button>
-						<button onclick={handleShare} class="hover:text-white transition-colors" title="Share Page">
+						<button
+							onclick={handleShare}
+							class="transition-colors hover:text-white"
+							title="Share Page"
+						>
 							<Share2 size={17} />
 						</button>
 						<button
 							onclick={toggleReading}
-							class="transition-colors {isReading ? 'text-[#B58A6C] animate-pulse' : 'hover:text-white'}"
+							class="transition-colors {isReading
+								? 'animate-pulse text-[#B58A6C]'
+								: 'hover:text-white'}"
 							title="Read Aloud"
 						>
 							<Volume2 size={17} />
@@ -223,22 +242,26 @@
 		<!-- Chat Input -->
 		<div class="relative shrink-0">
 			{#if showLimitWarning}
-				<div class="absolute bottom-full left-0 right-0 mb-3 flex justify-center z-10">
-					<div class="flex items-center gap-2 rounded-2xl bg-red-500/10 border border-red-500/20 px-4 py-2.5 text-red-400 shadow-xl backdrop-blur-md">
+				<div class="absolute right-0 bottom-full left-0 z-10 mb-3 flex justify-center">
+					<div
+						class="flex items-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-red-400 shadow-xl backdrop-blur-md"
+					>
 						<AlertCircle size={15} />
 						<div class="text-xs">
 							<span class="font-bold">Daily Limit Reached!</span>
-							<span class="opacity-80 hidden sm:inline"> Upgrade to Pro to continue.</span>
+							<span class="hidden opacity-80 sm:inline"> Upgrade to Pro to continue.</span>
 						</div>
 					</div>
 				</div>
 			{/if}
 
-			<div class="flex items-center gap-2 sm:gap-3 rounded-3xl border border-white/10 bg-[#1A191D] p-2 sm:p-3 shadow-2xl transition-all focus-within:border-[#B58A6C]/30">
+			<div
+				class="flex items-center gap-2 rounded-3xl border border-white/10 bg-[#1A191D] p-2 shadow-2xl transition-all focus-within:border-[#B58A6C]/30 sm:gap-3 sm:p-3"
+			>
 				<!-- Attach -->
 				<button
 					onclick={triggerFileUpload}
-					class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/5 text-white/40 hover:bg-white/10 transition-all shrink-0"
+					class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5 text-white/40 transition-all hover:bg-white/10 sm:h-10 sm:w-10"
 				>
 					<Plus size={18} />
 				</button>
@@ -249,35 +272,46 @@
 					bind:value={inputText}
 					onkeydown={handleKeyDown}
 					placeholder="Write a message..."
-					class="flex-1 min-w-0 bg-transparent border-none outline-none text-white text-sm placeholder:text-white/20"
+					class="min-w-0 flex-1 border-none bg-transparent text-sm text-white outline-none placeholder:text-white/20"
 				/>
 
 				<!-- Right group -->
-				<div class="flex items-center gap-1.5 shrink-0">
+				<div class="flex shrink-0 items-center gap-1.5">
 					<!-- Model selector -->
 					<div class="relative">
 						<button
 							onclick={toggleModels}
-							class="flex items-center gap-1 rounded-full bg-white/5 px-2 py-1.5 text-xs font-medium text-white/60 hover:bg-white/10 transition-all sm:px-4 sm:py-2 sm:gap-2"
+							class="flex items-center gap-1 rounded-full bg-white/5 px-2 py-1.5 text-xs font-medium text-white/60 transition-all hover:bg-white/10 sm:gap-2 sm:px-4 sm:py-2"
 						>
-							<span class="capitalize hidden sm:inline">{selectedModel}</span>
-							<span class="capitalize sm:hidden text-[10px]">{selectedModel.split(' ').pop()}</span>
+							<span class="hidden capitalize sm:inline">{selectedModel}</span>
+							<span class="text-[10px] capitalize sm:hidden">{selectedModel.split(' ').pop()}</span>
 							<ChevronDown size={12} class="text-white/30" />
 						</button>
 
 						{#if showModels}
-							<div class="absolute bottom-full right-0 mb-3 w-52 sm:w-64 overflow-hidden rounded-2xl border border-white/10 bg-[#2A292D] p-1 shadow-2xl z-50">
-								<div class="px-3 py-2 text-[10px] font-bold text-white/20 uppercase tracking-widest">Select Model</div>
+							<div
+								class="absolute right-0 bottom-full z-50 mb-3 w-52 overflow-hidden rounded-2xl border border-white/10 bg-[#2A292D] p-1 shadow-2xl sm:w-64"
+							>
+								<div
+									class="px-3 py-2 text-[10px] font-bold tracking-widest text-white/20 uppercase"
+								>
+									Select Model
+								</div>
 								{#each models as model}
 									<button
 										onclick={() => selectModel(model)}
-										class="w-full rounded-xl px-3 py-2 text-left text-xs transition-all {selectedModel === model ? 'bg-[#B58A6C] text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}"
+										class="w-full rounded-xl px-3 py-2 text-left text-xs transition-all {selectedModel ===
+										model
+											? 'bg-[#B58A6C] text-white'
+											: 'text-white/60 hover:bg-white/5 hover:text-white'}"
 									>
 										<span class="capitalize">{model}</span>
 									</button>
 								{/each}
 								<div class="mt-1 border-t border-white/5 p-2">
-									<div class="flex items-center gap-2 rounded-lg bg-orange-500/10 px-2 py-2 text-[10px] text-orange-400">
+									<div
+										class="flex items-center gap-2 rounded-lg bg-orange-500/10 px-2 py-2 text-[10px] text-orange-400"
+									>
 										<Sparkles size={12} />
 										<span>Upgrade to Pro for Unlimited credits</span>
 									</div>
@@ -289,14 +323,16 @@
 					<!-- Send -->
 					<button
 						onclick={handleSend}
-						class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full {inputText ? 'bg-[#B58A6C] text-white' : 'bg-white/5 text-white/40'} hover:scale-105 transition-all"
+						class="flex h-9 w-9 items-center justify-center rounded-full sm:h-10 sm:w-10 {inputText
+							? 'bg-[#B58A6C] text-white'
+							: 'bg-white/5 text-white/40'} transition-all hover:scale-105"
 					>
 						<Send size={17} />
 					</button>
 				</div>
 			</div>
 
-			<p class="mt-3 text-center text-[9px] sm:text-[10px] text-white/20 uppercase tracking-widest">
+			<p class="mt-3 text-center text-[9px] tracking-widest text-white/20 uppercase sm:text-[10px]">
 				Xyphx AI is an experimental model. Please double-check responses.
 			</p>
 		</div>

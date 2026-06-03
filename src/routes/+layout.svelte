@@ -16,7 +16,8 @@
 			}
 			try {
 				const { db } = await import('$lib/firebase');
-				const { doc, updateDoc, increment, setDoc, getDoc, collection, addDoc } = await import('firebase/firestore');
+				const { doc, updateDoc, increment, setDoc, getDoc, collection, addDoc } =
+					await import('firebase/firestore');
 
 				const docRef = doc(db, 'dashboard', 'visitors');
 				const docSnap = await getDoc(docRef);
@@ -44,9 +45,10 @@
 
 				// Get visitor location for more realistic logs
 				const location = await getVisitorLocation();
-				const description = location === 'Someone' 
-					? 'Someone viewed the home page' 
-					: `Someone from ${location} viewed the home page`;
+				const description =
+					location === 'Someone'
+						? 'Someone viewed the home page'
+						: `Someone from ${location} viewed the home page`;
 
 				// Log page view activity
 				await addDoc(collection(db, 'activity_logs'), {
@@ -81,7 +83,7 @@
 				const elements = Array.from(document.querySelectorAll('.snap-start')) as HTMLElement[];
 				snap.addElements(elements, { align: 'start' });
 			}, 100);
-			
+
 			// Store snap instance in window for cleanup if needed
 			(window as any).lenisSnap = snap;
 		});

@@ -98,11 +98,14 @@
 	</header>
 
 	<!-- Tabs -->
-	<div class="flex w-full gap-2 overflow-x-auto rounded-xl border border-admin-stone bg-admin-coolgray p-1 no-scrollbar sm:w-fit">
+	<div
+		class="no-scrollbar flex w-full gap-2 overflow-x-auto rounded-xl border border-admin-stone bg-admin-coolgray p-1 sm:w-fit"
+	>
 		{#each tabs as tab (tab.id)}
 			<button
 				onclick={() => (activeTab = tab.id)}
-				class="whitespace-nowrap rounded-lg px-6 py-2 font-medium transition-all {activeTab === tab.id
+				class="rounded-lg px-6 py-2 font-medium whitespace-nowrap transition-all {activeTab ===
+				tab.id
 					? 'bg-admin-clay text-white shadow-lg shadow-admin-clay/20'
 					: 'text-admin-charcoal/50 hover:text-admin-charcoal/70'}"
 			>
@@ -115,7 +118,8 @@
 	<div class="rounded-2xl border border-admin-stone bg-admin-coolgray p-8 shadow-2xl">
 		<form onsubmit={handleAdd} class="grid grid-cols-1 items-end gap-6 md:grid-cols-3">
 			<div class="space-y-2">
-				<label for="skill-name" class="text-sm font-medium text-admin-charcoal/70">Skill Name</label>
+				<label for="skill-name" class="text-sm font-medium text-admin-charcoal/70">Skill Name</label
+				>
 				<input
 					id="skill-name"
 					type="text"
@@ -125,7 +129,9 @@
 				/>
 			</div>
 			<div class="space-y-2">
-				<label for="icon-url" class="text-sm font-medium text-admin-charcoal/70">Icon URL (SVG/PNG)</label>
+				<label for="icon-url" class="text-sm font-medium text-admin-charcoal/70"
+					>Icon URL (SVG/PNG)</label
+				>
 				<input
 					id="icon-url"
 					type="text"
@@ -165,7 +171,9 @@
 	<div class="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-6">
 		{#if loading}
 			{#each Array(6) as _}
-				<div class="h-40 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"></div>
+				<div
+					class="h-40 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"
+				></div>
 			{/each}
 		{:else if items.length === 0}
 			<div

@@ -18,7 +18,7 @@
 	let {
 		title = 'CallMeSidhu | S SIDHARTH | Full Stack Developer',
 		description = 'Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare, DevOps, AI and modern web technologies.',
-		image = '/favicon.png', 
+		image = '/favicon.png',
 		canonical = 'https://callmesidhu.xyphx.com',
 		type = 'website',
 		keywords = 'callmesidhu, CallMeSidhu, S Sidharth, XyphX, Full Stack Developer, Freelancer, Software Engineer, React, Next.js, Node.js, Express.js, MongoDB, PostgreSQL, Flutter, Docker, AWS, Cloudflare, DevOps, CI/CD, AI, Machine Learning',
@@ -34,61 +34,63 @@
 
 	// Person and Organization combined schema
 	const personSchema = {
-		"@context": "https://schema.org",
-		"@graph": [
+		'@context': 'https://schema.org',
+		'@graph': [
 			{
-				"@type": "Person",
-				"@id": `${baseSchemaUrl}/#person`,
-				"name": "Sidharth",
-				"alternateName": ["CallMeSidhu", "S SIDHARTH"],
-				"url": baseSchemaUrl,
-				"image": `${baseSchemaUrl}/favicon.png`,
-				"jobTitle": ["Full Stack Developer", "Founder & CEO", "Freelancer", "Software Engineer"],
-				"worksFor": {
-					"@type": "Organization",
-					"@id": `${baseSchemaUrl}/#organization`,
-					"name": "XyphX",
-					"url": "https://xyphx.com" // Update if different
+				'@type': 'Person',
+				'@id': `${baseSchemaUrl}/#person`,
+				name: 'Sidharth',
+				alternateName: ['CallMeSidhu', 'S SIDHARTH'],
+				url: baseSchemaUrl,
+				image: `${baseSchemaUrl}/favicon.png`,
+				jobTitle: ['Full Stack Developer', 'Founder & CEO', 'Freelancer', 'Software Engineer'],
+				worksFor: {
+					'@type': 'Organization',
+					'@id': `${baseSchemaUrl}/#organization`,
+					name: 'XyphX',
+					url: 'https://xyphx.com' // Update if different
 				},
-				"description": "Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer.",
-				"sameAs": [
-					"https://github.com/callmesidhu",
-					"https://linkedin.com/in/callmesidhu"
-				]
+				description:
+					'Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer.',
+				sameAs: ['https://github.com/callmesidhu', 'https://linkedin.com/in/callmesidhu']
 			},
 			{
-				"@type": "Organization",
-				"@id": `${baseSchemaUrl}/#organization`,
-				"name": "XyphX",
-				"url": "https://xyphx.com", // Assumed URL, update if needed
-				"founder": {
-					"@id": `${baseSchemaUrl}/#person`
+				'@type': 'Organization',
+				'@id': `${baseSchemaUrl}/#organization`,
+				name: 'XyphX',
+				url: 'https://xyphx.com', // Assumed URL, update if needed
+				founder: {
+					'@id': `${baseSchemaUrl}/#person`
 				}
 			},
 			{
-				"@type": "WebSite",
-				"@id": `${baseSchemaUrl}/#website`,
-				"url": baseSchemaUrl,
-				"name": "CallMeSidhu",
-				"description": "Portfolio of Sidharth (CallMeSidhu), Full Stack Developer and Founder of XyphX.",
-				"publisher": {
-					"@id": `${baseSchemaUrl}/#person`
+				'@type': 'WebSite',
+				'@id': `${baseSchemaUrl}/#website`,
+				url: baseSchemaUrl,
+				name: 'CallMeSidhu',
+				description:
+					'Portfolio of Sidharth (CallMeSidhu), Full Stack Developer and Founder of XyphX.',
+				publisher: {
+					'@id': `${baseSchemaUrl}/#person`
 				}
 			}
 		]
 	};
 
 	// Breadcrumb schema
-	const breadcrumbSchema = breadcrumbs.length > 0 ? {
-		"@context": "https://schema.org",
-		"@type": "BreadcrumbList",
-		"itemListElement": breadcrumbs.map((crumb, index) => ({
-			"@type": "ListItem",
-			"position": index + 1,
-			"name": crumb.name,
-			"item": crumb.item
-		}))
-	} : null;
+	const breadcrumbSchema =
+		breadcrumbs.length > 0
+			? {
+					'@context': 'https://schema.org',
+					'@type': 'BreadcrumbList',
+					itemListElement: breadcrumbs.map((crumb, index) => ({
+						'@type': 'ListItem',
+						position: index + 1,
+						name: crumb.name,
+						item: crumb.item
+					}))
+				}
+			: null;
 
 	const schemaData = JSON.stringify(personSchema);
 	const breadcrumbData = breadcrumbSchema ? JSON.stringify(breadcrumbSchema) : null;
@@ -102,7 +104,7 @@
 	<meta name="author" content={authorName} />
 	<meta name="keywords" content={keywords} />
 	<meta name="robots" content={robots} />
-	
+
 	<!-- Canonical -->
 	<link rel="canonical" href={canonical} />
 
@@ -125,7 +127,7 @@
 	<!-- JSON-LD Structured Data -->
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html `<script type="application/ld+json">${schemaData}<\/script>`}
-	
+
 	{#if breadcrumbData}
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		{@html `<script type="application/ld+json">${breadcrumbData}<\/script>`}

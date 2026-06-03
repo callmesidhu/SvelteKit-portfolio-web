@@ -1,3 +1,3 @@
 export const appState = $state({
-    isInitialLoading: true
+	isInitialLoading: true
 });

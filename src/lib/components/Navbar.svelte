@@ -34,14 +34,19 @@
 			const { db } = await import('$lib/firebase');
 			const { doc, setDoc, increment, collection, addDoc } = await import('firebase/firestore');
 			const docRef = doc(db, 'dashboard', 'visitors');
-			await setDoc(docRef, {
-				clicks: increment(1)
-			}, { merge: true });
+			await setDoc(
+				docRef,
+				{
+					clicks: increment(1)
+				},
+				{ merge: true }
+			);
 
 			const location = await getVisitorLocation();
-			const description = location === 'Someone'
-				? 'Someone viewed/downloaded resume'
-				: `Someone from ${location} viewed/downloaded resume`;
+			const description =
+				location === 'Someone'
+					? 'Someone viewed/downloaded resume'
+					: `Someone from ${location} viewed/downloaded resume`;
 
 			await addDoc(collection(db, 'activity_logs'), {
 				type: 'resume_download',
@@ -106,16 +111,15 @@
 			Admin
 			<Icons name="ArrowUpRight" size={14} />
 		</a>
-		
+
 		<!-- Chatbot toggle -->
 		<button
-			onclick={() => chatOpen = !chatOpen}
-			class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-md transition-all hover:bg-[#B58A6C]/20 hover:border-[#B58A6C]/40 group"
+			onclick={() => (chatOpen = !chatOpen)}
+			class="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-md transition-all hover:border-[#B58A6C]/40 hover:bg-[#B58A6C]/20"
 			aria-label="Open Chat"
 		>
 			<Icons name="MessageSquare" size={18} />
 		</button>
-
 
 		<a
 			href="/resume"
@@ -129,16 +133,24 @@
 
 		<!-- Mobile hamburger -->
 		<button
-			onclick={() => menuOpen = !menuOpen}
+			onclick={() => (menuOpen = !menuOpen)}
 			class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-md transition-all hover:bg-black/60 md:hidden"
 			aria-label="Toggle menu"
 			aria-expanded={menuOpen}
 		>
-			<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+			<svg
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2.5"
+				stroke-linecap="round"
+			>
 				{#if menuOpen}
-					<path d="M6 18L18 6M6 6l12 12"/>
+					<path d="M6 18L18 6M6 6l12 12" />
 				{:else}
-					<path d="M4 6h16M4 12h16M4 18h16"/>
+					<path d="M4 6h16M4 12h16M4 18h16" />
 				{/if}
 			</svg>
 		</button>
@@ -155,7 +167,10 @@
 				<a
 					href="#{link.toLowerCase()}"
 					onclick={closeMenu}
-					class="flex items-center justify-between rounded-xl px-4 py-3 font-body text-sm font-medium text-white/80 transition-all hover:bg-white/10 hover:text-white {link === 'Contact' ? 'mt-1 rounded-xl bg-white/10 text-white' : ''}"
+					class="flex items-center justify-between rounded-xl px-4 py-3 font-body text-sm font-medium text-white/80 transition-all hover:bg-white/10 hover:text-white {link ===
+					'Contact'
+						? 'mt-1 rounded-xl bg-white/10 text-white'
+						: ''}"
 				>
 					{link}
 					{#if link === 'Contact'}
@@ -190,7 +205,13 @@
 		animation: slideDown 0.2s ease-out;
 	}
 	@keyframes slideDown {
-		from { opacity: 0; transform: translateY(-8px); }
-		to   { opacity: 1; transform: translateY(0); }
+		from {
+			opacity: 0;
+			transform: translateY(-8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 </style>

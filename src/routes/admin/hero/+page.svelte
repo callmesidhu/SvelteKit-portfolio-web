@@ -82,7 +82,9 @@
 			<Rocket class="text-admin-clay" />
 			Manage Hero Roles
 		</h1>
-		<p class="mt-2 text-admin-charcoal/70">These roles will cycle through your hero section text.</p>
+		<p class="mt-2 text-admin-charcoal/70">
+			These roles will cycle through your hero section text.
+		</p>
 	</header>
 
 	<!-- Add Role Form -->
@@ -117,7 +119,9 @@
 
 		{#if status}
 			<p
-				class="mt-4 animate-in fade-in slide-in-from-top-2 text-center text-sm font-medium {status.includes('✅')
+				class="animate-in fade-in slide-in-from-top-2 mt-4 text-center text-sm font-medium {status.includes(
+					'✅'
+				)
 					? 'text-emerald-600'
 					: 'text-red-600'} sm:text-left"
 			>
@@ -130,7 +134,9 @@
 	<div class="space-y-4">
 		{#if loading}
 			{#each Array(3) as _, i (i)}
-				<div class="h-20 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"></div>
+				<div
+					class="h-20 animate-pulse rounded-2xl border border-admin-stone bg-admin-coolgray"
+				></div>
 			{/each}
 		{:else if roles.length === 0}
 			<div class="rounded-2xl border border-admin-stone bg-admin-coolgray py-12 text-center">
@@ -142,7 +148,9 @@
 					class="group flex items-center justify-between rounded-2xl border border-admin-stone bg-admin-coolgray p-5 transition-all duration-300 hover:border-admin-taupe/50 hover:bg-admin-stone/10"
 				>
 					<div class="flex items-center gap-4">
-						<div class="cursor-grab text-admin-charcoal/40 hover:text-admin-charcoal/60 active:cursor-grabbing">
+						<div
+							class="cursor-grab text-admin-charcoal/40 hover:text-admin-charcoal/60 active:cursor-grabbing"
+						>
 							<GripVertical size={20} />
 						</div>
 						<span class="text-lg font-medium text-admin-charcoal">{role.role}</span>

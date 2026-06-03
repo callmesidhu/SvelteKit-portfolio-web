@@ -80,7 +80,6 @@
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	}
 
-
 	const addProject = async (e: SubmitEvent) => {
 		e.preventDefault();
 		if (!title || !tech) {
@@ -182,7 +181,10 @@
 		</div>
 		<form onsubmit={addProject} class="grid grid-cols-1 gap-6 md:grid-cols-2">
 			<div class="space-y-2">
-				<label for="proj-title" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
+				<label
+					for="proj-title"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				>
 					<Type size={14} /> Title *
 				</label>
 				<input
@@ -196,7 +198,10 @@
 			</div>
 
 			<div class="space-y-2">
-				<label for="proj-tech" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
+				<label
+					for="proj-tech"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				>
 					<Code size={14} /> Technologies *
 				</label>
 				<input
@@ -210,7 +215,8 @@
 			</div>
 
 			<div class="space-y-2 md:col-span-2">
-				<label for="proj-desc" class="text-sm font-medium text-admin-charcoal/70">Description</label>
+				<label for="proj-desc" class="text-sm font-medium text-admin-charcoal/70">Description</label
+				>
 				<textarea
 					id="proj-desc"
 					rows={3}
@@ -221,7 +227,10 @@
 			</div>
 
 			<div class="space-y-2">
-				<label for="proj-url" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
+				<label
+					for="proj-url"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				>
 					<LinkIcon size={14} /> Project URL
 				</label>
 				<input
@@ -234,7 +243,10 @@
 			</div>
 
 			<div class="space-y-2">
-				<label for="proj-image" class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70">
+				<label
+					for="proj-image"
+					class="flex items-center gap-2 text-sm font-medium text-admin-charcoal/70"
+				>
 					<ImageIcon size={14} /> Cover Image URL
 				</label>
 				<input
@@ -360,8 +372,14 @@
 										rel="noreferrer"
 										class="group/link flex items-center gap-1 text-sm font-medium text-admin-charcoal/50 transition-colors hover:text-admin-charcoal"
 									>
-										<ExternalLink size={14} class="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" /> 
-										<span class="border-b border-transparent transition-colors group-hover/link:border-admin-charcoal">Preview</span>
+										<ExternalLink
+											size={14}
+											class="transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+										/>
+										<span
+											class="border-b border-transparent transition-colors group-hover/link:border-admin-charcoal"
+											>Preview</span
+										>
 									</a>
 								{:else}
 									<div></div>

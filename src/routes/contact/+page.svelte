@@ -4,7 +4,7 @@
 	import SEO from '$lib/components/SEO.svelte';
 </script>
 
-<SEO 
+<SEO
 	title="Contact | CallMeSidhu"
 	description="Get in touch with S Sidharth (CallMeSidhu). Available for freelance opportunities, full stack development projects, and technical consulting."
 	canonical="https://callmesidhu.xyphx.com/contact"
@@ -14,9 +14,9 @@
 	]}
 />
 
-<div class="bg-black min-h-screen flex flex-col">
+<div class="flex min-h-screen flex-col bg-black">
 	<Navbar />
-	<main class="flex-grow flex items-center justify-center">
+	<main class="flex flex-grow items-center justify-center">
 		<Contact />
 	</main>
 </div>

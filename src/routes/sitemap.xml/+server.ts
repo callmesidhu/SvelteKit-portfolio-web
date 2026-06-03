@@ -1,15 +1,9 @@
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
-    const pages = [
-        '',
-        'resume',
-        'admin',
-        'projects',
-        'contact'
-    ];
+	const pages = ['', 'resume', 'admin', 'projects', 'contact'];
 
-    const body = `<?xml version="1.0" encoding="UTF-8" ?>
+	const body = `<?xml version="1.0" encoding="UTF-8" ?>
 <urlset
   xmlns="https://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="https://www.w3.org/1999/xhtml"
@@ -19,8 +13,8 @@ export const GET: RequestHandler = async () => {
   xmlns:video="https://www.google.com/schemas/sitemap-video/1.1"
 >
   ${pages
-    .map(
-      (page) => `
+		.map(
+			(page) => `
   <url>
     <loc>https://callmesidhu.xyphx.com/${page}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
@@ -28,14 +22,14 @@ export const GET: RequestHandler = async () => {
     <priority>${page === '' ? '1.0' : '0.8'}</priority>
   </url>
   `
-    )
-    .join('')}
+		)
+		.join('')}
 </urlset>`;
 
-    return new Response(body, {
-        headers: {
-            'Content-Type': 'application/xml',
-            'Cache-Control': 'max-age=0, s-maxage=3600'
-        }
-    });
+	return new Response(body, {
+		headers: {
+			'Content-Type': 'application/xml',
+			'Cache-Control': 'max-age=0, s-maxage=3600'
+		}
+	});
 };
