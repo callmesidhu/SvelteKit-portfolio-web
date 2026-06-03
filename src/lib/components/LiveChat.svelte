@@ -53,6 +53,11 @@
 		email: ''
 	});
 
+	async function scrollMessagesToBottom() {
+		await tick();
+		if (container) container.scrollTop = container.scrollHeight;
+	}
+
 	async function addMessage(role: 'ai' | 'user', text: string) {
 		if (role === 'ai') {
 			isTyping = true;
@@ -60,8 +65,7 @@
 			isTyping = false;
 		}
 		messages = [...messages, { id: crypto.randomUUID(), role, text }];
-		await tick();
-		if (container) container.scrollTop = container.scrollHeight;
+		await scrollMessagesToBottom();
 	}
 
 	async function nextStep() {
@@ -113,6 +117,12 @@
 	onMount(async () => {
 		if (messages.length === 0) {
 			await addMessage('ai', steps[0].question);
+		}
+	});
+
+	$effect(() => {
+		if (open && container) {
+			scrollMessagesToBottom();
 		}
 	});
 
