@@ -288,20 +288,14 @@
 				<div class="loading-center-content">
 					{#if loadProgress < 60}
 						<div class="status-indicator" in:fade={{ delay: 400, duration: 400 }} out:fade={{ duration: 400 }}>
+							<span class="loading-percentage-middle">{loadProgress}%</span>
 							<h2 class="status-title">Waiting for Network{dots}</h2>
 						</div>
 					{:else if loadProgress >= 60 && loadProgress <= 90}
 						<div class="status-indicator" in:fade={{ delay: 400, duration: 400 }} out:fade={{ duration: 400 }}>
+							<span class="loading-percentage-middle">{loadProgress}%</span>
 							<h2 class="status-title">Loading{dots}</h2>
 						</div>
-					{/if}
-				</div>
-
-				<div class="subtle-loader" aria-live="polite">
-					{#if !isOnline}
-						Offline
-					{:else}
-						{loadProgress}%
 					{/if}
 				</div>
 			</div>
@@ -460,18 +454,7 @@
 		transition: opacity 0.3s;
 	}
 
-	.subtle-loader {
-		position: absolute;
-		bottom: 30px;
-		right: 40px;
-		font-family: 'Barlow', sans-serif;
-		font-size: 14px;
-		color: rgba(255, 255, 255, 0.85);
-		letter-spacing: 3px;
-		font-weight: 600;
-		z-index: 10;
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-	}
+
 
 	/* ── Top Status Message ─────────────────────────────────────────────────── */
 	.top-status-message {
@@ -537,6 +520,15 @@
 		color: #b58a6c;
 		margin: 0;
 		text-shadow: 0 0 20px rgba(181, 138, 108, 0.3), 0 2px 10px rgba(0, 0, 0, 0.6);
+	}
+
+	.loading-percentage-middle {
+		font-family: 'Barlow', sans-serif;
+		font-size: 13px;
+		letter-spacing: 2px;
+		color: rgba(255, 255, 255, 0.5);
+		margin-bottom: 12px;
+		font-weight: 600;
 	}
 
 
@@ -706,10 +698,6 @@
 		.hero-content {
 			padding: 0 16px;
 		}
-		.subtle-loader {
-			font-size: 12px;
-			letter-spacing: 2px;
-		}
 	}
 	@media (max-width: 480px) {
 		.hero-role-wrapper {
@@ -723,10 +711,6 @@
 		.hero-name {
 			font-size: 11px;
 			letter-spacing: 0.3em;
-		}
-		.subtle-loader {
-			font-size: 12px;
-			letter-spacing: 2px;
 		}
 	}
 </style>
