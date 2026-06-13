@@ -9,6 +9,10 @@
 	let { children } = $props();
 
 	onMount(() => {
+		if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+			appState.isInitialLoading = false;
+		}
+
 		// Track visitor analytics dynamically to avoid SSR issues
 		const trackAnalytics = async () => {
 			if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {

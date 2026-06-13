@@ -3,6 +3,7 @@
 	import Icons from './Icons.svelte';
 	import LiveChat from './LiveChat.svelte';
 	import { getVisitorLocation } from '$lib/analytics';
+	import { appState } from '$lib/state.svelte';
 	const logo = '/favicon.png';
 
 	const links = ['Home', 'About', 'Skills', 'Experiences', 'Projects', 'Contact'];
@@ -60,7 +61,8 @@
 </script>
 
 <nav
-	class="fixed top-4 right-0 left-0 z-50 flex items-center justify-between px-4 py-3 text-white sm:px-8 lg:px-16"
+	class="fixed top-4 right-0 left-0 z-50 flex items-center justify-between px-4 py-3 text-white sm:px-8 lg:px-16 navbar-fade-wrapper"
+	class:visible={!appState.isInitialLoading}
 >
 	<!-- Logo -->
 	<a
@@ -201,6 +203,18 @@
 <LiveChat bind:open={chatOpen} />
 
 <style>
+	.navbar-fade-wrapper {
+		opacity: 0;
+		transform: translateY(-30px);
+		visibility: hidden;
+		transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s ease-out;
+	}
+	.navbar-fade-wrapper.visible {
+		opacity: 1;
+		transform: translateY(0);
+		visibility: visible;
+	}
+
 	.mobile-menu {
 		animation: slideDown 0.2s ease-out;
 	}

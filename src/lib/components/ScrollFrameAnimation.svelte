@@ -3,6 +3,7 @@
 	import { db } from '$lib/firebase';
 	import { collection, getDocs } from 'firebase/firestore';
 	import { appState } from '$lib/state.svelte';
+	import { fade, fly } from 'svelte/transition';
 
 	// ─── Config ────────────────────────────────────────────────────────────────
 	const TOTAL_FRAMES = 373;
@@ -25,6 +26,8 @@
 	let mouseX = $state(-1000);
 	let mouseY = $state(-1000);
 	let showLoadingScreen = $state(true);
+	let isOnline = $state(true);
+	let dots = $state('');
 
 	function handleMouseMove(e: MouseEvent) {
 		mouseX = e.clientX;
@@ -171,6 +174,29 @@
 		resizeCanvas();
 		preloadFrames();
 
+		// Set initial online status safely in browser
+		isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+
+		const updateOnlineStatus = () => {
+			isOnline = navigator.onLine;
+		};
+
+		if (typeof window !== 'undefined') {
+			window.addEventListener('online', updateOnlineStatus);
+			window.addEventListener('offline', updateOnlineStatus);
+		}
+
+		// Dots animation timer
+		let dotsInterval: any;
+		if (typeof window !== 'undefined') {
+			dotsInterval = setInterval(() => {
+				if (dots === '') dots = '.';
+				else if (dots === '.') dots = '..';
+				else if (dots === '..') dots = '...';
+				else dots = '';
+			}, 400);
+		}
+
 		// Fetch roles from Firebase
 		const fetchRoles = async () => {
 			try {
@@ -188,7 +214,7 @@
 			} catch (err) {
 				console.error('Error fetching roles:', err);
 				// Fallback if firebase fails
-				roles = ['Full Stack Developer', 'App Developer', 'UI/UX Designer'];
+				roles = ['Full Stack Developer', 'App Developer', 'AI Engineer'];
 				type();
 			}
 		};
@@ -203,6 +229,13 @@
 		return () => {
 			cancelAnimationFrame(rafId);
 			ro.disconnect();
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('online', updateOnlineStatus);
+				window.removeEventListener('offline', updateOnlineStatus);
+			}
+			if (dotsInterval) {
+				clearInterval(dotsInterval);
+			}
 		};
 	});
 
@@ -243,8 +276,33 @@
 				<!-- Fades applied specifically to the loading background image -->
 				<div class="top-fade" aria-hidden="true"></div>
 				<div class="bottom-fade" aria-hidden="true"></div>
+
+				<!-- Top-positioned status message -->
+				{#if !isOnline}
+					<div class="top-status-message" transition:fly={{ y: -15, duration: 600 }}>
+						Waiting for internet connection
+					</div>
+				{/if}
+
+				<!-- Centered Premium Loading & Network Status Panel -->
+				<div class="loading-center-content">
+					{#if loadProgress < 60}
+						<div class="status-indicator" in:fade={{ delay: 400, duration: 400 }} out:fade={{ duration: 400 }}>
+							<h2 class="status-title">Waiting for Network{dots}</h2>
+						</div>
+					{:else if loadProgress >= 60 && loadProgress <= 90}
+						<div class="status-indicator" in:fade={{ delay: 400, duration: 400 }} out:fade={{ duration: 400 }}>
+							<h2 class="status-title">Loading{dots}</h2>
+						</div>
+					{/if}
+				</div>
+
 				<div class="subtle-loader" aria-live="polite">
-					{loadProgress}%
+					{#if !isOnline}
+						Offline
+					{:else}
+						{loadProgress}%
+					{/if}
 				</div>
 			</div>
 		{/if}
@@ -414,6 +472,73 @@
 		z-index: 10;
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 	}
+
+	/* ── Top Status Message ─────────────────────────────────────────────────── */
+	.top-status-message {
+		position: absolute;
+		top: 40px;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		background: rgba(181, 138, 108, 0.1);
+		border: 1px solid rgba(181, 138, 108, 0.25);
+		padding: 8px 18px;
+		border-radius: 99px;
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		color: #b58a6c;
+		font-family: 'Barlow', sans-serif;
+		font-size: 12px;
+		font-weight: 500;
+		letter-spacing: 1.5px;
+		text-transform: uppercase;
+		z-index: 11;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+	}
+
+	/* ── Loading Center Content ────────────────────────────────────────────── */
+	.loading-center-content {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		z-index: 10;
+		text-align: center;
+		width: 90%;
+		max-width: 400px;
+		pointer-events: none;
+		animation: initial-fade-in 1s ease-out forwards;
+	}
+
+	@keyframes initial-fade-in {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+
+	.status-indicator {
+		position: absolute;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 100%;
+	}
+
+	.status-title {
+		font-family: 'Barlow', sans-serif;
+		font-size: 20px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 4px;
+		color: #b58a6c;
+		margin: 0;
+		text-shadow: 0 0 20px rgba(181, 138, 108, 0.3), 0 2px 10px rgba(0, 0, 0, 0.6);
+	}
+
 
 	/* ── Progress bar ─────────────────────────────────────────────────────────── */
 	.progress-bar-wrap {

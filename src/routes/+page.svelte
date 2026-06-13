@@ -7,6 +7,7 @@
 	import ProjectsGrid from '$lib/components/ProjectsGrid.svelte';
 	import Contact from '$lib/components/Contact.svelte';
 	import SEO from '$lib/components/SEO.svelte';
+	import { appState } from '$lib/state.svelte';
 </script>
 
 <SEO
@@ -85,3 +86,5 @@
 		<Contact />
 	</main>
 </div>
+
+

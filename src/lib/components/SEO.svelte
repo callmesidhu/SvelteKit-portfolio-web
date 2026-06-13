@@ -78,7 +78,7 @@
 	};
 
 	// Breadcrumb schema
-	const breadcrumbSchema =
+	const breadcrumbSchema = $derived(
 		breadcrumbs.length > 0
 			? {
 					'@context': 'https://schema.org',
@@ -90,10 +90,11 @@
 						item: crumb.item
 					}))
 				}
-			: null;
+			: null
+	);
 
 	const schemaData = JSON.stringify(personSchema);
-	const breadcrumbData = breadcrumbSchema ? JSON.stringify(breadcrumbSchema) : null;
+	const breadcrumbData = $derived(breadcrumbSchema ? JSON.stringify(breadcrumbSchema) : null);
 </script>
 
 <svelte:head>
