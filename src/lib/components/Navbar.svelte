@@ -5,6 +5,7 @@
 	import { getVisitorLocation } from '$lib/analytics';
 	import { appState } from '$lib/state.svelte';
 	const logo = '/favicon.png';
+	const resumePath = '/resume/callmesidhu_resumeV6.pdf';
 
 	const links = ['Home', 'About', 'Skills', 'Experiences', 'Projects', 'Contact'];
 	let isDark = $state(true);
@@ -124,7 +125,7 @@
 		</button>
 
 		<a
-			href="/resume"
+			href={resumePath}
 			target="_blank"
 			onclick={trackResumeClick}
 			class="hidden items-center gap-1.5 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm font-medium backdrop-blur-md transition-transform duration-200 hover:scale-105 md:flex"
@@ -189,7 +190,7 @@
 				Admin <Icons name="ArrowUpRight" size={13} />
 			</a>
 			<a
-				href="/resume"
+				href={resumePath}
 				target="_blank"
 				onclick={trackResumeClick}
 				class="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/70 transition-all hover:bg-white/10"
