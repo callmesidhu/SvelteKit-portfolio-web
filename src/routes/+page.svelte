@@ -11,7 +11,7 @@
 </script>
 
 <SEO
-	title="CallMeSidhu | Full Stack Developer & Founder of XyphX"
+	title="CALLMESIDHU | Full Stack Developer & Founder of XyphX"
 	description="Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare, DevOps, AI and modern web technologies."
 	canonical="https://callmesidhu.xyphx.com"
 	breadcrumbs={[{ name: 'Home', item: 'https://callmesidhu.xyphx.com' }]}
@@ -24,9 +24,9 @@
 	<main>
 		<!-- SEO Boost Content (Visually Hidden for Screen Readers & Search Engines) -->
 		<div class="sr-only">
-			<h1>CallMeSidhu - Full Stack Developer & Founder of XyphX</h1>
+			<h1>CALLMESIDHU - Full Stack Developer & Founder of XyphX</h1>
 			<p>
-				Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX,
+				Sidharth, known as callmesidhu, is a Full Stack Developer, Founder of XyphX,
 				Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare,
 				DevOps, AI and modern web technologies.
 			</p>

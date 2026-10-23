@@ -16,8 +16,8 @@
 	}
 
 	let {
-		title = 'CallMeSidhu | S SIDHARTH | Full Stack Developer',
-		description = 'Sidharth, known as CallMeSidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare, DevOps, AI and modern web technologies.',
+		title = 'CALLMESIDHU | S SIDHARTH | Full Stack Developer',
+		description = 'Sidharth, known as callmesidhu, is a Full Stack Developer, Founder & CEO of XyphX, Freelancer, and Software Engineer specializing in React, Node.js, Flutter, Cloudflare, DevOps, AI and modern web technologies.',
 		image = '/favicon.png',
 		canonical = 'https://callmesidhu.xyphx.com',
 		type = 'website',

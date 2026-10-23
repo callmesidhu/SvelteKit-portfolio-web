@@ -119,8 +119,8 @@
 </script>
 
 <SEO
-	title="Admin Dashboard | CallMeSidhu"
-	description="Admin dashboard for CallMeSidhu portfolio."
+	title="Admin Dashboard | CALLMESIDHU"
+	description="Admin dashboard for CALLMESIDHU portfolio."
 	robots="noindex, nofollow"
 />
 

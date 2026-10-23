@@ -5,8 +5,8 @@
 </script>
 
 <SEO
-	title="Projects | CallMeSidhu"
-	description="Explore the portfolio of web, mobile, and AI projects developed by S Sidharth (CallMeSidhu), including React, SvelteKit, and Flutter applications."
+	title="Projects | CALLMESIDHU"
+	description="Explore the portfolio of web, mobile, and AI projects developed by S Sidharth (CALLMESIDHU), including React, SvelteKit, and Flutter applications."
 	canonical="https://callmesidhu.xyphx.com/projects"
 	breadcrumbs={[
 		{ name: 'Home', item: 'https://callmesidhu.xyphx.com' },

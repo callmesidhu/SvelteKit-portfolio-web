@@ -1,6 +1,6 @@
 <script lang="ts">
 	let copied = $state(false);
-	const EMAIL = 'callmesidhu@myyahoo.com';
+	const EMAIL = 'callmesidhu.x@outlook.com';
 
 	async function copyEmail() {
 		await navigator.clipboard.writeText(EMAIL);

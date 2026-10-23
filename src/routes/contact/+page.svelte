@@ -5,8 +5,8 @@
 </script>
 
 <SEO
-	title="Contact | CallMeSidhu"
-	description="Get in touch with S Sidharth (CallMeSidhu). Available for freelance opportunities, full stack development projects, and technical consulting."
+	title="Contact | CALLMESIDHU"
+	description="Get in touch with S Sidharth (CALLMESIDHU). Available for freelance opportunities, full stack development projects, and technical consulting."
 	canonical="https://callmesidhu.xyphx.com/contact"
 	breadcrumbs={[
 		{ name: 'Home', item: 'https://callmesidhu.xyphx.com' },

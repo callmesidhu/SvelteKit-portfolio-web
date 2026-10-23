@@ -62,7 +62,7 @@
 			>
 				<img src="/favicon.png" alt="Logo" class="h-full w-full object-contain" />
 			</div>
-			<h1 class="text-3xl font-bold text-admin-charcoal">callmesidhu@xyphx.admin</h1>
+			<h1 class="text-3xl font-bold text-admin-charcoal">callmesidhu@xyphx.com</h1>
 			<p class="mt-2 text-admin-charcoal/70">Login to your portfolio admin</p>
 		</div>
 

@@ -77,7 +77,7 @@
 		if (navigator.share) {
 			navigator
 				.share({
-					title: 'CallMeSidhu Portfolio',
+					title: 'CALLMESIDHU Portfolio',
 					text: "Check out Sidharth's portfolio!",
 					url: window.location.href
 				})
